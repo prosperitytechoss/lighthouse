@@ -1,0 +1,6 @@
+[project]
+name = "lighthouse-textmodel"
+version = "0.1.0"
+description = "Tier 2 hashed char n-gram text classifier for the child app"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "scikit-learn>=1.4", "scipy>=1.11"]

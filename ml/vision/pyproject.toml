@@ -1,0 +1,6 @@
+[project]
+name = "lighthouse-vision"
+version = "0.1.0"
+description = "Fetches and validates the on-device NSFW image model"
+requires-python = ">=3.11,<3.13"
+dependencies = ["onnxruntime>=1.19", "onnx>=1.16", "pillow>=10", "numpy<2.2"]

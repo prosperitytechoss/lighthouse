@@ -1,0 +1,8 @@
+.cache/
+seed/
+expansion.json
+variants.json
+audit_report.json
+prune_report.json
+keep_overrides.json
+eval_report.md

@@ -1,0 +1,38 @@
+/**
+ * The Lighthouse mascot — inline SVG, paths copied 1:1 from the approved Paper
+ * board (46 · Landing page). White body, two stripes, deep blue cap, lantern,
+ * dot eyes and a smile, soft ground shadow.
+ *
+ * `on` picks the surface variant the board uses:
+ *  - "light": cyan #1CABE2 stripes, pale blue shadow (white backgrounds)
+ *  - "cyan":  deep #0E7FA8 stripes, translucent white shadow (cyan hero)
+ */
+type MascotProps = {
+  on?: "light" | "cyan";
+  animated?: boolean;
+  className?: string;
+};
+
+export function Mascot({ on = "light", animated = false, className }: MascotProps) {
+  const stripe = on === "cyan" ? "#0E7FA8" : "#1CABE2";
+  const shadow = on === "cyan" ? "rgba(255, 255, 255, 0.35)" : "#E2EDF4";
+
+  return (
+    <svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
+      <ellipse cx="75" cy="132" rx="44" ry="8" fill={shadow} className={animated ? "mascot-shadow" : undefined} />
+      <g className={animated ? "mascot-bob" : undefined}>
+        <path d="M62 34 L10 18 L10 50 Z" fill="#1CABE2" opacity="0.16" />
+        <path d="M88 34 L140 18 L140 50 Z" fill="#1CABE2" opacity="0.16" />
+        <rect x="64" y="24" width="22" height="14" rx="4" fill="#FFD44D" />
+        <path d="M60 22 Q75 8 90 22 Z" fill="#0E7FA8" />
+        <circle cx="75" cy="12" r="3.5" fill="#0E7FA8" />
+        <path d="M58 40 L92 40 L100 128 L50 128 Z" fill="#FFFFFF" stroke="#D9E6EE" strokeWidth="2" />
+        <path d="M56 56 L94 56 L96 72 L54 72 Z" fill={stripe} />
+        <path d="M52 92 L98 92 L100 108 L50 108 Z" fill={stripe} />
+        <circle cx="68" cy="82" r="3" fill="#1A1A1A" />
+        <circle cx="82" cy="82" r="3" fill="#1A1A1A" />
+        <path d="M69 87 Q75 92 81 87" fill="none" stroke="#1A1A1A" strokeWidth="2.4" strokeLinecap="round" />
+      </g>
+    </svg>
+  );
+}

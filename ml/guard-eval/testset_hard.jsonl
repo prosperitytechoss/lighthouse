@@ -1,0 +1,18 @@
+{"id": 101, "text": "I'm not into sports betting at all", "category": null, "severity": null, "lang": "en", "kind": "hard_negative"}
+{"id": 102, "text": "I no dey watch porn abeg", "category": null, "severity": null, "lang": "pcm", "kind": "hard_negative"}
+{"id": 103, "text": "this coding assignment dey kill me 😂", "category": null, "severity": null, "lang": "pcm", "kind": "hard_negative"}
+{"id": 104, "text": "you dey kill me with these jokes lmao", "category": null, "severity": null, "lang": "pcm", "kind": "hard_negative"}
+{"id": 105, "text": "check out this p0rn link", "category": "Sexual Content", "severity": "high", "lang": "en", "kind": "positive"}
+{"id": 106, "text": "send me nudes😏now", "category": "Sexual Content", "severity": "high", "lang": "en", "kind": "positive"}
+{"id": 107, "text": "Igbo language class was fun today", "category": null, "severity": null, "lang": "en", "kind": "hard_negative"}
+{"id": 108, "text": "she speaks igbo and yoruba fluently", "category": null, "severity": null, "lang": "en", "kind": "hard_negative"}
+{"id": 109, "text": "who get igbo make we blaze", "category": "Substance Use", "severity": "high", "lang": "pcm", "kind": "positive"}
+{"id": 110, "text": "mo fe pa ara mi", "category": "Self-Harm", "severity": "high", "lang": "yo", "kind": "positive"}
+{"id": 111, "text": "zan buge ka after school", "category": "Violence", "severity": "review", "lang": "ha-en", "kind": "positive"}
+{"id": 112, "text": "a ga m eti gi", "category": "Violence", "severity": "review", "lang": "ig", "kind": "positive"}
+{"id": 113, "text": "abeg drop your bet9ja booking code", "category": "Gambling", "severity": "review", "lang": "pcm", "kind": "positive"}
+{"id": 114, "text": "I love jollof and I bet you do too 😋", "category": null, "severity": null, "lang": "en", "kind": "hard_negative"}
+{"id": 115, "text": "e be like say I no wan see tomorrow", "category": "Self-Harm", "severity": "high", "lang": "pcm", "kind": "positive"}
+{"id": 116, "text": "math test tomorrow, I'm dead 💀", "category": null, "severity": null, "lang": "en", "kind": "hard_negative"}
+{"id": 117, "text": "zan caca da kudi na", "category": "Gambling", "severity": "high", "lang": "ha", "kind": "positive"}
+{"id": 118, "text": "we dey blaze through this assignment 🔥", "category": null, "severity": null, "lang": "pcm", "kind": "hard_negative"}

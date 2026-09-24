@@ -1,0 +1,9 @@
+parity: 200 rows, argmax mismatches 0, severity mismatches 0, confidence > 1e-3 0, max delta 5.15e-7
+lexicon only: acc=94.3% safeFP=2.8% hardPass=96.0% posDetect=91.2% posCat=91.2% codeswitch=88.2%
+model only (0.85): acc=88.6% safeFP=0.0% hardPass=100.0% posDetect=76.5% posCat=76.5% codeswitch=82.4%
+hybrid: acc=94.3% safeFP=2.8% hardPass=96.0% posDetect=91.2% posCat=91.2% codeswitch=88.2%
+hybrid: 0 rows decided by the model:
+ts latency: 0.011 ms per message
+kotlin parity (kotlinc 2.1, JVM 17, android Context stubbed): 200 rows, mismatches 0, max conf delta 4.81e-07
+kotlin latency: 2.5 us per message (JVM warm; expect well under 1 ms on a low end phone)
+missing or corrupt asset: TextModel.load returns false, predict returns null

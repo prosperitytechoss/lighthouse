@@ -1,0 +1,37 @@
+{
+  "name": "lighthouse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lighthouse \u2014 parental safety for families. Monorepo: Parent (iOS+Android) and Child (Android) apps.",
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tooling/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:child": "turbo run dev --filter=@lighthouse/child",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@lighthouse/eslint-config": "*",
+    "eslint": "^9.39.0",
+    "turbo": "2.9.16",
+    "prettier": "^3.4.2",
+    "typescript": "~6.0.3"
+  },
+  "resolutions": {
+    "react-native-reanimated": "4.4.0",
+    "react-native-worklets": "0.9.1",
+    "expo-constants": "56.0.18",
+    "expo-modules-core": "56.0.15",
+    "expo-location": "56.0.15"
+  }
+}

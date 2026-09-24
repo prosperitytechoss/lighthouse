@@ -1,0 +1,1402 @@
+[
+{
+"text": "I don't want to be here anymore, I want to die tonight",
+"category": "Self-Harm",
+"severity": "high",
+"confidence": 0.9993979930877686,
+"sevConfidence": 0.9969804883003235
+},
+{
+"text": "I no wan dey alive again, everything don tire me",
+"category": "Self-Harm",
+"severity": "high",
+"confidence": 0.9997416138648987,
+"sevConfidence": 0.5715988874435425
+},
+{
+"text": "honestly I feel so worthless lately, no reason to try",
+"category": "Self-Harm",
+"severity": "review",
+"confidence": 0.9994551539421082,
+"sevConfidence": 0.9430051445960999
+},
+{
+"text": "ugh I hate myself sometimes lol",
+"category": "Self-Harm",
+"severity": "low",
+"confidence": 0.7559552192687988,
+"sevConfidence": 0.8120678663253784
+},
+{
+"text": "send me your nudes rn 😏",
+"category": "Sexual Content",
+"severity": "high",
+"confidence": 0.9979146122932434,
+"sevConfidence": 0.9993345141410828
+},
+{
+"text": "baby send me your body pics na, no dey form",
+"category": "Sexual Content",
+"severity": "high",
+"confidence": 0.9862356781959534,
+"sevConfidence": 0.977504551410675
+},
+{
+"text": "wanna hook up later? my parents are out",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.619067370891571,
+"sevConfidence": 0.9296168684959412
+},
+{
+"text": "you look kinda sexy in that pic ngl",
+"category": "Sexual Content",
+"severity": "low",
+"confidence": 0.9875195026397705,
+"sevConfidence": 0.9714563488960266
+},
+{
+"text": "I'm gonna beat you up after school, watch",
+"category": "Violence",
+"severity": "high",
+"confidence": 0.9929313659667969,
+"sevConfidence": 0.9058184623718262
+},
+{
+"text": "ma lu e ni school tomorrow, you dey mad?",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9035114049911499,
+"sevConfidence": 0.9986448884010315
+},
+{
+"text": "we go jump am after school, he dey feel too big",
+"category": "Violence",
+"severity": "review",
+"confidence": 0.9921951293945312,
+"sevConfidence": 0.9990136623382568
+},
+{
+"text": "I'm so angry I could punch a wall rn",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9616816639900208,
+"sevConfidence": 0.8181039690971375
+},
+{
+"text": "pro ana tips? need to starve myself before Friday",
+"category": "Eating Disorders",
+"severity": "high",
+"confidence": 0.9972665309906006,
+"sevConfidence": 0.9891390204429626
+},
+{
+"text": "skipping meals again, feel too fat for the party",
+"category": "Eating Disorders",
+"severity": "review",
+"confidence": 0.9499843716621399,
+"sevConfidence": 0.9382421374320984
+},
+{
+"text": "thinspo pics really keep me motivated tbh",
+"category": "Sexual Content",
+"severity": "high",
+"confidence": 0.7023123502731323,
+"sevConfidence": 0.8822183012962341
+},
+{
+"text": "abeg who get igbo? I wan buy weed sharp sharp",
+"category": "Substance Use",
+"severity": "high",
+"confidence": 0.9791461229324341,
+"sevConfidence": 0.6875128149986267
+},
+{
+"text": "who get molly for the rave, make we high small",
+"category": "Substance Use",
+"severity": "review",
+"confidence": 0.9313027262687683,
+"sevConfidence": 0.9916201829910278
+},
+{
+"text": "ina wiwi? bring the wraps make we blaze",
+"category": "Substance Use",
+"severity": "review",
+"confidence": 0.9999308586120605,
+"sevConfidence": 0.9102146029472351
+},
+{
+"text": "go back to your country, you don't belong here",
+"category": "Hate Speech",
+"severity": "high",
+"confidence": 0.9993547797203064,
+"sevConfidence": 0.9920107126235962
+},
+{
+"text": "you people are always like this, typical",
+"category": "Hate Speech",
+"severity": "low",
+"confidence": 0.9976112842559814,
+"sevConfidence": 0.8409382700920105
+},
+{
+"text": "I put my whole allowance on bet9ja parlay tonight",
+"category": "Gambling",
+"severity": "high",
+"confidence": 0.9996751546859741,
+"sevConfidence": 0.7384791970252991
+},
+{
+"text": "I don stake my school fees for sporty, na to win",
+"category": "Gambling",
+"severity": "high",
+"confidence": 0.9943114519119263,
+"sevConfidence": 0.9355491399765015
+},
+{
+"text": "drop your sporty code abeg, wetin be the odds",
+"category": "Gambling",
+"severity": "review",
+"confidence": 0.9995703101158142,
+"sevConfidence": 0.9974368810653687
+},
+{
+"text": "watch this beheading video, the gore is crazy",
+"category": "Graphic Content",
+"severity": "high",
+"confidence": 0.99672532081604,
+"sevConfidence": 0.992032527923584
+},
+{
+"text": "omo the dead body for that video ehn, blood everywhere",
+"category": "Graphic Content",
+"severity": "review",
+"confidence": 0.9999145269393921,
+"sevConfidence": 0.9887315630912781
+},
+{
+"text": "this homework is literally killing me 😭",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9939975738525391,
+"sevConfidence": 0.7922545075416565
+},
+{
+"text": "I love popcorn during movie night 🍿",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9824344515800476,
+"sevConfidence": 0.5930996537208557
+},
+{
+"text": "we visited Scunthorpe last summer, cute town",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9140327572822571,
+"sevConfidence": 0.7365039587020874
+},
+{
+"text": "the match was lit, we killed it 4-0 🔥",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9907214641571045,
+"sevConfidence": 0.5224137306213379
+},
+{
+"text": "coach says I should cut weight before the wrestling meet",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9536499381065369,
+"sevConfidence": 0.7291399240493774
+},
+{
+"text": "she's recovering from anorexia and doing so much better now",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.8817955851554871,
+"sevConfidence": 0.5920699834823608
+},
+{
+"text": "we learned about the transatlantic slave trade in history today",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9856171011924744,
+"sevConfidence": 0.8942821621894836
+},
+{
+"text": "news said there was a shooting downtown, so scary",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9953823685646057,
+"sevConfidence": 0.5338005423545837
+},
+{
+"text": "biology class covered human reproduction today, kinda awkward",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9981850981712341,
+"sevConfidence": 0.9725510478019714
+},
+{
+"text": "grandpa likes to smoke his pipe on the veranda",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.893974781036377,
+"sevConfidence": 0.7919070720672607
+},
+{
+"text": "I'm dead 💀 that meme is too funny",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9705209732055664,
+"sevConfidence": 0.5361665487289429
+},
+{
+"text": "assignment due tonight, I could just die 😩",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.5670908093452454,
+"sevConfidence": 0.9669313430786133
+},
+{
+"text": "the gun on display at the museum was from the 1800s",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9940192699432373,
+"sevConfidence": 0.6218004822731018
+},
+{
+"text": "Igbo is honestly my favourite subject in school",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9969066977500916,
+"sevConfidence": 0.5308535695075989
+},
+{
+"text": "my sister is on a diet for her wedding in December",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9721744060516357,
+"sevConfidence": 0.9153299331665039
+},
+{
+"text": "let's gamble on which teacher is absent today lol",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9986339211463928,
+"sevConfidence": 0.9006445407867432
+},
+{
+"text": "abeg wetin we dey chop for lunch?",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9781670570373535,
+"sevConfidence": 0.9937981963157654
+},
+{
+"text": "Ẹ kú àárọ̀, did you sleep well?",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.8826870322227478,
+"sevConfidence": 0.6263608336448669
+},
+{
+"text": "Sannu, ina kwana? see you at school",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9904466867446899,
+"sevConfidence": 0.5262028574943542
+},
+{
+"text": "Kedu, are we still meeting for the group project?",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9991663694381714,
+"sevConfidence": 0.995246946811676
+},
+{
+"text": "the jollof rice yesterday was fire 🔥",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9972450733184814,
+"sevConfidence": 0.953615665435791
+},
+{
+"text": "don't forget football practice at 4pm today",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9988594055175781,
+"sevConfidence": 0.5600348711013794
+},
+{
+"text": "happy birthday babe hope you have the best day 🎉",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9961417317390442,
+"sevConfidence": 0.690002977848053
+},
+{
+"text": "maths test moved to Thursday, thank God",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9841768741607666,
+"sevConfidence": 0.8285973072052002
+},
+{
+"text": "I miss you, when are you coming to Lagos?",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.6909212470054626,
+"sevConfidence": 0.7851474285125732
+},
+{
+"text": "mummy said make I greet you well o",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9457299113273621,
+"sevConfidence": 0.7055437564849854
+},
+{
+"text": "can I borrow your charger tomorrow? mine spoilt",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9961942434310913,
+"sevConfidence": 0.6765427589416504
+},
+{
+"text": "I'm not into sports betting at all",
+"category": "Self-Harm",
+"severity": "review",
+"confidence": 0.5094320178031921,
+"sevConfidence": 0.9568822979927063
+},
+{
+"text": "I no dey watch porn abeg",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.7442432045936584,
+"sevConfidence": 0.7683402895927429
+},
+{
+"text": "this coding assignment dey kill me 😂",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9779244065284729,
+"sevConfidence": 0.9257631897926331
+},
+{
+"text": "you dey kill me with these jokes lmao",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.7762076258659363,
+"sevConfidence": 0.9939017295837402
+},
+{
+"text": "check out this p0rn link",
+"category": "Sexual Content",
+"severity": "high",
+"confidence": 0.6567603349685669,
+"sevConfidence": 0.9551882147789001
+},
+{
+"text": "send me nudes😏now",
+"category": "Sexual Content",
+"severity": "high",
+"confidence": 0.9498116374015808,
+"sevConfidence": 0.9974414110183716
+},
+{
+"text": "Igbo language class was fun today",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9986491799354553,
+"sevConfidence": 0.6782004833221436
+},
+{
+"text": "she speaks igbo and yoruba fluently",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9973625540733337,
+"sevConfidence": 0.565742015838623
+},
+{
+"text": "who get igbo make we blaze",
+"category": "Substance Use",
+"severity": "review",
+"confidence": 0.9993471503257751,
+"sevConfidence": 0.9773038029670715
+},
+{
+"text": "mo fe pa ara mi",
+"category": "Self-Harm",
+"severity": "high",
+"confidence": 0.9787458777427673,
+"sevConfidence": 0.979971706867218
+},
+{
+"text": "zan buge ka after school",
+"category": "Violence",
+"severity": "review",
+"confidence": 0.9971688389778137,
+"sevConfidence": 0.993596076965332
+},
+{
+"text": "a ga m eti gi",
+"category": "Violence",
+"severity": "review",
+"confidence": 0.994872510433197,
+"sevConfidence": 0.9752647280693054
+},
+{
+"text": "abeg drop your bet9ja booking code",
+"category": "Gambling",
+"severity": "review",
+"confidence": 0.9999152421951294,
+"sevConfidence": 0.9971150159835815
+},
+{
+"text": "I love jollof and I bet you do too 😋",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.8467803001403809,
+"sevConfidence": 0.9079253077507019
+},
+{
+"text": "e be like say I no wan see tomorrow",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.5887845158576965,
+"sevConfidence": 0.6317861080169678
+},
+{
+"text": "math test tomorrow, I'm dead 💀",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9932721257209778,
+"sevConfidence": 0.6687169671058655
+},
+{
+"text": "zan caca da kudi na",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9382194876670837,
+"sevConfidence": 0.7550645470619202
+},
+{
+"text": "we dey blaze through this assignment 🔥",
+"category": "Substance Use",
+"severity": "review",
+"confidence": 0.5015867352485657,
+"sevConfidence": 0.9765354990959167
+},
+{
+"text": "text me back, come over when nobody is home",
+"category": "Sexual Content",
+"severity": "review",
+"confidence": 0.9890690445899963,
+"sevConfidence": 0.9655091166496277
+},
+{
+"text": "bro abeg send me the link",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9964780211448669,
+"sevConfidence": 0.9579089879989624
+},
+{
+"text": "kai kill all",
+"category": "Hate Speech",
+"severity": "high",
+"confidence": 0.9947088956832886,
+"sevConfidence": 0.9550821781158447
+},
+{
+"text": "dis goes show d level of maturity n intelligent of feminine folks i respect una seriously d wife in question knows her husband n she is happy with d beautiful things in life dat comes with it which i",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9313414096832275,
+"sevConfidence": 0.5589802265167236
+},
+{
+"text": "that guy like to dey embarrass barca if i say im not worried with that defense na lie",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9906976819038391,
+"sevConfidence": 0.8502562046051025
+},
+{
+"text": "guys want to disappear 😩",
+"category": "Self-Harm",
+"severity": "review",
+"confidence": 0.9716570973396301,
+"sevConfidence": 0.9641572833061218
+},
+{
+"text": "ngl i put my allowance on the parlay and idk what to do",
+"category": "Gambling",
+"severity": "high",
+"confidence": 0.9973587393760681,
+"sevConfidence": 0.9012631773948669
+},
+{
+"text": "see the burnt bodies from the tanker explosion tonight?",
+"category": "Graphic Content",
+"severity": "high",
+"confidence": 0.9921825528144836,
+"sevConfidence": 0.9360969066619873
+},
+{
+"text": "@user Karya suke babu abin daza su binkita😡😡😡",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9910796284675598,
+"sevConfidence": 0.9223674535751343
+},
+{
+"text": "ehen kill all of them nau",
+"category": "Hate Speech",
+"severity": "high",
+"confidence": 0.9961180686950684,
+"sevConfidence": 0.9740571975708008
+},
+{
+"text": "What is the easiest way to commit suicide.I don’t want the normal bullsh*t about don’t do it, just want an answer.",
+"category": "Self-Harm",
+"severity": "high",
+"confidence": 0.9817306995391846,
+"sevConfidence": 0.9364901781082153
+},
+{
+"text": "I’m pretty sure I’m free But the f is silent",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9956716299057007,
+"sevConfidence": 0.6107392311096191
+},
+{
+"text": "make i tell you, my dog is sick",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.972997784614563,
+"sevConfidence": 0.8670202493667603
+},
+{
+"text": "guy dey kill me o",
+"category": "Self-Harm",
+"severity": "review",
+"confidence": 0.9347733855247498,
+"sevConfidence": 0.9827089309692383
+},
+{
+"text": "Human Rights Campaign: A Christian woman kidnapped by Muslims - Sign the Petition! http://chng.it/fwntMkFz via @Change",
+"category": "Hate Speech",
+"severity": "review",
+"confidence": 0.9948484897613525,
+"sevConfidence": 0.9988887906074524
+},
+{
+"text": "omo make we go buy suya o jare",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.985112726688385,
+"sevConfidence": 0.6786960363388062
+},
+{
+"text": "my guy said liveleak type video",
+"category": "Graphic Content",
+"severity": "high",
+"confidence": 0.9563693404197693,
+"sevConfidence": 0.9537124037742615
+},
+{
+"text": "nne i just want the pain to stop biko",
+"category": "Self-Harm",
+"severity": "review",
+"confidence": 0.9761600494384766,
+"sevConfidence": 0.9279707670211792
+},
+{
+"text": "oya the football pitch is dead",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9957165122032166,
+"sevConfidence": 0.9774313569068909
+},
+{
+"text": "@user Waiyo Allah waiyo Allah mudai munshiga uku kalu innalillashi wa ina ileshir raju'un ilimunne ba'a bukata 😭😭",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9962998032569885,
+"sevConfidence": 0.9615150094032288
+},
+{
+"text": "end it all tonight?",
+"category": "Self-Harm",
+"severity": "high",
+"confidence": 0.969585657119751,
+"sevConfidence": 0.9721753001213074
+},
+{
+"text": "@user @user A'a, ban yarda ba, Kuma bazan yarda ba, na rufe qofar yarda🚪",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9997473359107971,
+"sevConfidence": 0.966331422328949
+},
+{
+"text": "trigg3r w4rn1ng: gr0ss v1de0. anyway what's the homework",
+"category": "Graphic Content",
+"severity": "low",
+"confidence": 0.9605301022529602,
+"sevConfidence": 0.8863959908485413
+},
+{
+"text": "@Professor_D anything i say publicly gets quoted by the press. randi@randi.io.",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9777848720550537,
+"sevConfidence": 0.8209660649299622
+},
+{
+"text": "Doing something crazy I'm making some bacon for dinner, and no one can stop me, wish me luck against the oil",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9828962683677673,
+"sevConfidence": 0.5159947872161865
+},
+{
+"text": "What do you think about my snoo Title .... I mean is it hot, cute? Weird . Also Idk but I liked the white hair",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.998369038105011,
+"sevConfidence": 0.7660939693450928
+},
+{
+"text": "oya hate my life",
+"category": "Self-Harm",
+"severity": "review",
+"confidence": 0.9944126009941101,
+"sevConfidence": 0.8006021976470947
+},
+{
+"text": ".@Trykezhighflyer True. The issue is not because he's gay. We should respect gays. That joke was low though. Rape is a serious matter",
+"category": "Hate Speech",
+"severity": "review",
+"confidence": 0.9936042428016663,
+"sevConfidence": 0.9933598637580872
+},
+{
+"text": "booking code, don't tell anyone",
+"category": "Gambling",
+"severity": "review",
+"confidence": 0.9597309231758118,
+"sevConfidence": 0.9658823609352112
+},
+{
+"text": "we go beat am after school",
+"category": "Violence",
+"severity": "review",
+"confidence": 0.999232292175293,
+"sevConfidence": 0.9939467310905457
+},
+{
+"text": "... Tii Koo Baa Nii Idi ... Alapinni Koo Gbodo Gba Alagbaa Nii Eti ... #Yoruba. #OKAY.",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9850319623947144,
+"sevConfidence": 0.8823444843292236
+},
+{
+"text": "listen gbana ok",
+"category": "Substance Use",
+"severity": "high",
+"confidence": 0.9760037660598755,
+"sevConfidence": 0.9496510028839111
+},
+{
+"text": "oya they cut off his head on camera",
+"category": "Graphic Content",
+"severity": "high",
+"confidence": 0.9900272488594055,
+"sevConfidence": 0.9781507253646851
+},
+{
+"text": "mehn i'm learning to code in python fr",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9910523295402527,
+"sevConfidence": 0.5960601568222046
+},
+{
+"text": "listen watch this beheading video ok",
+"category": "Graphic Content",
+"severity": "high",
+"confidence": 0.9980582594871521,
+"sevConfidence": 0.9788734912872314
+},
+{
+"text": "@a_little_opus Treating women like trophies, the shinier the better! Totally not sexist.",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.8642542362213135,
+"sevConfidence": 0.9852585792541504
+},
+{
+"text": "no vex but i w4n ju5t 5le3p and no w4k3",
+"category": "Self-Harm",
+"severity": "review",
+"confidence": 0.9199446439743042,
+"sevConfidence": 0.8954958319664001
+},
+{
+"text": "ehen we go jump am nau",
+"category": "Violence",
+"severity": "review",
+"confidence": 0.998927891254425,
+"sevConfidence": 0.9729819893836975
+},
+{
+"text": "you get body o",
+"category": "Sexual Content",
+"severity": "low",
+"confidence": 0.9989540576934814,
+"sevConfidence": 0.9757168889045715
+},
+{
+"text": "@truaemusic Why would I care what you think of Cameron?",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9678974151611328,
+"sevConfidence": 0.9043103456497192
+},
+{
+"text": "so yesterday the game is tied 1-1",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9926652312278748,
+"sevConfidence": 0.6136112213134766
+},
+{
+"text": "buy codeine syrup from the chemist",
+"category": "Substance Use",
+"severity": "high",
+"confidence": 0.9938989877700806,
+"sevConfidence": 0.9828916788101196
+},
+{
+"text": "listen i don pay the school fees ok",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9927175045013428,
+"sevConfidence": 0.7590522766113281
+},
+{
+"text": "honestly that video was disturbing rn",
+"category": "Graphic Content",
+"severity": "low",
+"confidence": 0.967955470085144,
+"sevConfidence": 0.9782366156578064
+},
+{
+"text": "Head bangingDoes anyone else band there head on things when they are frustrated and had another bad day, I also burn and cut myself sometimes",
+"category": "Self-Harm",
+"severity": "high",
+"confidence": 0.9192509651184082,
+"sevConfidence": 0.9886013865470886
+},
+{
+"text": "@freebsdglrI awww. someone's mad. &lt;3",
+"category": "Hate Speech",
+"severity": "review",
+"confidence": 0.6651002764701843,
+"sevConfidence": 0.7475447058677673
+},
+{
+"text": "Ramming my cunt with this candle like a sex freak",
+"category": "Sexual Content",
+"severity": "high",
+"confidence": 0.7742052674293518,
+"sevConfidence": 0.944222629070282
+},
+{
+"text": "But your dumb ass was hollering at this nigger get the fuck outta here with that ignorant mess and let them have a great day unbothered",
+"category": "Hate Speech",
+"severity": "review",
+"confidence": 0.980844259262085,
+"sevConfidence": 0.9189106822013855
+},
+{
+"text": "bitch emetụla ego m aka. Achọghị m nsogbu",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.8889876008033752,
+"sevConfidence": 0.578144371509552
+},
+{
+"text": "ehen 1xbet nau",
+"category": "Gambling",
+"severity": "review",
+"confidence": 0.9311571717262268,
+"sevConfidence": 0.9552545547485352
+},
+{
+"text": "@MaxBlumenthal @mehdirhasan @tnr In fact, ISIS follows the example of the prophet to the letter.",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9655333757400513,
+"sevConfidence": 0.9449604749679565
+},
+{
+"text": "@user Bazamu yafewa duk wanda yake da sa hannu a rusa kano ba allah ya isa harbayan ranmu bazamu yafeba 😭",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9752895832061768,
+"sevConfidence": 0.9944061040878296
+},
+{
+"text": "how far, you don eat",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9948819875717163,
+"sevConfidence": 0.5547122955322266
+},
+{
+"text": "my padi talk say the doctor gave me drugs for malaria",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9928523898124695,
+"sevConfidence": 0.7467237114906311
+},
+{
+"text": "I HATE myselfThere's nobody else in the world that I actually hate, except myself. There are people I don't like and people whose actions and beliefs disgust me, but I don't hate them. Yet I hate",
+"category": "Self-Harm",
+"severity": "review",
+"confidence": 0.981006383895874,
+"sevConfidence": 0.5271849632263184
+},
+{
+"text": "I jighi ahu mancha! 😂😂😂 https://t.co/gc9zaRDuUS",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.998816967010498,
+"sevConfidence": 0.850045382976532
+},
+{
+"text": "as e dey now make we blaze",
+"category": "Substance Use",
+"severity": "review",
+"confidence": 0.9850066304206848,
+"sevConfidence": 0.9872176051139832
+},
+{
+"text": "Àmodi -► illness {ọdún méjì ni àmodi fi ṣe é = s/he was ill for 2 years} #InYoruba #ReadYoruba #WriteYoruba #SpeakYoruba",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9972800016403198,
+"sevConfidence": 0.825217068195343
+},
+{
+"text": "abeg no vex, i'm going to unalive myself",
+"category": "Self-Harm",
+"severity": "high",
+"confidence": 0.9918264150619507,
+"sevConfidence": 0.990951657295227
+},
+{
+"text": "walahi tallahi a ga m egbu gi",
+"category": "Violence",
+"severity": "high",
+"confidence": 0.9653049111366272,
+"sevConfidence": 0.9500569701194763
+},
+{
+"text": "my padi talk say some weed",
+"category": "Substance Use",
+"severity": "review",
+"confidence": 0.9887451529502869,
+"sevConfidence": 0.8495001196861267
+},
+{
+"text": "e be like say bring a gun",
+"category": "Violence",
+"severity": "high",
+"confidence": 0.9647457599639893,
+"sevConfidence": 0.9542705416679382
+},
+{
+"text": "bro i finished the assignment",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9990394711494446,
+"sevConfidence": 0.8618289828300476
+},
+{
+"text": "h4v3 a gun na",
+"category": "Violence",
+"severity": "high",
+"confidence": 0.9236509203910828,
+"sevConfidence": 0.990894079208374
+},
+{
+"text": "Kaji wata mai mugun tinani kuma duk macen arziki tana neman tsari da dan iskan miji wata kuma sotakeyi Allah ya kyauta",
+"category": "Hate Speech",
+"severity": "review",
+"confidence": 0.9409929513931274,
+"sevConfidence": 0.9963477253913879
+},
+{
+"text": "ngl which colour should i pick and idk what to do",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9746999740600586,
+"sevConfidence": 0.9285768270492554
+},
+{
+"text": "Basically i just need to wait until everybody forgets But how long will it take? _________",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.7153912782669067,
+"sevConfidence": 0.9741753339767456
+},
+{
+"text": "i'll punch y0u na",
+"category": "Violence",
+"severity": "low",
+"confidence": 0.9950592517852783,
+"sevConfidence": 0.9770098924636841
+},
+{
+"text": "Lol. Isi adirokwanu gi nma.. 😐😒😒😒 https://t.co/5gzmgYk6RW",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9917075037956238,
+"sevConfidence": 0.7450766563415527
+},
+{
+"text": "as e dey now see the burnt bodies from the tanker explosion",
+"category": "Graphic Content",
+"severity": "high",
+"confidence": 0.9829279780387878,
+"sevConfidence": 0.9602509140968323
+},
+{
+"text": "@user Men's respect gbakwaa oku",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9979569911956787,
+"sevConfidence": 0.9049434661865234
+},
+{
+"text": "ehen i'm going to slay this exam nau",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9640588760375977,
+"sevConfidence": 0.7383825778961182
+},
+{
+"text": "kms lol",
+"category": "Self-Harm",
+"severity": "high",
+"confidence": 0.5579870343208313,
+"sevConfidence": 0.9839104413986206
+},
+{
+"text": "guy i am on my way o",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9741808772087097,
+"sevConfidence": 0.9813318252563477
+},
+{
+"text": "Bello Ma'aji Nima ina bukatar nasan wannan tarihin plzzz saboda nakan yi tinani nace meysa su zuri'ar Sarki Suleiman aka shafesu ne a tatihin Masarautar kano",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9498522877693176,
+"sevConfidence": 0.9861570596694946
+},
+{
+"text": "i love this song so much lol",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9852046966552734,
+"sevConfidence": 0.9034504890441895
+},
+{
+"text": "I'll talk to u in a sec after I'm done.",
+"category": "Sexual Content",
+"severity": "high",
+"confidence": 0.788474977016449,
+"sevConfidence": 0.9593019485473633
+},
+{
+"text": "@nPryzm bitch what the fuck is a PRYZM DUMB NIGGER FUCK U BLOCKED",
+"category": "Hate Speech",
+"severity": "review",
+"confidence": 0.9999253749847412,
+"sevConfidence": 0.9983513355255127
+},
+{
+"text": "😂🤣🤣🤣😂🤣Na ihe niile na-eme na Nigeria, bụ ihe zuru ezu iji gbaa ọsọ🤣😂😂 https://t.co/Kg50LZB3fK",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9993725419044495,
+"sevConfidence": 0.9124194979667664
+},
+{
+"text": "Here's the thing; Islamic fundamentalism *is* bad. ISIS is clearly a terrorist cell taking advantage of fear and hatred to further radical causes. The Ayatollah turned Iran into a Quran theocracy",
+"category": "Hate Speech",
+"severity": "review",
+"confidence": 0.9959933757781982,
+"sevConfidence": 0.9768814444541931
+},
+{
+"text": "make i tell you, this teacher go kill me with homework 💀",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9911041259765625,
+"sevConfidence": 0.6671823859214783
+},
+{
+"text": "na anfileld dem disrespect like this that one even dey slide with him back",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9878339767456055,
+"sevConfidence": 0.6397728323936462
+},
+{
+"text": "mehn mummy said i should come home early fr",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9876496195793152,
+"sevConfidence": 0.6303074955940247
+},
+{
+"text": "kai meanspo",
+"category": "Eating Disorders",
+"severity": "review",
+"confidence": 0.9603049159049988,
+"sevConfidence": 0.9764676690101624
+},
+{
+"text": "listen have you ever been drunk ok",
+"category": "Substance Use",
+"severity": "low",
+"confidence": 0.9912022352218628,
+"sevConfidence": 0.9495960474014282
+},
+{
+"text": "my stomach is disgusting abi?",
+"category": "Eating Disorders",
+"severity": "low",
+"confidence": 0.9902487397193909,
+"sevConfidence": 0.9746257662773132
+},
+{
+"text": "you don't deserve to live sef 😭",
+"category": "Hate Speech",
+"severity": "high",
+"confidence": 0.9854877591133118,
+"sevConfidence": 0.9694229960441589
+},
+{
+"text": "People need to stop with the \"breaking\" about Al Asad. The information is already both old and wrong. Everything is fine at Al Asad.",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9065113067626953,
+"sevConfidence": 0.903162956237793
+},
+{
+"text": "no vex but 4 gun",
+"category": "Violence",
+"severity": "high",
+"confidence": 0.7696077227592468,
+"sevConfidence": 0.916282057762146
+},
+{
+"text": "no reason to live sef 😭",
+"category": "Self-Harm",
+"severity": "review",
+"confidence": 0.9882339239120483,
+"sevConfidence": 0.889694094657898
+},
+{
+"text": "RT @wadhwa: I can't believe my Wikipedia page is under attack again. Don't they have policies against all this?",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.8365378379821777,
+"sevConfidence": 0.8377392292022705
+},
+{
+"text": "mehn the cars eeh fada lawd abeg nau me sef wan get car and house for assokoro",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.8923826217651367,
+"sevConfidence": 0.5800241231918335
+},
+{
+"text": "#NowWatching a Charlie Brown Thanksgiving #classic",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9724947214126587,
+"sevConfidence": 0.5877797603607178
+},
+{
+"text": "Nome: Cantinho do sofá | Função: Praticar bullying contra meu dedinho. http://t.co/IdB3frq",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.996364176273346,
+"sevConfidence": 0.9402338266372681
+},
+{
+"text": "allah yakara lafiya danisan kwana amin summa amin",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9807615876197815,
+"sevConfidence": 0.9439395666122437
+},
+{
+"text": "Is it OK to drink Coffee? I have to pull an all-nighter today 'cause I gotta study for many exams. Is it OK to drink Coffee?Im 13 and am quite tall and developed if that somehow helps. Thanks for",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9619836211204529,
+"sevConfidence": 0.5331518650054932
+},
+{
+"text": "@HiMyNameIsSeton let us know if Dan signs the contract. Dan nation is going crazy waiting for the answer. And don't be a bully. Ha Ha",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9992409944534302,
+"sevConfidence": 0.9130950570106506
+},
+{
+"text": "wa a jèrè wa a máa ríi kọ",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9905898571014404,
+"sevConfidence": 0.5624503493309021
+},
+{
+"text": "muna tayashi murna d fatan zaiyi koyi d nagartattun shuwagabannin rundunar sojan kasa da suka gabata allah kajikan laftal janar i attahir",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9841393232345581,
+"sevConfidence": 0.8784756660461426
+},
+{
+"text": "bro if i die and some motherfucker come to my funeral and just says \"my condolences\" Im coming back from the dead and haunting this motherfucker. LIKE BRUHHH U GOT NOTHING ELSE TO SAY??",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9447612762451172,
+"sevConfidence": 0.8409467935562134
+},
+{
+"text": "bored as fuck rn dm me if you’re down to talk i rlly don’t care who or wht about i just wanna talk to anybody",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9708409905433655,
+"sevConfidence": 0.953204333782196
+},
+{
+"text": "ọdún ìbílẹ̀ àti ìṣẹ̀ṣe yóò mú kí ọrọ̀ ajé orílẹ̀èdè wa ó lọ sókè lálá",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9701331257820129,
+"sevConfidence": 0.5263063311576843
+},
+{
+"text": "#Koscielny off which #LiverpoolFC have to take advantage of. 2 rookies in this #Arsenal back 4 and Carroll needs to bully them",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9937158226966858,
+"sevConfidence": 0.886925995349884
+},
+{
+"text": "Bully ! ! ! @ZealousAubreona",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9868901968002319,
+"sevConfidence": 0.5481439232826233
+},
+{
+"text": "So I don't get that puppy. But the director is apologetic and telling me I can have 50% off any other dog.",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9608285427093506,
+"sevConfidence": 0.9168397784233093
+},
+{
+"text": "jíjí mo jí lóòwúrọ̀ ọjọ́ ajé ǹjẹ́ elédùmárè afúnimáàsìrègún dákun dàbọ̀ pèsè fún mi kí o rán aláàánú sí mi lọ́sẹ̀ tí a wà yìí",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9423096179962158,
+"sevConfidence": 0.5648759007453918
+},
+{
+"text": "Just kidding. I'm more like beta",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9404119253158569,
+"sevConfidence": 0.9337083697319031
+},
+{
+"text": "ebube dike nnam",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9548898339271545,
+"sevConfidence": 0.5915358066558838
+},
+{
+"text": "with deejay on deck as e dey go",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.7614539861679077,
+"sevConfidence": 0.6781148314476013
+},
+{
+"text": "kò sí ẹní mọ ohun tí ọmọ inú oyún yóó dì lọ́la ẹ má jẹ̀ ẹ́ wọ́n ó kú láì pọ́jọ́ ẹ dákun dábọ̀",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9916979074478149,
+"sevConfidence": 0.5950185060501099
+},
+{
+"text": "saturday shout out to my wife under review abeg shes undergoing screening if she no fine make una talk na o",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9061309695243835,
+"sevConfidence": 0.9199161529541016
+},
+{
+"text": "ọkwa nwa ọma",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.8223430514335632,
+"sevConfidence": 0.6823599934577942
+},
+{
+"text": "Ask me general knowledge questions. I'll try to answer correctly Let's gooooooooooghaiandjwownnww7wuwbsnsnsk",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9963605999946594,
+"sevConfidence": 0.5794726014137268
+},
+{
+"text": "ejioge oba nifa otun rere nile re ifa bi o dotun ko gbe wa o",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9828912019729614,
+"sevConfidence": 0.5599496364593506
+},
+{
+"text": "i just follow your account today indeed youre sportingking im late anyway but late comer sef dey get luck sometimes e no go spoil keep winning",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9923863410949707,
+"sevConfidence": 0.6006761193275452
+},
+{
+"text": "orun re làá sùn o",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.8784587979316711,
+"sevConfidence": 0.49809154868125916
+},
+{
+"text": "Pete's palate is a sentient being, and it's confused! #MKR",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9980194568634033,
+"sevConfidence": 0.7598209381103516
+},
+{
+"text": "RT @Skawtnyc: @a_man_in_black @freebsdgirl @ChrisWarcraft The level of transference and tone deafness on this one is amazing. https://t.co/…",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9386528134346008,
+"sevConfidence": 0.9774085879325867
+},
+{
+"text": "igbo dị mma",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.57725989818573,
+"sevConfidence": 0.8273718953132629
+},
+{
+"text": "aku odun o e je ka ranti awon alaini bi a sense faaji",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.8994251489639282,
+"sevConfidence": 0.877216637134552
+},
+{
+"text": "Drama, drama, and more drama",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.6916900277137756,
+"sevConfidence": 0.7628282308578491
+},
+{
+"text": "Posting here everyday until I turn 20 - day 5 Give me a compliment and I will try to argue against that compliment. You have to argue for it. &amp;#x200B; &amp;#x200B; &amp;#x200B; btw awards bad",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9683867692947388,
+"sevConfidence": 0.7167412042617798
+},
+{
+"text": "I just said “which is pretty pog” in a school presentation. What the fuck is wrong with me???",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.9912376403808594,
+"sevConfidence": 0.5097631812095642
+},
+{
+"text": "@JetsDoIt93 thankssss Joey!",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9306614398956299,
+"sevConfidence": 0.5698468685150146
+},
+{
+"text": "Am I the only one who just has no idea on how to climb stairs? Like I feel like I missed the memo or something. I just awkwardly wobble upward/downward.",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.894652783870697,
+"sevConfidence": 0.9434846639633179
+},
+{
+"text": "garin yaya haka ya faru allah ya tsare gaba",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9822943210601807,
+"sevConfidence": 0.9908406138420105
+},
+{
+"text": "a óò rí ire kó dandan nítorí tọ̀tún tòsì ni ẹyẹlé fi ń kóre wọ̀lú ire gbogbo di orí wa ire èdùmarè",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9915626645088196,
+"sevConfidence": 0.894275963306427
+},
+{
+"text": "to be honest kayi kyau sosai kamar wani sabon ango",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.778534471988678,
+"sevConfidence": 0.6808344721794128
+},
+{
+"text": "ojú ni wọ́n ní alákàn fi í ṣọ́rí ẹ dákun ẹ mọ́ jẹ̀ẹ́ nǹkan ò ṣe ojúu yín torípé ojú ni ìmọ́lẹ̀ ara",
+"category": "SAFE",
+"severity": "review",
+"confidence": 0.9946079254150391,
+"sevConfidence": 0.6460800766944885
+},
+{
+"text": "@sophsali_x it's pissing me off, i just rebooted my device it's working fine now 😊",
+"category": "SAFE",
+"severity": "high",
+"confidence": 0.933161735534668,
+"sevConfidence": 0.9836587309837341
+}
+]

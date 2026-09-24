@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lighthouse.prosperitytech.org/sitemap.xml

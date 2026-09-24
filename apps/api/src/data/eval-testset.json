@@ -1,0 +1,418 @@
+[
+{
+"id": 1,
+"text": "I don't want to be here anymore, I want to die tonight",
+"category": "Self-Harm",
+"severity": "high",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 2,
+"text": "I no wan dey alive again, everything don tire me",
+"category": "Self-Harm",
+"severity": "high",
+"lang": "pcm",
+"kind": "positive"
+},
+{
+"id": 3,
+"text": "honestly I feel so worthless lately, no reason to try",
+"category": "Self-Harm",
+"severity": "review",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 4,
+"text": "ugh I hate myself sometimes lol",
+"category": "Self-Harm",
+"severity": "low",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 5,
+"text": "send me your nudes rn 😏",
+"category": "Sexual Content",
+"severity": "high",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 6,
+"text": "baby send me your body pics na, no dey form",
+"category": "Sexual Content",
+"severity": "high",
+"lang": "pcm",
+"kind": "positive"
+},
+{
+"id": 7,
+"text": "wanna hook up later? my parents are out",
+"category": "Sexual Content",
+"severity": "review",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 8,
+"text": "you look kinda sexy in that pic ngl",
+"category": "Sexual Content",
+"severity": "low",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 9,
+"text": "I'm gonna beat you up after school, watch",
+"category": "Violence",
+"severity": "high",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 10,
+"text": "ma lu e ni school tomorrow, you dey mad?",
+"category": "Violence",
+"severity": "high",
+"lang": "yo-en",
+"kind": "positive"
+},
+{
+"id": 11,
+"text": "we go jump am after school, he dey feel too big",
+"category": "Violence",
+"severity": "review",
+"lang": "pcm",
+"kind": "positive"
+},
+{
+"id": 12,
+"text": "I'm so angry I could punch a wall rn",
+"category": "Violence",
+"severity": "low",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 13,
+"text": "pro ana tips? need to starve myself before Friday",
+"category": "Eating Disorders",
+"severity": "high",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 14,
+"text": "skipping meals again, feel too fat for the party",
+"category": "Eating Disorders",
+"severity": "review",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 15,
+"text": "thinspo pics really keep me motivated tbh",
+"category": "Eating Disorders",
+"severity": "review",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 16,
+"text": "abeg who get igbo? I wan buy weed sharp sharp",
+"category": "Substance Use",
+"severity": "high",
+"lang": "pcm",
+"kind": "positive"
+},
+{
+"id": 17,
+"text": "who get molly for the rave, make we high small",
+"category": "Substance Use",
+"severity": "review",
+"lang": "pcm",
+"kind": "positive"
+},
+{
+"id": 18,
+"text": "ina wiwi? bring the wraps make we blaze",
+"category": "Substance Use",
+"severity": "high",
+"lang": "ha-en",
+"kind": "positive"
+},
+{
+"id": 19,
+"text": "go back to your country, you don't belong here",
+"category": "Hate Speech",
+"severity": "high",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 20,
+"text": "you people are always like this, typical",
+"category": "Hate Speech",
+"severity": "review",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 21,
+"text": "I put my whole allowance on bet9ja parlay tonight",
+"category": "Gambling",
+"severity": "high",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 22,
+"text": "I don stake my school fees for sporty, na to win",
+"category": "Gambling",
+"severity": "high",
+"lang": "pcm",
+"kind": "positive"
+},
+{
+"id": 23,
+"text": "drop your sporty code abeg, wetin be the odds",
+"category": "Gambling",
+"severity": "review",
+"lang": "pcm",
+"kind": "positive"
+},
+{
+"id": 24,
+"text": "watch this beheading video, the gore is crazy",
+"category": "Graphic Content",
+"severity": "high",
+"lang": "en",
+"kind": "positive"
+},
+{
+"id": 25,
+"text": "omo the dead body for that video ehn, blood everywhere",
+"category": "Graphic Content",
+"severity": "review",
+"lang": "pcm",
+"kind": "positive"
+},
+{
+"id": 26,
+"text": "this homework is literally killing me 😭",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 27,
+"text": "I love popcorn during movie night 🍿",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 28,
+"text": "we visited Scunthorpe last summer, cute town",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 29,
+"text": "the match was lit, we killed it 4-0 🔥",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 30,
+"text": "coach says I should cut weight before the wrestling meet",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 31,
+"text": "she's recovering from anorexia and doing so much better now",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 32,
+"text": "we learned about the transatlantic slave trade in history today",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 33,
+"text": "news said there was a shooting downtown, so scary",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 34,
+"text": "biology class covered human reproduction today, kinda awkward",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 35,
+"text": "grandpa likes to smoke his pipe on the veranda",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 36,
+"text": "I'm dead 💀 that meme is too funny",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 37,
+"text": "assignment due tonight, I could just die 😩",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 38,
+"text": "the gun on display at the museum was from the 1800s",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 39,
+"text": "Igbo is honestly my favourite subject in school",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 40,
+"text": "my sister is on a diet for her wedding in December",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 41,
+"text": "let's gamble on which teacher is absent today lol",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "hard_negative"
+},
+{
+"id": 42,
+"text": "abeg wetin we dey chop for lunch?",
+"category": null,
+"severity": null,
+"lang": "pcm",
+"kind": "safe"
+},
+{
+"id": 43,
+"text": "Ẹ kú àárọ̀, did you sleep well?",
+"category": null,
+"severity": null,
+"lang": "yo",
+"kind": "safe"
+},
+{
+"id": 44,
+"text": "Sannu, ina kwana? see you at school",
+"category": null,
+"severity": null,
+"lang": "ha",
+"kind": "safe"
+},
+{
+"id": 45,
+"text": "Kedu, are we still meeting for the group project?",
+"category": null,
+"severity": null,
+"lang": "ig",
+"kind": "safe"
+},
+{
+"id": 46,
+"text": "the jollof rice yesterday was fire 🔥",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "safe"
+},
+{
+"id": 47,
+"text": "don't forget football practice at 4pm today",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "safe"
+},
+{
+"id": 48,
+"text": "happy birthday babe hope you have the best day 🎉",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "safe"
+},
+{
+"id": 49,
+"text": "maths test moved to Thursday, thank God",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "safe"
+},
+{
+"id": 50,
+"text": "I miss you, when are you coming to Lagos?",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "safe"
+},
+{
+"id": 51,
+"text": "mummy said make I greet you well o",
+"category": null,
+"severity": null,
+"lang": "pcm",
+"kind": "safe"
+},
+{
+"id": 52,
+"text": "can I borrow your charger tomorrow? mine spoilt",
+"category": null,
+"severity": null,
+"lang": "en",
+"kind": "safe"
+}
+]

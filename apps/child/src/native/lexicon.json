@@ -1,0 +1,183 @@
+{
+  "version": 0,
+  "_meta": {
+    "generated": false,
+    "note": "Starter list so the app runs out of the box. The full Lighthouse word list is maintained by Prosperity Tech and is not part of this repository. Grow your own through the admin, then publish."
+  },
+  "context": {
+    "negators": [
+      "no",
+      "not",
+      "never",
+      "dont",
+      "don't",
+      "nor",
+      "without",
+      "cant",
+      "cannot",
+      "neither",
+      "no dey",
+      "nor dey"
+    ],
+    "sarcasmEmoji": [
+      "😂",
+      "🤣",
+      "💀",
+      "😭",
+      "😅",
+      "😹",
+      "🙃"
+    ],
+    "sarcasmWords": [
+      "lol",
+      "lmao",
+      "lmfao",
+      "haha",
+      "hehe",
+      "jk",
+      "just kidding",
+      "abi"
+    ],
+    "negatorWindow": 3,
+    "drugContextTokens": [
+      "buy",
+      "get",
+      "got",
+      "sell",
+      "selling",
+      "smoke",
+      "blaze",
+      "light",
+      "wrap",
+      "wraps",
+      "high",
+      "stuff",
+      "gimme",
+      "supply",
+      "score",
+      "roll"
+    ]
+  },
+  "ambiguousTerms": {
+    "igbo": {
+      "note": "weed slang only when drug-context present; otherwise the language/ethnicity — do not flag",
+      "category": "Substance Use",
+      "requires": "drugContext",
+      "severity": "high"
+    }
+  },
+  "categories": {
+    "Gambling": {
+      "en": {
+        "high": [
+          "addicted 2 bet9ja",
+          "addicted 2 betting",
+          "addicted 2 sporty",
+          "addicted to bet9ja",
+          "addicted to betting",
+          "addicted to sporty"
+        ],
+        "review": [],
+        "low": []
+      }
+    },
+    "Violence": {
+      "en": {
+        "high": [
+          "a gun",
+          "a pistol",
+          "acid attack",
+          "airlords",
+          "ambush her",
+          "ambush him"
+        ],
+        "review": [],
+        "low": []
+      }
+    },
+    "Self-Harm": {
+      "en": {
+        "high": [
+          "attempted sucide",
+          "attempted suicide",
+          "attempted suiside",
+          "best way to kill maself",
+          "best way to kill mysef",
+          "best way to kill myself"
+        ],
+        "review": [],
+        "low": []
+      }
+    },
+    "Hate Speech": {
+      "en": {
+        "high": [
+          "all muslims are terrorists",
+          "all muslims r terrorists",
+          "all northerners are boko haram",
+          "all northerners are terrorists",
+          "all northerners r boko haram",
+          "biafra rats"
+        ],
+        "review": [],
+        "low": []
+      }
+    },
+    "Substance Use": {
+      "en": {
+        "high": [
+          "420 blaze",
+          "420 friendly",
+          "a blunt",
+          "a joint",
+          "a line of coke",
+          "a spliff"
+        ],
+        "review": [],
+        "low": []
+      }
+    },
+    "Sexual Content": {
+      "en": {
+        "high": [
+          "69 position",
+          "anal sex",
+          "anal sexx",
+          "are you a vergin",
+          "are you a virgin",
+          "bang u"
+        ],
+        "review": [],
+        "low": []
+      }
+    },
+    "Graphic Content": {
+      "en": {
+        "high": [
+          "1 lunatic 1 ice pick",
+          "1 man 1 jar",
+          "2 girls 1 cup",
+          "3 guys 1 hammer",
+          "animal cruelty vid",
+          "animal cruelty video"
+        ],
+        "review": [],
+        "low": []
+      }
+    },
+    "Eating Disorders": {
+      "en": {
+        "high": [
+          "0 cal today",
+          "500 cal a day",
+          "500 calories a day",
+          "800 calories a day",
+          "ana coach",
+          "ana diet"
+        ],
+        "review": [],
+        "low": []
+      }
+    }
+  }
+}

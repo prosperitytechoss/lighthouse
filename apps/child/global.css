@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * React Native Reusables theme variables, sourced from @lighthouse/tokens.
+ * Light mode only. Values are the HSL of our brand tokens — our tokens remain the
+ * source of truth; these variables just expose them to RNR's semantic classes.
+ */
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* neutral.white  #FFFFFF */
+    --foreground: 0 0% 10%; /* neutral[900]   #1A1A1A */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 197 78% 49%; /* brand cyan      #1CABE2 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 33% 97%; /* neutral[50]   #F5F7FB */
+    --secondary-foreground: 0 0% 10%;
+    --muted: 220 33% 97%;
+    --muted-foreground: 240 3% 57%; /* neutral[400] #8E8E93 */
+    --accent: 220 33% 97%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 4 100% 59%; /* semantic.error #FF3B30 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 22% 93%; /* neutral[100]    #E8ECF0 */
+    --input: 210 22% 93%;
+    --ring: 197 78% 49%; /* brand cyan focus ring */
+    --radius: 0.625rem; /* 10px root radius */
+  }
+}

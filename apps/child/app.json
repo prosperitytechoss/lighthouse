@@ -1,0 +1,69 @@
+{
+  "expo": {
+    "name": "Lighthouse",
+    "slug": "lighthouse-child",
+    "scheme": "lighthousechild",
+    "version": "0.5.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "platforms": [
+      "android"
+    ],
+    "android": {
+      "package": "fund.fastforward.lighthouse.child",
+      "allowBackup": false,
+      "softwareKeyboardLayoutMode": "resize",
+      "adaptiveIcon": {
+        "backgroundColor": "#1CABE2",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.PACKAGE_USAGE_STATS",
+        "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.FOREGROUND_SERVICE"
+      ],
+      "blockedPermissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "versionCode": 107
+    },
+    "plugins": [
+      "expo-dev-client",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1CABE2",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 160
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Lighthouse shares this phone's location with the linked parent so they can see where their child is.",
+          "locationAlwaysAndWhenInUsePermission": "Lighthouse shares this phone's location with the linked parent \u2014 including in the background, so they can see where their child is even when the app is closed.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ],
+      "./plugins/withChildPermissions",
+      "./plugins/withLowMemoryGradle"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "fa5e6282-7c34-44f8-8ff2-274685df5d58"
+      }
+    },
+    "owner": "dripinc"
+  }
+}

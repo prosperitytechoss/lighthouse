@@ -1,0 +1,34 @@
+{
+  "name": "@lighthouse/ui",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@lighthouse/tokens": "*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.6.0"
+  },
+  "peerDependencies": {
+    "@rn-primitives/portal": "*",
+    "expo-haptics": "*",
+    "lucide-react-native": "*",
+    "nativewind": ">=4",
+    "react": "*",
+    "react-native": "*",
+    "react-native-keyboard-controller": "*",
+    "react-native-reanimated": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-svg": "*"
+  },
+  "devDependencies": {
+    "@lighthouse/tsconfig": "*",
+    "@lighthouse/eslint-config": "*",
+    "@types/react": "~19.2.2"
+  }
+}

@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+  }
+
+  body {
+    @apply bg-white font-sans text-ink;
+  }
+}
+
+@layer components {
+  /*
+   * Chunky Duolingo-style button: 16px radius with a 4px darker bottom edge.
+   * The edge is a hard box shadow (not a border) so pressing the button can
+   * never shift surrounding layout — :active translates the face down onto
+   * the edge. Set the edge color per button via --btn-edge.
+   */
+  .btn-chunky {
+    --btn-edge: theme(colors.primary.700);
+    @apply inline-flex select-none items-center rounded-xl transition-transform duration-75;
+    box-shadow: 0 4px 0 0 var(--btn-edge);
+  }
+
+  .btn-chunky:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 0 var(--btn-edge);
+  }
+
+  .btn-chunky:focus-visible {
+    @apply outline outline-2 outline-offset-4 outline-primary-700;
+  }
+}
+
+@layer components {
+  /* Readable single column used by the privacy and terms pages. */
+  .prose-legal h1 {
+    @apply text-[34px] font-bold leading-[42px] tracking-[-0.015em] text-primary-700 lg:text-[44px] lg:leading-[52px];
+  }
+
+  .prose-legal h2 {
+    @apply pt-10 text-[22px] font-bold leading-7 text-ink lg:text-[26px] lg:leading-8;
+  }
+
+  .prose-legal p {
+    @apply pt-4 text-base leading-[27px] text-ink;
+  }
+
+  .prose-legal ul {
+    @apply flex flex-col gap-3 pt-4;
+  }
+
+  .prose-legal li {
+    @apply relative pl-6 text-base leading-[27px] text-ink;
+  }
+
+  .prose-legal li::before {
+    @apply absolute left-0 top-[10px] h-2 w-2 rounded-full bg-primary content-[''];
+  }
+
+  .prose-legal strong {
+    @apply font-bold;
+  }
+
+  .prose-legal a {
+    @apply font-bold text-primary-700 underline underline-offset-2;
+  }
+
+  .prose-legal code {
+    @apply rounded bg-surface px-1.5 py-0.5 font-mono text-[14px] text-ink;
+  }
+}
+
+/* Watched-app marks: small and grey so they inform without competing. */
+.brand-logo {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+/* Mascot idle bob — body floats, ground shadow squishes in counterpoint. */
+@keyframes mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes mascot-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(0.93);
+    opacity: 0.8;
+  }
+}
+
+.mascot-bob {
+  animation: mascot-bob 3.2s ease-in-out infinite;
+}
+
+.mascot-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mascot-shadow 3.2s ease-in-out infinite;
+}
+
+/* Speech bubble fade-scale entrance, growing from its tail. */
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.bubble-in {
+  transform-origin: 50% 100%;
+  animation: bubble-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15) 0.35s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .mascot-bob,
+  .mascot-shadow,
+  .bubble-in {
+    animation: none;
+  }
+}

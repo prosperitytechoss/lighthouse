@@ -1,0 +1,4 @@
+{
+  "extends": "@lighthouse/tsconfig/react-native.json",
+  "include": ["src", "nativewind-env.d.ts"]
+}

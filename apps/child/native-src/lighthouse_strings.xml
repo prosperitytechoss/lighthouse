@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="accessibility_service_description">Lets Lighthouse see what is on screen in your apps so it can flag harmful content. It never records, screenshots, or sends what is on your screen.</string>
+</resources>

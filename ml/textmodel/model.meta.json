@@ -1,0 +1,37 @@
+{
+  "magic": "LHTM",
+  "version": 1,
+  "buckets": 131072,
+  "categories": [
+    "Self-Harm",
+    "Eating Disorders",
+    "Sexual Content",
+    "Violence",
+    "Graphic Content",
+    "Substance Use",
+    "Hate Speech",
+    "Gambling",
+    "SAFE"
+  ],
+  "severities": [
+    "high",
+    "review",
+    "low"
+  ],
+  "maxCodepoints": 300,
+  "charNgrams": [
+    3,
+    4,
+    5
+  ],
+  "hash": "fnv1a32 over utf8 bytes, prefix byte 1 word, 2 bigram, 3 char",
+  "quant": "int8 per class scale, clip 99.95 pct",
+  "C": {
+    "category": 20.0,
+    "severity": 5.0
+  },
+  "nullBelow": 0.5,
+  "hybridThreshold": 0.85,
+  "bytes": 1573095,
+  "layout": "magic, u16 version, u32 buckets, u8 nClasses, u8 nSev, names (u8 len + utf8), per head: f32 scale[c], i8 w[buckets*c], f32 bias[c]"
+}

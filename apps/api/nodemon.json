@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["dist", "drizzle"],
+  "exec": "tsx src/index.ts"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@lighthouse/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./tailwind-preset": "./tailwind-preset.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@lighthouse/types": "*",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^3.4.0"
+  },
+  "devDependencies": {
+    "@lighthouse/tsconfig": "*",
+    "@lighthouse/eslint-config": "*",
+    "tailwindcss": "^3.4.17"
+  }
+}

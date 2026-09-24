@@ -1,0 +1,53 @@
+{
+  "total": 25216,
+  "byCategory": {
+    "SAFE": 9583,
+    "Self-Harm": 3477,
+    "Substance Use": 1872,
+    "Gambling": 1384,
+    "Hate Speech": 2907,
+    "Sexual Content": 2163,
+    "Graphic Content": 954,
+    "Eating Disorders": 1217,
+    "Violence": 1659
+  },
+  "bySource": {
+    "hf:cyberbullying / Hate Speech": 1500,
+    "hf:cyberbullying / SAFE": 1498,
+    "hf:hausahate / Hate Speech": 452,
+    "hf:hausahate / SAFE": 342,
+    "hf:naijasenti / SAFE": 2400,
+    "hf:sexting / Sexual Content": 396,
+    "hf:suicide / SAFE": 1500,
+    "hf:suicide / Self-Harm": 1500,
+    "template / Eating Disorders": 1153,
+    "template / Gambling": 1318,
+    "template / Graphic Content": 902,
+    "template / Hate Speech": 906,
+    "template / SAFE": 3693,
+    "template / Self-Harm": 1903,
+    "template / Sexual Content": 1676,
+    "template / Substance Use": 1463,
+    "template / Violence": 1578,
+    "template_drug / SAFE": 150,
+    "template_drug / Substance Use": 320,
+    "template_l33t / Eating Disorders": 64,
+    "template_l33t / Gambling": 66,
+    "template_l33t / Graphic Content": 52,
+    "template_l33t / Hate Speech": 49,
+    "template_l33t / Self-Harm": 74,
+    "template_l33t / Sexual Content": 91,
+    "template_l33t / Substance Use": 89,
+    "template_l33t / Violence": 81
+  },
+  "bySeverity": {
+    "low": 1298,
+    "high": 7408,
+    "review": 6927
+  },
+  "drugTerms": 160,
+  "benignCheck": {
+    "ng": 3000,
+    "en": 3000
+  }
+}

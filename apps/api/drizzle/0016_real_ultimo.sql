@@ -1,0 +1,1 @@
+ALTER TABLE "devices" ADD COLUMN "weekly_digest_sent_at" timestamp with time zone;

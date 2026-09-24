@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+data/raw/
+data/train.jsonl
+data/benign_check.jsonl
+data/benign_fp.json
+model.npz

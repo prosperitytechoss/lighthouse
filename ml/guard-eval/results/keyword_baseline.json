@@ -1,0 +1,8 @@
+{
+  "overall_accuracy": 0.8269230769230769,
+  "safe_false_positive_rate": 0.1111111111111111,
+  "hard_negative_pass_rate": 0.8125,
+  "positive_category_accuracy": 0.76,
+  "codeswitch_detection_rate": 0.4,
+  "n": 52
+}
