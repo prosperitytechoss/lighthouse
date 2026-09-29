@@ -34,7 +34,7 @@ function ChecksVisual() {
         <span className="rounded-[10px] bg-white px-2.5 py-1 text-[13px] font-bold leading-4 text-ink shadow-[0_1px_2px_rgba(16,42,67,0.08)]">
           All clear today.
         </span>
-        <span className="text-[12px] leading-4 text-muted">Nothing saved. Nothing sent.</span>
+        <span className="text-[12px] leading-4 text-muted">Checks happen on this phone.</span>
       </div>
     </div>
   );
@@ -53,25 +53,25 @@ function EmailVisual() {
           <span className="text-[11px] leading-4 text-muted">Lighthouse, Sunday 6 pm</span>
         </div>
       </div>
-      <span className="text-[12px] leading-4 text-muted">And an instant alert if something serious happens.</span>
+      <span className="text-[12px] leading-4 text-muted">An alert if Lighthouse detects a serious concern.</span>
     </div>
   );
 }
 
 const STEPS: { title: string; body: string; visual: ReactNode }[] = [
   {
-    title: "Set up on their phone with your email",
-    body: "Install Lighthouse on the child’s phone, type your email, done. There is no parent app and no dashboard to learn.",
+    title: "Set it up on their phone",
+    body: "Install Lighthouse on your child’s phone and add your email. Confirm your email to receive alerts. Your child can always see that Lighthouse is running.",
     visual: <SetupVisual />,
   },
   {
     title: "The phone checks itself",
-    body: "Lighthouse reads the screen right on the device and sorts what it sees into safety categories. The content itself never leaves the phone.",
+    body: "Lighthouse checks what’s happening on the phone for signs of serious risk. The analysis happens on the device, not on our servers.",
     visual: <ChecksVisual />,
   },
   {
-    title: "You get one calm email a week",
-    body: "A short Sunday summary of how the week went, and an alert the moment something serious shows up.",
+    title: "You hear when something matters",
+    body: "You get a simple weekly summary when things are quiet and an alert if Lighthouse detects something serious.",
     visual: <EmailVisual />,
   },
 ];
@@ -82,6 +82,9 @@ export function HowItWorks() {
       <h2 className="text-center text-[32px] font-bold leading-10 tracking-[-0.015em] text-ink lg:text-[40px] lg:leading-[48px]">
         How it works
       </h2>
+      <p className="pt-4 text-center text-base leading-[25px] text-muted">
+        You get the alert, not their private information.
+      </p>
       <div className="mx-auto flex max-w-[880px] flex-col gap-10 pt-10 lg:gap-12">
         {STEPS.map(({ title, body, visual }, i) => (
           <div

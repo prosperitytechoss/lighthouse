@@ -4,8 +4,8 @@ const STROKE = { fill: "none", stroke: "#1CABE2", strokeWidth: 2.2, strokeLineca
 
 const FEATURES: { title: string; body: string; icon: ReactNode }[] = [
   {
-    title: "Checked on the phone",
-    body: "The reading happens on the child’s phone. Messages, searches and photos never leave it. Only a safety category does.",
+    title: "Checked on their phone",
+    body: "Messages, photos and other content are checked on the child’s device. Their private content does not need to leave the phone.",
     icon: (
       <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <rect width="14" height="20" x="5" y="2" rx="2" ry="2" {...STROKE} />
@@ -14,8 +14,8 @@ const FEATURES: { title: string; body: string; icon: ReactNode }[] = [
     ),
   },
   {
-    title: "No parent app to learn",
-    body: "Set up once on the child’s phone with your email. You get a calm Sunday summary and an instant email when something serious comes up.",
+    title: "Parents get alerts, not conversations",
+    body: "If Lighthouse detects a serious concern, you are told what kind of concern was detected. You do not receive the underlying messages, photos or searches.",
     icon: (
       <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <rect width="20" height="16" x="2" y="4" rx="2" {...STROKE} />
@@ -24,8 +24,8 @@ const FEATURES: { title: string; body: string; icon: ReactNode }[] = [
     ),
   },
   {
-    title: "Kids see everything",
-    body: "Nothing is hidden. The child sees what Lighthouse watches, what it can never see, and when something was flagged.",
+    title: "Never secret monitoring",
+    body: "Your child can see that Lighthouse is running. You’ll be notified if monitoring is disabled or the phone stops reporting, which can happen if Lighthouse is uninstalled.",
     icon: (
       <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" {...STROKE} />
