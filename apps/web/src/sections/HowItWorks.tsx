@@ -65,12 +65,12 @@ const STEPS: { title: string; body: string; visual: ReactNode }[] = [
     visual: <SetupVisual />,
   },
   {
-    title: "The phone checks itself",
+    title: "Lighthouse checks for serious risks",
     body: "Lighthouse checks what’s happening on the phone for signs of serious risk. The analysis happens on the device, not on our servers.",
     visual: <ChecksVisual />,
   },
   {
-    title: "You hear when something matters",
+    title: "You get an alert if something is wrong",
     body: "You get a simple weekly summary when things are quiet and an alert if Lighthouse detects something serious.",
     visual: <EmailVisual />,
   },

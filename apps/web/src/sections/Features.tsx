@@ -4,7 +4,7 @@ const STROKE = { fill: "none", stroke: "#1CABE2", strokeWidth: 2.2, strokeLineca
 
 const FEATURES: { title: string; body: string; icon: ReactNode }[] = [
   {
-    title: "Checked on their phone",
+    title: "Safety checks happen on your child’s phone",
     body: "Messages, photos and other content are checked on the child’s device. Their private content does not need to leave the phone.",
     icon: (
       <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -24,7 +24,7 @@ const FEATURES: { title: string; body: string; icon: ReactNode }[] = [
     ),
   },
   {
-    title: "Never secret monitoring",
+    title: "No secret monitoring, ever",
     body: "Your child can see that Lighthouse is running. You’ll be notified if monitoring is disabled or the phone stops reporting, which can happen if Lighthouse is uninstalled.",
     icon: (
       <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
