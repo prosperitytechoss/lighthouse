@@ -5,9 +5,9 @@
  * user counts.
  */
 const CLAIMS = [
-  "Private content stays on the phone",
-  "Checks happen on the phone",
-  "Never hidden from your child",
+  "Safety checks stay on the phone",
+  "Alerts, not private messages",
+  "Always visible to your child",
   "Free and open source",
 ];
 
