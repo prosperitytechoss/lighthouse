@@ -56,10 +56,10 @@ export function Home({ go, status, statusError }: { go: Go; status: LexStatus | 
   let neverCheckedIn = 0;
   for (const d of ov?.devices ?? []) {
     if (d.health === "not_reporting" && !d.lastSeenAt) neverCheckedIn++;
-    if (d.health === "not_reporting" && d.lastSeenAt) items.push({ tone: "high", tag: "Silent", text: `${d.name} last checked in ${fmtAgo(d.lastSeenAt)}.`, action: "Open phone", go: () => go("phones", d.id) });
+    if (d.health === "not_reporting" && d.lastSeenAt) items.push({ tone: "high", tag: "Offline", text: `${d.name} was last online ${fmtAgo(d.lastSeenAt)}.`, action: "Open phone", go: () => go("phones", d.id) });
     if (d.health === "monitoring_off") items.push({ tone: "review", tag: "Switch off", text: `${d.name} has a monitoring switch turned off on the phone.`, action: "Open phone", go: () => go("phones", d.id) });
   }
-  if (neverCheckedIn) items.push({ tone: "low", tag: "Never checked in", text: `${neverCheckedIn} phone${neverCheckedIn === 1 ? " was" : "s were"} paired but never sent anything.`, action: "Open phones", go: () => go("phones") });
+  if (neverCheckedIn) items.push({ tone: "low", tag: "Never online", text: `${neverCheckedIn} phone${neverCheckedIn === 1 ? " was" : "s were"} set up but never came online.`, action: "Open phones", go: () => go("phones") });
   if (jobs) {
     const latest = new Map<string, api.JobRun>();
     for (const r of [...jobs.runs].sort((a, b) => b.startedAt.localeCompare(a.startedAt))) if (!latest.has(r.job)) latest.set(r.job, r);

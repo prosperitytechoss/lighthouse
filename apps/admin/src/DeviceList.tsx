@@ -4,7 +4,7 @@ import { Empty } from "./ui";
 
 export type OverviewDevice = Overview["devices"][number];
 
-export const HEALTH_LABEL: Record<string, string> = { active: "Reporting", monitoring_off: "Monitoring off", not_reporting: "Silent" };
+export const HEALTH_LABEL: Record<string, string> = { active: "Online", monitoring_off: "Monitoring off", not_reporting: "Offline" };
 export const HEALTH_CLASS: Record<string, string> = { active: "low", monitoring_off: "review", not_reporting: "high" };
 
 export function fmtAgo(s: string): string {
@@ -16,7 +16,7 @@ export function fmtAgo(s: string): string {
   return `${Math.round(h / 24)} days ago`;
 }
 
-export const fmtSeen = (s: string | null) => (s ? `last check in ${fmtAgo(s)}` : "never checked in");
+export const fmtSeen = (s: string | null) => (s ? `last online ${fmtAgo(s)}` : "never came online");
 
 export function enginePlain(d: OverviewDevice): string | null {
   const s = d.engineStats;
@@ -71,7 +71,7 @@ export function DeviceList({ devices, open, onOpen, emptyText }: { devices: Over
             ) : d.visionSupported === false ? (
               <span className="badge lang">No vision</span>
             ) : null}
-            <span className={`badge ${HEALTH_CLASS[d.health]}`}>{HEALTH_LABEL[d.health]}</span>
+            <span className={`badge ${HEALTH_CLASS[d.health]}`}>{d.lastSeenAt ? HEALTH_LABEL[d.health] : "Never online"}</span>
             <span className="muted small" aria-hidden>{isOpen ? "Hide" : "Open"}</span>
             {isOpen && (
               <div className="detail" onClick={(e) => e.stopPropagation()}>
