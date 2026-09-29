@@ -4,10 +4,19 @@ import { Empty } from "./ui";
 
 export type OverviewDevice = Overview["devices"][number];
 
-export const HEALTH_LABEL: Record<string, string> = { active: "Reporting", monitoring_off: "Monitoring off", not_reporting: "Not reporting" };
+export const HEALTH_LABEL: Record<string, string> = { active: "Reporting", monitoring_off: "Monitoring off", not_reporting: "Silent" };
 export const HEALTH_CLASS: Record<string, string> = { active: "low", monitoring_off: "review", not_reporting: "high" };
 
-export const fmtSeen = (s: string | null) => (s ? new Date(s).toLocaleString() : "never");
+export function fmtAgo(s: string): string {
+  const m = Math.max(0, Math.round((Date.now() - new Date(s).getTime()) / 60_000));
+  if (m < 1) return "just now";
+  if (m < 60) return `${m} min ago`;
+  const h = Math.round(m / 60);
+  if (h < 48) return `${h} hour${h === 1 ? "" : "s"} ago`;
+  return `${Math.round(h / 24)} days ago`;
+}
+
+export const fmtSeen = (s: string | null) => (s ? `last check in ${fmtAgo(s)}` : "never checked in");
 
 export function enginePlain(d: OverviewDevice): string | null {
   const s = d.engineStats;
@@ -53,7 +62,7 @@ export function DeviceList({ devices, open, onOpen, emptyText }: { devices: Over
               <div style={{ fontSize: 15, fontWeight: 600 }}>
                 {d.name}{d.assignee && <span className="muted" style={{ fontWeight: 400 }}>, {d.assignee}</span>}
               </div>
-              <div className="muted small">{d.account ?? "no account"}, {d.signals} signals, last seen {fmtSeen(d.lastSeenAt)}</div>
+              <div className="muted small">{d.account ?? "no account"}, {d.signals} signals, {fmtSeen(d.lastSeenAt)}</div>
               {line && <div style={{ fontSize: 13, marginTop: 4, color: "var(--ink-2)" }}>{line}</div>}
             </div>
             {d.batteryLevel != null && <span className="badge lang">Battery {d.batteryLevel}%</span>}

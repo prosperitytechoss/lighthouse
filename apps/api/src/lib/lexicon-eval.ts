@@ -30,9 +30,10 @@ function seqIndex(hay: string[], needle: string[]): number {
   return -1;
 }
 
-function classifyWith(lex: LexiconPayload, text: string): { category: string; severity: Sev } | null {
-  if (!text) return null;
-  const terms: { toks: string[]; cat: string; sev: Sev; soft: boolean }[] = [];
+type Classify = (text: string) => { category: string; severity: Sev } | null;
+
+export function compileLexicon(lex: LexiconPayload): Classify {
+  const terms: { toks: string[]; joined: string; cat: string; sev: Sev; soft: boolean }[] = [];
   for (const cat of ORDER) {
     const byLang = lex.categories?.[cat];
     if (!byLang) continue;
@@ -40,7 +41,9 @@ function classifyWith(lex: LexiconPayload, text: string): { category: string; se
       for (const sev of ["high", "review", "low"] as Sev[]) {
         for (const phrase of byLang[lang]?.[sev] ?? []) {
           const toks = tokenize(phrase);
-          if (toks.length) terms.push({ toks, cat, sev, soft: cat === "Self-Harm" && SOFT.has(toks.join(" ")) });
+          if (!toks.length) continue;
+          const joined = toks.join(" ");
+          terms.push({ toks, joined, cat, sev, soft: cat === "Self-Harm" && SOFT.has(joined) });
         }
       }
     }
@@ -48,6 +51,18 @@ function classifyWith(lex: LexiconPayload, text: string): { category: string; se
   const ctx = lex.context;
   const negators = new Set((ctx?.negators ?? []).flatMap(tokenize));
   const drugCtx = new Set(ctx?.drugContextTokens ?? []);
+  return (text) => classifyCompiled(lex, terms, negators, drugCtx, text);
+}
+
+function classifyCompiled(
+  lex: LexiconPayload,
+  terms: { toks: string[]; joined: string; cat: string; sev: Sev; soft: boolean }[],
+  negators: Set<string>,
+  drugCtx: Set<string>,
+  text: string,
+): { category: string; severity: Sev } | null {
+  if (!text) return null;
+  const ctx = lex.context;
   const raw = tokenize(text);
   if (!raw.length) return null;
   const l33tHay = ` ${tokenize(deL33t(text)).join(" ")} `;
@@ -62,7 +77,7 @@ function classifyWith(lex: LexiconPayload, text: string): { category: string; se
   for (const t of terms) {
     const idx = seqIndex(raw, t.toks);
     if (idx >= 0) { if (!negatedBefore(idx)) matches.push({ cat: t.cat, sev: t.sev, soft: t.soft }); continue; }
-    if (l33tHay.includes(` ${t.toks.join(" ")} `)) matches.push({ cat: t.cat, sev: t.sev, soft: t.soft });
+    if (l33tHay.includes(` ${t.joined} `)) matches.push({ cat: t.cat, sev: t.sev, soft: t.soft });
   }
   for (const [word, spec] of Object.entries(lex.ambiguousTerms ?? {})) {
     if (raw.includes(word) && raw.some((x) => drugCtx.has(x))) matches.push({ cat: spec.category, sev: spec.severity as Sev, soft: false });
@@ -83,10 +98,10 @@ function classifyWith(lex: LexiconPayload, text: string): { category: string; se
 type Row = { id: number; text: string; category: string | null; severity: string | null; lang: string; kind: string };
 
 /** Score `lex` against the canonical set; returns the same metrics as the harness. */
-export function evalLexicon(lex: LexiconPayload) {
+export function evalLexicon(lex: LexiconPayload, classify: Classify = compileLexicon(lex)) {
   const items = testset as Row[];
   const catMatch = (exp: string | null, pred: string | null) => (exp === null ? pred === null : pred === exp);
-  const preds = items.map((i) => ({ i, p: classifyWith(lex, i.text) }));
+  const preds = items.map((i) => ({ i, p: classify(i.text) }));
   const pos = preds.filter((x) => x.i.category !== null);
   const safe = preds.filter((x) => x.i.category === null);
   const hard = preds.filter((x) => x.i.kind === "hard_negative");
@@ -108,10 +123,10 @@ export function evalLexicon(lex: LexiconPayload) {
 type DatasetRow = { text: string; category: string | null; kind: string };
 
 /** Score `lex` against approved eval-split dataset examples. Null when there are none. */
-export function evalDataset(lex: LexiconPayload, rows: DatasetRow[]) {
+export function evalDataset(lex: LexiconPayload, rows: DatasetRow[], classify: Classify = compileLexicon(lex)) {
   if (!rows.length) return null;
   const catMatch = (exp: string | null, pred: string | null) => (exp === null ? pred === null : pred === exp);
-  const preds = rows.map((i) => ({ i, p: classifyWith(lex, i.text) }));
+  const preds = rows.map((i) => ({ i, p: classify(i.text) }));
   const pos = preds.filter((x) => x.i.category !== null);
   const safe = preds.filter((x) => x.i.category === null);
   const frac = (a: typeof preds, ok: (x: (typeof preds)[number]) => boolean) => (a.length ? a.filter(ok).length / a.length : 0);

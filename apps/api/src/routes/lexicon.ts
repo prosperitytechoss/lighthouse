@@ -8,7 +8,7 @@ import { requireAdmin, requireDeviceOrAdmin } from "../lib/admin-auth";
 import { ah } from "../lib/http";
 import { assembleLiveCategories, getCurrentVersion, getLivePayload, publish } from "../lib/lexicon";
 import { CATEGORIES, LANGUAGES, SEVERITIES } from "../lib/lexicon-defaults";
-import { evalDataset, evalLexicon } from "../lib/lexicon-eval";
+import { compileLexicon, evalDataset, evalLexicon } from "../lib/lexicon-eval";
 import { generateLexiconCandidates } from "../lib/lexicon-generate";
 
 export const lexiconRouter = Router();
@@ -231,6 +231,7 @@ lexiconRouter.get(
       .select({ text: datasetExamples.text, category: datasetExamples.category, kind: datasetExamples.kind })
       .from(datasetExamples)
       .where(and(eq(datasetExamples.status, "approved"), eq(datasetExamples.split, "eval")));
-    res.json({ ...evalLexicon(lex), dataset: evalDataset(lex, rows) });
+    const classify = compileLexicon(lex);
+    res.json({ ...evalLexicon(lex, classify), dataset: evalDataset(lex, rows, classify) });
   }),
 );

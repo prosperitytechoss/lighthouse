@@ -17,14 +17,17 @@ function Live({ toast, onChange }: Common) {
   const load = useCallback(async () => {
     setErr("");
     try {
-      const [{ terms }, st] = await Promise.all([api.listTerms({ status: "live", ...(query.length >= 2 ? { search: query } : {}) }), api.lexStatus()]);
+      const { terms } = await api.listTerms({ status: "live", ...(query.length >= 2 ? { search: query } : {}) });
       setTerms(terms);
-      setTotal(st.liveCount);
     } catch (e) {
       setErr(errMsg(e, "Live words did not load"));
     }
   }, [query]);
+  const loadTotal = useCallback(() => {
+    api.lexStatus().then((st) => setTotal(st.liveCount)).catch(() => {});
+  }, []);
   useEffect(() => void load(), [load]);
+  useEffect(() => loadTotal(), [loadTotal]);
   useEffect(() => {
     const t = window.setTimeout(() => setQuery(search.trim()), 300);
     return () => window.clearTimeout(t);
@@ -35,6 +38,7 @@ function Live({ toast, onChange }: Common) {
       await api.patchTerm(t.id, patch);
       toast(msg);
       void load();
+      loadTotal();
       onChange();
     } catch (e) {
       setErr(errMsg(e, "Change failed"));
