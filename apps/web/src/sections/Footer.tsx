@@ -2,7 +2,10 @@ export function Footer() {
   return (
     <footer className="flex flex-col gap-3 border-t border-hairline px-5 py-7 md:flex-row md:items-center md:gap-6 md:px-10 lg:px-20">
       <p className="text-sm font-bold leading-[18px] text-ink md:flex-1">
-        Lighthouse, by Prosperity Tech Projects
+        Lighthouse, by{" "}
+        <a href="https://prosperitytech.org" target="_blank" rel="noopener noreferrer">
+          Prosperity Tech Projects
+        </a>
       </p>
       <a href="/privacy" className="text-[13px] leading-4 text-muted hover:text-ink">
         Privacy policy

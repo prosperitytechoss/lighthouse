@@ -1,15 +1,23 @@
 const FAQS: { q: string; a: string }[] = [
   {
-    q: "Can my child see that it is on?",
-    a: "Yes, always. Lighthouse never hides. The child sees the app on their phone, what it watches, what it can never see, and when something was flagged.",
+    q: "Can my child see that Lighthouse is on?",
+    a: "Yes. Lighthouse is not designed for secret monitoring. Your child can see that it is running.",
   },
   {
     q: "Do you read their messages?",
-    a: "The check happens on the phone itself. What is on screen is read there to look for risk, then forgotten. It is never saved, never sent, and you never see the actual words, photos, or searches. Only a safety category ever leaves the phone.",
+    a: "Lighthouse can check what is happening on the phone for potential safety concerns. That analysis happens on the device. Their actual messages, images and searches are not sent to Lighthouse or shown to parents.",
+  },
+  {
+    q: "What does a parent see?",
+    a: "An alert tells the parent what kind of concern Lighthouse detected. It does not include the underlying conversation, message, photo or search.",
+  },
+  {
+    q: "What happens if my child turns it off?",
+    a: "You’re notified if monitoring is disabled or the phone stops reporting. If Lighthouse is uninstalled, the alert comes after the phone has stopped reporting for a while. It cannot tell an uninstall apart from a phone that is off or offline.",
   },
   {
     q: "What phones does it work on?",
-    a: "Android only for now. The child needs an Android phone. You as the parent only need an email address, on any device.",
+    a: "Android for now.",
   },
   {
     q: "What does it cost?",
@@ -17,11 +25,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Is it open source?",
-    a: "Yes. The code is public on GitHub, so you do not have to take our word for what runs on your child's phone. You can read exactly what it checks and what it sends.",
-  },
-  {
-    q: "How do I stop it?",
-    a: "Uninstall the app or disconnect it from the phone at any time. Nothing lingers, because nothing was stored anywhere else.",
+    a: "Yes. Lighthouse is open source, so anyone can inspect the code and understand how it works.",
   },
 ];
 
@@ -29,7 +33,7 @@ export function Faq() {
   return (
     <section className="px-5 py-14 md:px-10 lg:px-20 lg:py-16">
       <h2 className="text-center text-[32px] font-bold leading-10 tracking-[-0.015em] text-ink lg:text-[40px] lg:leading-[48px]">
-        Honest answers
+        Honest answers.
       </h2>
       <div className="mx-auto flex max-w-[720px] flex-col gap-3 pt-10">
         {FAQS.map(({ q, a }) => (

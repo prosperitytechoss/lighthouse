@@ -5,10 +5,10 @@
  * user counts.
  */
 const CLAIMS = [
-  "Nothing is saved or sent off the phone",
-  "Checks run on the phone, not our servers",
-  "Free for families",
-  "Open source, anyone can read the code",
+  "Private content stays on the phone",
+  "Checks happen on the phone",
+  "Never hidden from your child",
+  "Free and open source",
 ];
 
 const APPS: { name: string; file: string }[] = [
