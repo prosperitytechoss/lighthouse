@@ -4,6 +4,8 @@ import { closeDb } from "./db/client";
 import { startSchedulers } from "./lib/jobs";
 import { logger } from "./lib/logger";
 import { closeRedis, connectRedis } from "./lib/redis";
+import { closeQueues, readyQueues } from "./lib/queue";
+import { startMailWorker } from "./services/mail-queue";
 
 // A dropped Redis/Postgres socket rejects its in-flight promises; any rejection
 // not tied to a request handler would otherwise kill the process (Node treats
@@ -20,20 +22,22 @@ process.on("uncaughtException", (err) => {
 async function main(): Promise<void> {
   // Open Redis up front so a bad REDIS_URL fails loudly at boot.
   await connectRedis();
-
-  const app = createApp();
-  const server = app.listen(env.PORT, () => {
-    logger.info(`API listening on http://localhost:${env.PORT} (${env.NODE_ENV})`);
-  });
+  startMailWorker();
+  await readyQueues();
 
   // Background jobs: silent-device detection + weekly digest. Production only
   // unless RUN_SCHEDULERS=true: a dev API on a laptop once emailed a parent a
   // contradictory weekly from its local database.
   if (isProd || env.RUN_SCHEDULERS === "true") {
-    startSchedulers();
+    await startSchedulers();
   } else {
     logger.info("[jobs] schedulers OFF (not production; set RUN_SCHEDULERS=true to enable)");
   }
+
+  const app = createApp();
+  const server = app.listen(env.PORT, () => {
+    logger.info(`API listening on http://localhost:${env.PORT} (${env.NODE_ENV})`);
+  });
 
   let shuttingDown = false;
   const shutdown = (signal: string): void => {
@@ -42,7 +46,7 @@ async function main(): Promise<void> {
     logger.info(`${signal} received — shutting down gracefully`);
 
     server.close(() => {
-      void Promise.allSettled([closeDb(), closeRedis()]).then(() => {
+      void closeQueues().then(() => Promise.allSettled([closeDb(), closeRedis()])).then(() => {
         logger.info("Closed HTTP server, Postgres, and Redis. Goodbye.");
         process.exit(0);
       });
@@ -52,7 +56,7 @@ async function main(): Promise<void> {
     setTimeout(() => {
       logger.error("Forced exit after shutdown timeout");
       process.exit(1);
-    }, 10_000).unref();
+    }, 25_000).unref();
   };
 
   process.on("SIGTERM", () => shutdown("SIGTERM"));

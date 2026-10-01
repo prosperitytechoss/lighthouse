@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 
-import { env } from "../config/env";
+import { env, isProd } from "../config/env";
 import { db } from "../db/client";
 import { accounts, devices } from "../db/schema";
 import { runWeeklyDigests } from "../services/digest";
@@ -8,6 +8,7 @@ import { emailService } from "../services/email";
 
 import { isJobRunning, lastOkRun, runJob } from "./harvest";
 import { logger } from "./logger";
+import { createQueue, createWorker, readyQueues } from "./queue";
 
 /**
  * Safety net: a silently-dead monitor is the worst failure mode. If a child
@@ -73,48 +74,51 @@ export function isWeeklySendWindow(now = new Date()): boolean {
   return weekday === DAYS[env.WEEKLY_DIGEST_DAY] && hour >= env.WEEKLY_DIGEST_HOUR;
 }
 
-let nextHarvestAt: Date | null = null;
+type ScheduledTask = "silence" | "weekly" | "harvest";
+type ScheduledData = { task: ScheduledTask };
+let scheduleQueue: ReturnType<typeof createQueue<ScheduledData>> | undefined;
+const schedulersEnabled = isProd || env.RUN_SCHEDULERS === "true";
 
 /** What the admin Jobs tab shows: interval + when the next scheduled harvest fires. */
-export function harvestSchedule(): { enabled: boolean; harvestIntervalMinutes: number; nextHarvestAt: Date | null } {
-  return { enabled: env.HARVEST_ENABLED, harvestIntervalMinutes: env.HARVEST_INTERVAL_MINUTES, nextHarvestAt: env.HARVEST_ENABLED ? nextHarvestAt : null };
+export async function harvestSchedule(): Promise<{ enabled: boolean; harvestIntervalMinutes: number; nextHarvestAt: Date | null }> {
+  const enabled = schedulersEnabled && env.HARVEST_ENABLED;
+  const scheduler = enabled ? await scheduleQueue?.getJobScheduler("harvest") : null;
+  return { enabled, harvestIntervalMinutes: env.HARVEST_INTERVAL_MINUTES, nextHarvestAt: scheduler?.next ? new Date(scheduler.next) : null };
 }
 
 async function scheduledHarvest(): Promise<void> {
   const intervalMs = env.HARVEST_INTERVAL_MINUTES * 60_000;
-  nextHarvestAt = new Date(Date.now() + intervalMs);
-  try {
-    if (isJobRunning("dataset_harvest")) return;
-    const last = await lastOkRun("dataset_harvest");
-    if (last && Date.now() - last.startedAt.getTime() < intervalMs) return;
-    await runJob("dataset_harvest", "scheduler");
-  } catch (e) {
-    logger.error("[harvest] scheduled run failed", e);
-  }
+  if (isJobRunning("dataset_harvest")) return;
+  const last = await lastOkRun("dataset_harvest");
+  if (last && Date.now() - last.startedAt.getTime() < intervalMs) return;
+  await runJob("dataset_harvest", "scheduler");
 }
 
-/** Start background schedulers. Interval-based; production can swap to real cron. */
-export function startSchedulers(): void {
-  const intervalMs = env.HARVEST_INTERVAL_MINUTES * 60_000;
+/** Redis owns schedules and locks, so restarts and overlapping deploys are safe. */
+export async function startSchedulers(): Promise<void> {
+  if (!schedulersEnabled || scheduleQueue) return;
+  scheduleQueue = createQueue<ScheduledData>("scheduled");
+  await readyQueues();
+  await scheduleQueue.setGlobalConcurrency(1);
+  await scheduleQueue.upsertJobScheduler("silence", { every: 30 * 60_000 }, {
+    name: "silence", data: { task: "silence" },
+  });
+  await scheduleQueue.upsertJobScheduler("weekly", { every: 15 * 60_000 }, {
+    name: "weekly", data: { task: "weekly" },
+  });
   if (env.HARVEST_ENABLED) {
-    nextHarvestAt = new Date(Date.now() + 60_000);
-    setTimeout(() => {
-      void scheduledHarvest();
-      setInterval(() => {
-        void scheduledHarvest();
-      }, intervalMs).unref();
-    }, 60_000).unref();
+    await scheduleQueue.upsertJobScheduler("harvest", { every: env.HARVEST_INTERVAL_MINUTES * 60_000 }, {
+      name: "harvest", data: { task: "harvest" },
+    });
+  } else {
+    await scheduleQueue.removeJobScheduler("harvest");
   }
-  setInterval(() => {
-    void checkSilentDevices().catch((e) => logger.error("[silence] error", e));
-  }, 30 * 60 * 1000).unref();
-  // Anchored to the calendar, not process uptime: poll every 15 minutes and let
-  // the send-window check + per-account stamp decide.
-  setInterval(() => {
-    if (!isWeeklySendWindow()) return;
-    void runWeeklyDigests().catch((e) => logger.error("[digest] error", e));
-  }, 15 * 60 * 1000).unref();
-  logger.info(
-    `[jobs] schedulers started (silence check: 30m; weekly summary: day ${env.WEEKLY_DIGEST_DAY} from ${env.WEEKLY_DIGEST_HOUR}:00 ${env.WEEKLY_DIGEST_TZ}; harvest: ${env.HARVEST_ENABLED ? `every ${env.HARVEST_INTERVAL_MINUTES}m` : "off"})`,
-  );
+  createWorker<ScheduledData>("scheduled", async (job) => {
+    switch (job.data.task) {
+      case "silence": await checkSilentDevices(); break;
+      case "weekly": if (isWeeklySendWindow()) await runWeeklyDigests(); break;
+      case "harvest": if (env.HARVEST_ENABLED) await scheduledHarvest(); break;
+    }
+  }, { concurrency: 1 });
+  logger.info("[jobs] BullMQ schedules active (silence: 30m, weekly window: 15m, harvest per configuration)");
 }

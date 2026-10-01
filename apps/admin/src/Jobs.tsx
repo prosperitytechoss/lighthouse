@@ -99,6 +99,17 @@ export function Jobs({ toast }: { toast: (m: string) => void }) {
   return (
     <div>
       {err && <ErrBanner e={err} />}
+      {!!info.queues?.length && (
+        <div className="card" style={{ marginBottom: 16 }}>
+          <h3>Background work</h3>
+          {info.queues.map(({ name, counts }) => (
+            <p key={name}>
+              <b>{name === "mail" ? "Email delivery" : "Scheduled tasks"}</b>: {(counts.waiting ?? 0) + (counts.prioritized ?? 0)} waiting, {counts.active ?? 0} running, {counts.delayed ?? 0} scheduled or retrying, {counts.failed ?? 0} failed.
+            </p>
+          ))}
+          <p className="muted small">Temporary failures retry automatically. Failed jobs have stopped retrying and need investigation.</p>
+        </div>
+      )}
       <div className="banner info" style={{ marginTop: 0 }}>
         One job runs here, every 6 hours. It collects example messages from the sources below into Training examples, and asks Gemini for new word suggestions. Nothing it collects reaches a phone. A person approves examples, a person approves words, and only Publish sends words to phones.
       </div>

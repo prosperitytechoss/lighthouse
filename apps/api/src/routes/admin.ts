@@ -19,6 +19,7 @@ import { JOB_NAMES, recentRuns, runJob, type JobName } from "../lib/harvest";
 import { ah, allowRequest, clientIp } from "../lib/http";
 import { harvestSchedule } from "../lib/jobs";
 import { logger } from "../lib/logger";
+import { queueStats } from "../lib/queue";
 import { runWeeklyDigests } from "../services/digest";
 import { emailService } from "../services/email";
 
@@ -128,7 +129,8 @@ adminRouter.get(
   "/jobs",
   requireAdmin,
   ah(async (_req, res) => {
-    res.json({ runs: await recentRuns(30), schedule: harvestSchedule() });
+    const [runs, schedule, queues] = await Promise.all([recentRuns(30), harvestSchedule(), queueStats()]);
+    res.json({ runs, schedule, queues });
   }),
 );
 

@@ -1,7 +1,6 @@
-import { Resend } from "resend";
-
 import { env, isProd } from "../config/env";
 import { logger } from "../lib/logger";
+import { enqueueMail } from "./mail-queue";
 
 /**
  * Email behind an interface with two transports:
@@ -319,11 +318,7 @@ class DevEmailService implements EmailService {
   }
 }
 
-class ResendEmailService implements EmailService {
-  private client: Resend;
-  constructor(apiKey: string) {
-    this.client = new Resend(apiKey);
-  }
+class QueuedEmailService implements EmailService {
   async sendOtp(to: string, code: string): Promise<void> {
     await this.send(to, OTP_SUBJECT, otpText(code),
       codeHtml("Your Lighthouse verification code:", code, "Expires in 10 minutes. Didn't request this? Ignore this email."));
@@ -369,31 +364,26 @@ class ResendEmailService implements EmailService {
   async sendFeedback(to: string, feedback: AppFeedback): Promise<void> {
     await this.send(to, feedbackSubject(feedback), feedbackText(feedback), feedbackHtml(feedback));
   }
-  /** Single logged path for every outgoing email — success and failure both land in the logs. */
+  /** Requests finish once Redis accepts the email; only the worker calls Resend. */
   private async send(to: string, subject: string, text: string, html?: string): Promise<void> {
-    const { data, error } = await this.client.emails.send({
-      from: env.EMAIL_FROM,
-      to,
-      subject,
-      text,
-      ...(html ? { html } : {}),
+    const isCode = [OTP_SUBJECT, RESET_SUBJECT, SETTINGS_OTP_SUBJECT].includes(subject);
+    const isMagicLink = subject === MAGIC_SUBJECT;
+    await enqueueMail({ from: env.EMAIL_FROM, to, subject, text, ...(html ? { html } : {}) }, {
+      priority: isCode || isMagicLink ? 1 : subject === ALERT_SUBJECT ? 2 : 5,
+      // Leave a minute for the recipient before the underlying credential expires.
+      ttlMs: isCode ? 9 * 60_000 : isMagicLink ? 14 * 60_000 : 23 * 3600_000,
     });
-    if (error) {
-      logger.error(`[email] FAILED "${subject}" -> ${to}: ${error.message}`);
-      throw new Error(`Resend send failed: ${error.message}`);
-    }
-    logger.info(`[email] sent "${subject}" -> ${to} (id: ${data?.id ?? "?"})`);
   }
 }
 
 export const emailService: EmailService = env.RESEND_API_KEY
-  ? new ResendEmailService(env.RESEND_API_KEY)
+  ? new QueuedEmailService()
   : new DevEmailService();
 
 // Say which transport is live, loudly — a child-safety product whose emails
 // silently go nowhere is the worst kind of "working".
 if (env.RESEND_API_KEY) {
-  logger.info(`[email] Resend transport active (from: ${env.EMAIL_FROM})`);
+  logger.info(`[email] BullMQ → Resend transport active (from: ${env.EMAIL_FROM})`);
 } else if (isProd) {
   logger.error(
     "[email] RESEND_API_KEY is NOT set — running the log-only dev transport in production. NO emails (confirmation, alerts, weekly) are being delivered.",

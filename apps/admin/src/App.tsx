@@ -1,4 +1,4 @@
-import { type ReactElement, useCallback, useEffect, useState } from "react";
+import { type ReactElement, useCallback, useEffect, useRef, useState } from "react";
 
 import * as api from "./api";
 import { type LexStatus } from "./api";
@@ -20,8 +20,8 @@ const ICONS: Record<PageId, ReactElement> = {
 };
 
 export function App() {
-  const callbackToken = new URLSearchParams(window.location.search).get("token");
-  const [authed, setAuthed] = useState(!!api.getToken());
+  const [callbackToken] = useState(() => new URLSearchParams(window.location.search).get("token"));
+  const [authed, setAuthed] = useState(false);
   const [checking, setChecking] = useState(!!api.getToken() || !!callbackToken);
   const [route, setRoute] = useState<Route>({ page: "home" });
   const [wordTab, setWordTab] = useState<WordTab>("live");
@@ -32,35 +32,81 @@ export function App() {
   const [datasetCandidates, setDatasetCandidates] = useState(0);
   const [toastMsg, setToastMsg] = useState("");
   const [callbackError, setCallbackError] = useState("");
+  const [sessionError, setSessionError] = useState("");
+  const [checkAttempt, setCheckAttempt] = useState(0);
+  const magicExchange = useRef<ReturnType<typeof api.exchangeMagic> | null>(null);
+
+  const resetSession = useCallback(() => {
+    setAuthed(false);
+    setChecking(false);
+    setStatus(null);
+    setStatusError("");
+    setSessionError("");
+    setDatasetCandidates(0);
+    setToastMsg("");
+    setMenu(false);
+    setRoute({ page: "home" });
+    setWordTab("live");
+    setAdvTab("eval");
+  }, []);
+
+  useEffect(() => api.onSessionExpired(() => {
+    resetSession();
+    setCallbackError("Your session has expired. Sign in again to continue.");
+  }), [resetSession]);
 
   const toast = (m: string) => {
     setToastMsg(m);
     window.setTimeout(() => setToastMsg(""), 2800);
   };
   const refreshStatus = useCallback(() => {
-    api.lexStatus().then((s) => { setStatus(s); setStatusError(""); }).catch((e) => { setStatus(null); setStatusError(`Word list status did not load. ${errMsg(e, "")}`.trim()); });
-    api.datasetStats().then((s) => setDatasetCandidates(s.byStatus.candidate ?? 0)).catch(() => setDatasetCandidates(0));
+    const token = api.getToken();
+    const current = () => token !== null && token === api.getToken();
+    api.lexStatus().then((s) => { if (current()) { setStatus(s); setStatusError(""); } }).catch((e) => {
+      if (current()) { setStatus(null); setStatusError(`Word list status did not load. ${errMsg(e, "")}`.trim()); }
+    });
+    api.datasetStats().then((s) => { if (current()) setDatasetCandidates(s.byStatus.candidate ?? 0); }).catch(() => {
+      if (current()) setDatasetCandidates(0);
+    });
   }, []);
 
   useEffect(() => {
+    let alive = true;
     if (callbackToken) {
-      api.exchangeMagic(callbackToken)
-        .then(({ token }) => { api.setToken(token); setAuthed(true); })
-        .catch(() => setCallbackError("That sign in link is invalid or has expired. Request a new one."))
-        .finally(() => { setChecking(false); window.history.replaceState({}, "", "/"); });
-      return;
+      // A magic token is single-use; StrictMode must not exchange it twice.
+      magicExchange.current ??= api.exchangeMagic(callbackToken);
+      magicExchange.current
+        .then(({ token }) => { if (alive) { api.setToken(token); setAuthed(true); } })
+        .catch(() => { if (alive) setCallbackError("That sign in link is invalid or has expired. Request a new one."); })
+        .finally(() => { if (alive) { setChecking(false); window.history.replaceState({}, "", "/"); } });
+      return () => { alive = false; };
     }
-    if (!api.getToken()) return;
-    api.me().then(() => setAuthed(true)).catch(() => api.clearToken()).finally(() => setChecking(false));
-  }, [callbackToken]);
+    if (!api.getToken()) { setChecking(false); return; }
+    const token = api.getToken();
+    api.me()
+      .then(() => { if (alive && api.getToken() === token) setAuthed(true); })
+      .catch((e) => {
+        if (alive && !(e instanceof api.ApiError && e.status === 401)) {
+          setSessionError(errMsg(e, "Could not check your session. Please try again."));
+        }
+      })
+      .finally(() => { if (alive) setChecking(false); });
+    return () => { alive = false; };
+  }, [callbackToken, checkAttempt]);
   useEffect(() => {
-    if (authed) refreshStatus();
-  }, [authed, refreshStatus]);
+    if (authed && !checking) refreshStatus();
+  }, [authed, checking, refreshStatus]);
 
   if (checking) return <Spinner />;
-  if (!authed) return <Login onAuthed={() => { setAuthed(true); }} notice={callbackError} />;
+  if (sessionError) return (
+    <div className="login">
+      <p role="alert">{sessionError}</p>
+      <button className="btn" onClick={() => { setSessionError(""); setChecking(true); setCheckAttempt((n) => n + 1); }}>Try again</button>
+    </div>
+  );
+  if (!authed) return <Login onAuthed={() => { setCallbackError(""); setAuthed(true); }} notice={callbackError} />;
 
-  const signOut = () => { void api.logout().catch(() => {}); api.clearToken(); setAuthed(false); };
+  const signOut = () => { void api.logout().catch(() => {}); api.clearToken(); resetSession(); setCallbackError(""); };
 
   const go = (page: PageId, sub?: string) => {
     if (page === "words" && sub) setWordTab(sub as WordTab);

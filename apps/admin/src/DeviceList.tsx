@@ -4,20 +4,6 @@ import { Empty } from "./ui";
 
 export type OverviewDevice = Overview["devices"][number];
 
-export const HEALTH_LABEL: Record<string, string> = { active: "Online", monitoring_off: "Monitoring off", not_reporting: "Offline" };
-export const HEALTH_CLASS: Record<string, string> = { active: "low", monitoring_off: "review", not_reporting: "high" };
-
-export function fmtAgo(s: string): string {
-  const m = Math.max(0, Math.round((Date.now() - new Date(s).getTime()) / 60_000));
-  if (m < 1) return "just now";
-  if (m < 60) return `${m} min ago`;
-  const h = Math.round(m / 60);
-  if (h < 48) return `${h} hour${h === 1 ? "" : "s"} ago`;
-  return `${Math.round(h / 24)} days ago`;
-}
-
-export const fmtSeen = (s: string | null) => (s ? `last online ${fmtAgo(s)}` : "never came online");
-
 export function enginePlain(d: OverviewDevice): string | null {
   const s = d.engineStats;
   if (!s) return null;
@@ -62,7 +48,7 @@ export function DeviceList({ devices, open, onOpen, emptyText }: { devices: Over
               <div style={{ fontSize: 15, fontWeight: 600 }}>
                 {d.name}{d.assignee && <span className="muted" style={{ fontWeight: 400 }}>, {d.assignee}</span>}
               </div>
-              <div className="muted small">{d.account ?? "no account"}, {d.signals} signals, {fmtSeen(d.lastSeenAt)}</div>
+              <div className="muted small">{d.account ?? "no account"}, {d.signals} signals</div>
               {line && <div style={{ fontSize: 13, marginTop: 4, color: "var(--ink-2)" }}>{line}</div>}
             </div>
             {d.batteryLevel != null && <span className="badge lang">Battery {d.batteryLevel}%</span>}
@@ -71,7 +57,7 @@ export function DeviceList({ devices, open, onOpen, emptyText }: { devices: Over
             ) : d.visionSupported === false ? (
               <span className="badge lang">No vision</span>
             ) : null}
-            <span className={`badge ${HEALTH_CLASS[d.health]}`}>{d.lastSeenAt ? HEALTH_LABEL[d.health] : "Never online"}</span>
+            {d.health === "monitoring_off" && <span className="badge review">Monitoring off</span>}
             <span className="muted small" aria-hidden>{isOpen ? "Hide" : "Open"}</span>
             {isOpen && (
               <div className="detail" onClick={(e) => e.stopPropagation()}>

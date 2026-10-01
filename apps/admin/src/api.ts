@@ -8,14 +8,20 @@ export const getToken = () => localStorage.getItem(TOKEN_KEY);
 export const setToken = (t: string) => localStorage.setItem(TOKEN_KEY, t);
 export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
 
+const sessionExpiredListeners = new Set<() => void>();
+export function onSessionExpired(listener: () => void): () => void {
+  sessionExpiredListeners.add(listener);
+  return () => { sessionExpiredListeners.delete(listener); };
+}
+
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
   }
 }
 
-async function req<T>(path: string, opts: RequestInit = {}): Promise<T> {
-  const token = getToken();
+async function req<T>(path: string, opts: RequestInit = {}, authenticated = true): Promise<T> {
+  const token = authenticated ? getToken() : null;
   const res = await fetch(`${API_BASE}${path}`, {
     ...opts,
     headers: {
@@ -24,6 +30,12 @@ async function req<T>(path: string, opts: RequestInit = {}): Promise<T> {
       ...(opts.headers ?? {}),
     },
   });
+  if (res.status === 401 && authenticated && token === getToken()) {
+    // An old request must not sign out a newer session. Public login errors
+    // also belong on the login form, not in the session-expiry handler.
+    clearToken();
+    for (const listener of sessionExpiredListeners) listener();
+  }
   const body = res.status === 204 ? {} : await res.json().catch(() => ({}));
   if (!res.ok) throw new ApiError(res.status, (body as { error?: string }).error ?? `HTTP ${res.status}`);
   return body as T;
@@ -92,9 +104,9 @@ export type Overview = {
 };
 
 // ── auth ──
-export const devLogin = (email: string) => req<{ token: string; email: string }>("/admin/dev-login", { method: "POST", body: JSON.stringify({ email }) });
-export const requestMagicLink = (email: string) => req<{ ok: true; devMagicUrl?: string }>("/admin/login", { method: "POST", body: JSON.stringify({ email }) });
-export const exchangeMagic = (token: string) => req<{ token: string; email: string }>("/admin/callback", { method: "POST", body: JSON.stringify({ token }) });
+export const devLogin = (email: string) => req<{ token: string; email: string }>("/admin/dev-login", { method: "POST", body: JSON.stringify({ email }) }, false);
+export const requestMagicLink = (email: string) => req<{ ok: true; devMagicUrl?: string }>("/admin/login", { method: "POST", body: JSON.stringify({ email }) }, false);
+export const exchangeMagic = (token: string) => req<{ token: string; email: string }>("/admin/callback", { method: "POST", body: JSON.stringify({ token }) }, false);
 export const me = () => req<{ email: string }>("/admin/me");
 export const logout = () => req("/admin/logout", { method: "POST" });
 export const getOverview = () => req<Overview>("/admin/overview");
@@ -215,6 +227,7 @@ export type JobRun = {
 export type JobsInfo = {
   runs: JobRun[];
   schedule: { enabled?: boolean; harvestIntervalMinutes: number; nextHarvestAt: string | null };
+  queues?: { name: string; counts: Record<string, number> }[];
 };
 export const listJobs = () => req<JobsInfo>("/admin/jobs");
 export const runJob = (job: JobName) => req<{ ok: true; run: JobRun }>(`/admin/jobs/${job}/run`, { method: "POST", body: "{}" });
