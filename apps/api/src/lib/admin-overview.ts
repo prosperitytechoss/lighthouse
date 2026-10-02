@@ -8,8 +8,8 @@ import { decryptSignalContent } from "./signal-crypto";
 
 /** Fleet health, mirrors the parent devices logic (silence + tamper). */
 function health(d: { lastSeenAt: Date | null; pairedAt: Date | null; createdAt: Date; accessibilityEnabled: boolean | null; notificationAccessEnabled: boolean | null }) {
-  const last = (d.lastSeenAt ?? d.pairedAt ?? d.createdAt).getTime();
-  if (Date.now() - last > env.SILENCE_HOURS * 3600_000) return "not_reporting";
+  if (!d.lastSeenAt) return "not_reporting";
+  if (Date.now() - d.lastSeenAt.getTime() > env.SILENCE_HOURS * 3600_000) return "not_reporting";
   if (d.accessibilityEnabled === false || d.notificationAccessEnabled === false) return "monitoring_off";
   return "active";
 }
@@ -102,6 +102,7 @@ export async function buildOverview() {
     stats: {
       totalDevices: devs.length,
       reporting: deviceList.filter((d) => d.health === "active").length,
+      silenceHours: env.SILENCE_HOURS,
       totalSignals: sigs.length,
       signals7d,
     },

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import * as api from "../api";
 import { type Overview } from "../api";
-import { DeviceList } from "../DeviceList";
+import { DeviceList, StatusHelp } from "../DeviceList";
 import { Page, Spinner, errMsg } from "../ui";
 
 export function Phones({ openId }: { openId?: string }) {
@@ -25,7 +25,7 @@ export function Phones({ openId }: { openId?: string }) {
         <>
           <div className="row wrap between" style={{ marginBottom: 12 }}>
             <input placeholder="Search by phone, child or parent" value={search} onChange={(e) => setSearch(e.target.value)} style={{ maxWidth: 360 }} />
-            <span className="muted small">{shown.length} of {ov.devices.length}</span>
+            <span className="row muted small" style={{ gap: 8 }}>{shown.length} of {ov.devices.length}<StatusHelp hours={ov.stats.silenceHours} /></span>
           </div>
           <DeviceList devices={shown} open={open} onOpen={setOpen} emptyText={q ? `No phone matches "${search}".` : "No phones set up yet."} />
         </>

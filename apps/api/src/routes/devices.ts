@@ -8,7 +8,8 @@ import { db } from "../db/client";
 import { accounts, devices, signals } from "../db/schema";
 import { requireDevice, requireParent } from "../lib/auth-middleware";
 import { revokeDeviceToken } from "../lib/device-token";
-import { ah } from "../lib/http";
+import { createConfirmToken } from "../lib/email-confirm";
+import { ah, allowRequest, publicBaseUrl } from "../lib/http";
 import { generateOtp, storeOtp, takeResendSlot, verifyOtp } from "../lib/otp";
 import { decryptSignalContent } from "../lib/signal-crypto";
 import { emailService } from "../services/email";
@@ -83,6 +84,7 @@ devicesRouter.get(
         email: accounts.email,
         alertThreshold: accounts.alertThreshold,
         emailAlertsEnabled: accounts.emailAlertsEnabled,
+        emailVerified: accounts.emailVerified,
         whatsappNumber: accounts.whatsappNumber,
       })
       .from(accounts)
@@ -91,7 +93,7 @@ devicesRouter.get(
     return res.json({
       ok: true,
       device: { id: device.id, name: device.name, role: device.role },
-      account: { email: account?.email ?? null },
+      account: { email: account?.email ?? null, emailVerified: account?.emailVerified ?? false },
       // Parent's phone (E.164), collected at setup — for display/edit in-app.
       parentPhone: account?.whatsappNumber ?? null,
       // Per-app capture filter the child pushes to native. null col = all enabled.
@@ -103,6 +105,26 @@ devicesRouter.get(
       // Email-alert master switch (parent-set in the child settings screen).
       emailAlertsEnabled: account?.emailAlertsEnabled ?? true,
     });
+  }),
+);
+
+devicesRouter.post(
+  "/confirmation/resend",
+  requireDevice,
+  ah(async (req, res) => {
+    if (!(await allowRequest(`resend-confirm:${req.accountId!}`, 3, 3600))) {
+      return res.status(429).json({ ok: false, error: "Please wait before sending another one." });
+    }
+    const [acct] = await db
+      .select({ email: accounts.email, emailVerified: accounts.emailVerified })
+      .from(accounts)
+      .where(eq(accounts.id, req.accountId!))
+      .limit(1);
+    if (!acct) return res.status(401).json({ ok: false, error: "Account not found" });
+    if (acct.emailVerified) return res.json({ ok: true });
+    const token = await createConfirmToken(req.accountId!);
+    await emailService.sendSetupConfirmation(acct.email, `${publicBaseUrl(req)}/register/confirm?token=${token}`);
+    return res.json({ ok: true });
   }),
 );
 

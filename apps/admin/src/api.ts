@@ -79,7 +79,7 @@ export type EvalResult = {
 };
 
 export type Overview = {
-  stats: { totalDevices: number; reporting: number; totalSignals: number; signals7d: number };
+  stats: { totalDevices: number; reporting: number; silenceHours?: number; totalSignals: number; signals7d: number };
   byDay: { date: string; count: number }[];
   byCategory: Record<string, number>;
   byChannel?: Record<string, number>;

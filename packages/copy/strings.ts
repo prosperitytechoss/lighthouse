@@ -476,24 +476,22 @@ export const strings = {
     // Production child onboarding: parent enters their contact on THIS device
     // (no parent app). QR pairing was retired with the parent app.
     onboarding: {
-      headline: "Lighthouse helps your family stay connected online.",
-      body: "It reads what's on your screen right here on this phone to spot anything unsafe. Never saved, never sent. Your parent never sees the actual content.",
+      headline: "Lighthouse keeps you safer on your phone.",
+      body: "It checks apps and games for signs of exploitation, bullying, violence, explicit content and self-harm. If Lighthouse finds something serious, your parent gets a safety alert, never your messages, photos or searches.",
       tagline: "I look out for you.",
-      scanButton: "Set up with a parent",
-      footer: "Ask a parent to help you set this up.",
+      scanButton: "Continue",
     },
 
     // Parent-contact setup — the parent enters their email + WhatsApp on the
     // child's phone. Replaces QR pairing now that there's no separate parent app.
     pairing: {
-      title: "Set up with a parent",
-      bubble: "Hi! Let's get your parent set up. No app for them, just email.",
-      emailLabel: "Parent's email",
+      title: "Where should we send safety alerts?",
+      body: "Add a parent or guardian's email. We'll send them a confirmation before Lighthouse starts monitoring.",
+      emailLabel: "Parent or guardian's email",
       emailPlaceholder: "parent@example.com",
       whatsappLabel: "Parent's WhatsApp number",
       whatsappPlaceholder: "0803 123 4567",
-      whatsappHint: "Local numbers are fine. We turn them into the full format for you.",
-      submit: "Link this phone",
+      submit: "Send verification message",
       linking: "Linking this phone",
       footer: "They get a confirmation email first. Nothing is sent until they tap it.",
       invalidEmail: "Enter a valid email address.",
@@ -540,7 +538,7 @@ export const strings = {
       saved: "Settings saved",
       saveError: "Couldn't save. Check the connection and try again.",
       reportBug: "Report a bug",
-      disconnect: "Disconnect from parent",
+      disconnect: "Stop email alerts",
     },
 
     // OTP gate shown before email alerts can be switched OFF (board 39).
@@ -564,7 +562,7 @@ export const strings = {
         idea: "An idea",
       },
       placeholder: "The app stopped after the phone restarted...",
-      note: "Your report goes to the Lighthouse team with the app version and phone model. Never your messages.",
+      note: "Your report goes to the Lighthouse team with the app version and phone model. Never your messages. You can paste or add screenshots too, and you choose which.",
       send: "Send report",
       sent: "Thanks. Your report is on its way.",
       empty: "Tell us a little about what happened first.",
@@ -589,12 +587,18 @@ export const strings = {
       linkedCard: "Linked to your parent",
       linkedActive: "Active",
       linkedPaused: "Paused",
-      footer: "Checked on this phone. Never saved, never sent. Your parent never sees the actual content.",
-      disconnectTitle: "Disconnect this phone?",
+      alertsGoTo: (email: string) => `Alerts go to ${email}`,
+      emailUnverified: "Email is unverified.",
+      emailUnverifiedChip: "Email unverified",
+      resend: "Resend",
+      resendSent: "Confirmation sent again.",
+      resendError: "Couldn't send it. Check the connection and try again.",
+      footer: "Safety checks happen on this phone. Your parent gets alerts, never your messages, photos or searches.",
+      disconnectTitle: "Stop email alerts?",
       disconnectBody:
         "This unlinks the phone from your parent and stops monitoring. You can set it up again with a parent afterwards.",
       disconnectCancel: "Cancel",
-      disconnectConfirm: "Disconnect",
+      disconnectConfirm: "Stop alerts",
     },
 
     // "Active" badge (Screen6ActiveBadge), Lighthouse running over other apps.
@@ -646,7 +650,7 @@ export const strings = {
     // Sequential permission wizard. Order matters, cannot skip.
     permissions: {
       grant: "Open settings",
-      granted: "I've turned it on",
+      granted: "I've turned it on. Continue.",
       notYetError: "That one isn't on yet. Tap the button, switch it on, then come back here.",
       bridgeMissing:
         "This copy of Lighthouse is out of date and can't open settings. Please reinstall the latest build, then try again.",
@@ -802,7 +806,7 @@ export const strings = {
       allSet: {
         bubble: "I'm watching over this phone now.",
         headline: "You're all set",
-        body: "Lighthouse is looking out for Amara on this phone. You can see exactly what's shared, anytime.",
+        body: "Lighthouse is looking out for Amara on this phone.",
         button: "Go to home",
       },
     },
@@ -811,7 +815,7 @@ export const strings = {
     // persistent foreground-service notification.
     transparency: {
       headline: "What I can and can't see",
-      bubble: "No secrets between us. Here's exactly how it works.",
+      bubble: "Here's exactly what I share with your parent, and what stays private.",
       canSeeLabel: "Your parent can see",
       canSee: [
         "The kind of thing that came up, like bullying or nudity",
@@ -824,7 +828,6 @@ export const strings = {
         "What you search, type, or watch",
         "Your photos, or any picture of your screen",
       ],
-      note: "I read the words on this phone and take a quick look at the screen every few seconds in the apps I watch. Each look is checked right here and thrown away. Nothing is saved. Nothing is sent. Only a safety category ever leaves.",
     },
   },
 } as const;

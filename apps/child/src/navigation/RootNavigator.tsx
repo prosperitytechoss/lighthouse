@@ -55,6 +55,7 @@ export function RootNavigator() {
 
   // Drop to unpaired: clear the token, warn, and reset to the welcome/scanner.
   const handleUnlinked = useCallback(async () => {
+    stopCapture();
     await clearDeviceToken();
     toast.error(strings.child.scan.unlinked);
     if (navigationRef.isReady()) {
@@ -146,7 +147,14 @@ export function RootNavigator() {
   const initialRouteName = state === "home" ? "Home" : state === "setup" ? "Setup" : "Onboarding";
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      ref={navigationRef}
+      onStateChange={() => {
+        const name = navigationRef.getCurrentRoute()?.name;
+        if (name === "Home") setState("home");
+        else if (name === "Onboarding") setState("onboarding");
+      }}
+    >
       <Stack.Navigator
         initialRouteName={initialRouteName}
         screenOptions={{ headerShown: false, animation: "slide_from_right" }}

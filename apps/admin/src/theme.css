@@ -245,3 +245,12 @@ input[type="checkbox"].switch {
   .runs td { padding: 2px 0; border: none; }
   .runs .mono { white-space: normal; }
 }
+
+.info { position: relative; display: inline-flex; font-weight: 400; }
+.info summary { list-style: none; cursor: pointer; width: 20px; height: 20px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 600; line-height: 18px; text-align: center; user-select: none; }
+.info summary::-webkit-details-marker { display: none; }
+.info[open] summary { background: var(--cyan-050); color: var(--cyan-deep); border-color: var(--cyan-deep); }
+.info-pop { position: absolute; z-index: 20; top: 28px; left: 0; width: 340px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); background: #fff; box-shadow: 0 8px 24px rgba(16, 42, 67, 0.12); font-size: 13px; line-height: 19px; color: var(--ink-2); text-align: left; }
+.info-pop p { margin: 0 0 8px; }
+.info-pop p:last-child { margin-bottom: 0; }
+.info-pop .info-chain { font-family: var(--mono, ui-monospace, monospace); font-size: 12px; color: var(--ink); padding-bottom: 8px; border-bottom: 1px solid var(--border); }

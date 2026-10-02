@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import * as api from "../api";
 import { type DatasetStats, type JobsInfo, type LexStatus, type Overview } from "../api";
 import { BarChart, Bars, CHANNEL_LABEL } from "../Charts";
-import { DeviceList } from "../DeviceList";
+import { DeviceList, StatusHelp, fmtAgo } from "../DeviceList";
 import { JOB_LABEL, runFailures } from "../Jobs";
 import { type Go } from "../routes";
 import { Page, Spinner, errMsg } from "../ui";
@@ -15,7 +15,7 @@ function statusLine(ov: Overview | null, status: LexStatus | null, attention: nu
   if (ov) {
     const total = ov.stats.totalDevices;
     if (total === 0) parts.push("No phones set up yet.");
-    else parts.push(`${total} phone${total === 1 ? "" : "s"} set up.`);
+    else parts.push(`${ov.stats.reporting} of ${total} phone${total === 1 ? "" : "s"} reporting.`);
   }
   parts.push(attention === 0 ? "Nothing needs attention." : `${attention} thing${attention === 1 ? "" : "s"} need${attention === 1 ? "s" : ""} attention.`);
   if (status && ov) {
@@ -53,9 +53,13 @@ export function Home({ go, status, statusError }: { go: Go; status: LexStatus | 
   }, []);
 
   const items: Item[] = [];
+  let neverCheckedIn = 0;
   for (const d of ov?.devices ?? []) {
+    if (d.health === "not_reporting" && !d.lastSeenAt) neverCheckedIn++;
+    if (d.health === "not_reporting" && d.lastSeenAt) items.push({ tone: "high", tag: "Offline", text: `${d.name} was last online ${fmtAgo(d.lastSeenAt)}.`, action: "Open phone", go: () => go("phones", d.id) });
     if (d.health === "monitoring_off") items.push({ tone: "review", tag: "Switch off", text: `${d.name} has a monitoring switch turned off on the phone.`, action: "Open phone", go: () => go("phones", d.id) });
   }
+  if (neverCheckedIn) items.push({ tone: "low", tag: "Never online", text: `${neverCheckedIn} phone${neverCheckedIn === 1 ? " was" : "s were"} set up but never came online.`, action: "Open phones", go: () => go("phones") });
   if (jobs) {
     const latest = new Map<string, api.JobRun>();
     for (const r of [...jobs.runs].sort((a, b) => b.startedAt.localeCompare(a.startedAt))) if (!latest.has(r.job)) latest.set(r.job, r);
@@ -70,7 +74,7 @@ export function Home({ go, status, statusError }: { go: Go; status: LexStatus | 
         <>
           <p className="status-line">{statusLine(ov, status, items.length)}</p>
 
-          <h2 style={{ marginTop: 0 }}>Needs attention</h2>
+          <h2 style={{ marginTop: 0, display: "flex", alignItems: "center", gap: 8 }}>Needs attention<StatusHelp hours={ov?.stats.silenceHours} /></h2>
           <div className="attn">
             {items.length === 0 ? (
               <div className="attn-ok">Nothing right now.</div>
@@ -88,6 +92,7 @@ export function Home({ go, status, statusError }: { go: Go; status: LexStatus | 
               <h2>Signals</h2>
               <div className="metrics">
                 <div className="metric"><div className="val">{ov.stats.totalDevices}</div><div className="lbl">Phones</div></div>
+                <div className="metric"><div className="val">{ov.stats.reporting}</div><div className="lbl">Reporting now</div></div>
                 <div className="metric"><div className="val">{ov.stats.signals7d}</div><div className="lbl">Signals, last 7 days</div></div>
                 <div className="metric"><div className="val">{ov.stats.totalSignals}</div><div className="lbl">Signals, all time</div></div>
               </div>

@@ -49,9 +49,6 @@ export function Splash({ navigation }: NativeStackScreenProps<ChildStackParamLis
               label={s.scanButton}
               onPress={() => navigation.navigate("ParentContact")}
             />
-            <Text className="mt-lg text-center text-[13px] leading-4 text-muted-foreground">
-              {s.footer}
-            </Text>
           </View>
         </View>
       </SafeAreaView>

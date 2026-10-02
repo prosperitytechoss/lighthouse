@@ -49,6 +49,7 @@ export function DeviceDetail({ id }: { id: string }) {
           ["Model", [d.deviceInfo?.manufacturer, d.deviceInfo?.model].filter(Boolean).join(" ") || "unknown"],
           ["Android", d.deviceInfo?.os ?? "unknown"],
           ["Battery", d.batteryLevel == null ? "not reported yet" : `${d.batteryLevel}%${d.batteryCharging ? ", charging" : ""}`],
+          ["Last check in", when(d.lastSeenAt)],
           ["Set up", when(d.pairedAt ?? d.createdAt)],
         ]} />
         <Block title="Parent" rows={[

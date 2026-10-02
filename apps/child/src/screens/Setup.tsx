@@ -228,7 +228,7 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
                       openGrant(step.native);
                     }}
                   />
-                  <TextAction label={p.granted} busy={busy} onPress={() => verify(() => isGranted(step.native))} />
+                  <ChunkyButton variant="success" label={p.granted} loading={busy} onPress={() => verify(() => isGranted(step.native))} />
                 </>
               ) : step.type === "location" ? (
                 <>
@@ -239,7 +239,7 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
                       await requestFineLocation();
                     }}
                   />
-                  <TextAction label={p.granted} busy={busy} onPress={() => verify(hasFineLocation)} />
+                  <ChunkyButton variant="success" label={p.granted} loading={busy} onPress={() => verify(hasFineLocation)} />
                 </>
               ) : step.type === "backgroundLocation" ? (
                 <>
@@ -256,7 +256,7 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
                       }
                     }}
                   />
-                  <TextAction label={p.granted} busy={busy} onPress={() => verify(hasBackgroundLocation)} />
+                  <ChunkyButton variant="success" label={p.granted} loading={busy} onPress={() => verify(hasBackgroundLocation)} />
                 </>
               ) : autostartMissing ? (
                 <>
@@ -283,7 +283,7 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
                       if (!opened) setAutostartMissing(true);
                     }}
                   />
-                  <TextAction label={p.playProtectDone} onPress={advance} />
+                  <ChunkyButton variant="success" label={p.playProtectDone} onPress={advance} />
                 </>
               )}
             </View>

@@ -17,7 +17,7 @@ import Animated, {
 import { haptics } from "./haptics";
 import { Text } from "./Text";
 
-export type ChunkyButtonVariant = "primary" | "ghost" | "danger-outline";
+export type ChunkyButtonVariant = "primary" | "success" | "ghost" | "danger-outline";
 export type ChunkyButtonSize = "lg" | "md" | "sm";
 
 /**
@@ -62,6 +62,7 @@ type Palette = {
 
 const PALETTES: Record<ChunkyButtonVariant, Palette> = {
   primary: { face: "#1CABE2", edge: "#0E7FA8", label: "#FFFFFF" },
+  success: { face: "#1FA85A", edge: "#15803D", label: "#FFFFFF" },
   ghost: { face: "#FFFFFF", edge: "#E8ECF0", label: "#1A1A1A", border: "#E8ECF0", borderWidth: 2 },
   "danger-outline": {
     face: "#FFFFFF",

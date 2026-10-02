@@ -21,7 +21,7 @@ import Svg, { Path } from "react-native-svg";
 
 import { pairingApi } from "../api/client";
 import { useFocusedStatusBar } from "../hooks/useFocusedStatusBar";
-import { setBlockingEnabled, setBlockThreshold, setMonitoredApps } from "../native/capture";
+import { setBlockingEnabled, setBlockThreshold, setMonitoredApps, stopCapture } from "../native/capture";
 import { clearDeviceToken, getDeviceToken } from "../native/session";
 import type { ChildStackParamList } from "../navigation/RootNavigator";
 
@@ -135,6 +135,7 @@ export function ChildSettings({
         text: hm.disconnectConfirm,
         style: "destructive",
         onPress: async () => {
+          stopCapture();
           await clearDeviceToken();
           navigation.reset({ index: 0, routes: [{ name: "Onboarding" }] });
         },

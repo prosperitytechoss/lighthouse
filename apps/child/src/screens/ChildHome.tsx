@@ -18,7 +18,7 @@ import { useCallback, useState } from "react";
 import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { pairingApi, type WeeklyResponse } from "../api/client";
+import { type MeResponse, pairingApi, type WeeklyResponse } from "../api/client";
 import { Grain } from "../components/Grain";
 import { WaveEdge } from "../components/WaveEdge";
 import { useFocusedStatusBar } from "../hooks/useFocusedStatusBar";
@@ -47,6 +47,7 @@ export function ChildHome({ navigation }: NativeStackScreenProps<ChildStackParam
   const [status, setStatus] = useState<Status | null>(null);
   const [week, setWeek] = useState<WeeklyResponse | null>(null);
   const [vision, setVision] = useState<VisionStatus | null>(null);
+  const [account, setAccount] = useState<MeResponse["account"] | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   // Load REAL status: actual permission grants on this phone + this device's
@@ -60,11 +61,21 @@ export function ChildHome({ navigation }: NativeStackScreenProps<ChildStackParam
     setVision(await getVisionStatus());
     const token = await getDeviceToken();
     if (token) {
-      const res = await pairingApi.weekly(token);
+      const [res, me] = await Promise.all([pairingApi.weekly(token), pairingApi.me(token)]);
       if (res.ok) setWeek(res.data);
+      if (me.ok) setAccount(me.data.account);
     }
     setLoaded(true);
   }, []);
+
+  const resend = useCallback(async () => {
+    const token = await getDeviceToken();
+    const res = token ? await pairingApi.resendConfirmation(token) : null;
+    if (res?.ok) toast.success(h.resendSent);
+    else toast.error(h.resendError);
+  }, [toast]);
+
+  const unverified = !!account?.email && !account.emailVerified;
 
   useFocusEffect(
     useCallback(() => {
@@ -131,6 +142,11 @@ export function ChildHome({ navigation }: NativeStackScreenProps<ChildStackParam
                 <Text className="text-[18px] font-bold leading-[22px] text-white" style={{ letterSpacing: -0.18 }}>
                   {strings.app.name}
                 </Text>
+                {unverified ? (
+                  <View className="rounded-pill bg-warning-bg px-[10px] py-[3px]">
+                    <Text className="text-[12px] font-bold leading-4 text-[#B45309]">{h.emailUnverifiedChip}</Text>
+                  </View>
+                ) : null}
               </View>
               <Pressable
                 onPressIn={haptics.select}
@@ -239,6 +255,20 @@ export function ChildHome({ navigation }: NativeStackScreenProps<ChildStackParam
               <LinkCard
                 icon={<Mail size={22} color="#1CABE2" strokeWidth={2.2} />}
                 label={h.linkedCard}
+                sub={
+                  account?.email ? (
+                    unverified ? (
+                      <View className="flex-row items-center gap-[5px]">
+                        <Text className="text-[12.5px] leading-4 text-[#B45309]">{h.emailUnverified}</Text>
+                        <Pressable onPress={resend} hitSlop={8} accessibilityRole="button">
+                          <Text className="text-[12.5px] font-bold leading-4 text-primary-700">{h.resend}</Text>
+                        </Pressable>
+                      </View>
+                    ) : (
+                      <Text className="text-[12.5px] leading-4 text-muted-foreground">{h.alertsGoTo(account.email)}</Text>
+                    )
+                  ) : null
+                }
                 onPress={() => navigation.navigate("Transparency")}
                 trailing={
                   <View className={`rounded-pill px-[10px] py-xs ${monitoringOn ? "bg-primary-50" : "bg-warning-bg"}`}>
@@ -266,11 +296,13 @@ const BAND = "#0A7FB8";
 function LinkCard({
   icon,
   label,
+  sub,
   onPress,
   trailing,
 }: {
   icon: React.ReactNode;
   label: string;
+  sub?: React.ReactNode;
   onPress: () => void;
   trailing?: React.ReactNode;
 }) {
@@ -282,7 +314,10 @@ function LinkCard({
       className="flex-row items-center gap-md rounded-xl bg-white px-lg py-[14px] active:opacity-80"
     >
       {icon}
-      <Text className="flex-1 text-[16px] font-bold leading-5 text-foreground">{label}</Text>
+      <View className="flex-1 gap-[2px]">
+        <Text className="text-[16px] font-bold leading-5 text-foreground">{label}</Text>
+        {sub}
+      </View>
       {trailing ?? <ChevronRight size={20} color="#C2C7D0" strokeWidth={2.4} />}
     </Pressable>
   );

@@ -94,11 +94,6 @@ export function Transparency({
             {t.cantSeeLabel}
           </Text>
           <RowCard items={t.cantSee} can={false} />
-
-          {/* The on-device promise. */}
-          <View className="mt-lg rounded-xl bg-surface px-lg py-[14px]">
-            <Text className="text-[13px] leading-[19px] text-foreground">{t.note}</Text>
-          </View>
         </ScrollView>
       </View>
     </Screen>

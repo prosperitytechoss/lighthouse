@@ -1,11 +1,11 @@
 import { strings } from "@lighthouse/copy";
-import { ArcWash, ChunkyButton, RiveMascot, SpeechBubble, Text, useToast } from "@lighthouse/ui";
+import { ArcWash, ChunkyButton, Text, useToast } from "@lighthouse/ui";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { ChevronLeft } from "lucide-react-native";
 import { useRef, useState } from "react";
-import { Platform, Pressable, ScrollView, TextInput, View } from "react-native";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { Platform, Pressable, TextInput, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { pairingApi } from "../api/client";
@@ -110,90 +110,82 @@ export function ParentContact({
     <View className="flex-1 bg-background">
       <StatusBar style="dark" />
       <ArcWash intensity={0.1} />
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        <SafeAreaView edges={["top", "bottom", "left", "right"]} className="flex-1">
-          <View className="w-full max-w-[480px] flex-1 self-center">
-            <View className="px-lg pt-sm">
-              <Pressable onPress={() => navigation.goBack()} hitSlop={10} accessibilityRole="button" accessibilityLabel="Go back">
-                <ChevronLeft size={26} color="#1A1A1A" />
-              </Pressable>
-            </View>
-
-            <ScrollView
-              contentContainerClassName="grow px-2xl pb-lg"
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-            >
-              {/* Mascot + speech (board 26) */}
-              <View className="flex-row items-end gap-[10px] pt-md">
-                <RiveMascot size={76} />
-                <SpeechBubble tail="corner" style={{ flex: 1, alignItems: "stretch" }}>
-                  <Text className="text-[14.5px] font-semibold leading-[21px] text-foreground">
-                    {s.bubble}
-                  </Text>
-                </SpeechBubble>
-              </View>
-
-              <BoardField label={s.emailLabel} style={{ paddingTop: 24 }}>
-                <TextInput
-                  className={inputClass}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                  autoCorrect={false}
-                  placeholder={s.emailPlaceholder}
-                  placeholderTextColor="#A8AEB8"
-                  value={email}
-                  onChangeText={setEmail}
-                  returnKeyType="next"
-                />
-              </BoardField>
-
-              <BoardField label={s.whatsappLabel} style={{ paddingTop: 20 }}>
-                <View className="mt-sm flex-row items-center gap-sm rounded-[14px] bg-white px-lg">
-                  <TextInput
-                    className="flex-1 py-[14px] text-[15px] leading-[18px] text-foreground font-regular"
-                    keyboardType="phone-pad"
-                    placeholder={s.whatsappPlaceholder}
-                    placeholderTextColor="#A8AEB8"
-                    value={whatsapp}
-                    onChangeText={setWhatsapp}
-                  />
-                  {/* Live normalization pill — the board's "+234 803 123 4567" chip. */}
-                  {phoneValid ? (
-                    <View className="rounded-pill bg-primary-50 px-[10px] py-[3px]">
-                      <Text className="text-[11px] font-bold leading-[14px] text-primary-700">
-                        {formatE164(normalized)}
-                      </Text>
-                    </View>
-                  ) : null}
-                </View>
-              </BoardField>
-              {/* Live inline feedback — don't wait for submit to say the number is off. */}
-              {whatsapp.trim() && !phoneValid ? (
-                <Text className="pt-sm text-[12.5px] leading-[18px] text-destructive">
-                  {s.invalidWhatsapp}
-                </Text>
-              ) : (
-                <Text className="pt-sm text-[12.5px] leading-[18px] text-muted-foreground">
-                  {s.whatsappHint}
-                </Text>
-              )}
-            </ScrollView>
-
-            <View className="px-2xl pb-md">
-              <ChunkyButton
-                label={busy ? s.linking : s.submit}
-                onPress={onSubmit}
-                loading={busy}
-              />
-              <Text className="pt-[14px] text-center text-[12.5px] leading-4 text-muted-foreground">
-                {s.footer}
-              </Text>
-            </View>
+      <SafeAreaView edges={["top", "bottom", "left", "right"]} className="flex-1">
+        <View className="w-full max-w-[480px] flex-1 self-center">
+          <View className="px-lg pt-sm">
+            <Pressable onPress={() => navigation.goBack()} hitSlop={10} accessibilityRole="button" accessibilityLabel="Go back">
+              <ChevronLeft size={26} color="#1A1A1A" />
+            </Pressable>
           </View>
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+
+          <KeyboardAwareScrollView
+            contentContainerClassName="grow px-2xl pb-lg"
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <Text
+              className="pt-md text-[26px] font-bold leading-[32px] text-foreground"
+              style={{ letterSpacing: -0.39 }}
+            >
+              {s.title}
+            </Text>
+            <Text className="pt-[10px] text-[15px] leading-6 text-muted-foreground">{s.body}</Text>
+
+            <BoardField label={s.emailLabel} style={{ paddingTop: 20 }}>
+              <TextInput
+                className={inputClass}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+                autoCorrect={false}
+                placeholder={s.emailPlaceholder}
+                placeholderTextColor="#A8AEB8"
+                value={email}
+                onChangeText={setEmail}
+                returnKeyType="next"
+              />
+            </BoardField>
+
+            <BoardField label={s.whatsappLabel} style={{ paddingTop: 20 }}>
+              <View className="mt-sm flex-row items-center gap-sm rounded-[14px] bg-white px-lg">
+                <TextInput
+                  className="flex-1 py-[14px] text-[15px] leading-[18px] text-foreground font-regular"
+                  keyboardType="phone-pad"
+                  placeholder={s.whatsappPlaceholder}
+                  placeholderTextColor="#A8AEB8"
+                  value={whatsapp}
+                  onChangeText={setWhatsapp}
+                />
+                {/* Live normalization pill — the board's "+234 803 123 4567" chip. */}
+                {phoneValid ? (
+                  <View className="rounded-pill bg-primary-50 px-[10px] py-[3px]">
+                    <Text className="text-[11px] font-bold leading-[14px] text-primary-700">
+                      {formatE164(normalized)}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+            </BoardField>
+            {/* Live inline feedback — don't wait for submit to say the number is off. */}
+            {whatsapp.trim() && !phoneValid ? (
+              <Text className="pt-sm text-[12.5px] leading-[18px] text-destructive">
+                {s.invalidWhatsapp}
+              </Text>
+            ) : null}
+          </KeyboardAwareScrollView>
+
+          <View className="px-2xl pb-md">
+            <ChunkyButton
+              label={busy ? s.linking : s.submit}
+              onPress={onSubmit}
+              loading={busy}
+            />
+            <Text className="pt-[14px] text-center text-[12.5px] leading-4 text-muted-foreground">
+              {s.footer}
+            </Text>
+          </View>
+        </View>
+      </SafeAreaView>
     </View>
   );
 }

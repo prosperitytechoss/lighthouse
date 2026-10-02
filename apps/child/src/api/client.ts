@@ -109,7 +109,7 @@ export type RegisterResponse = {
 export type MeResponse = {
   ok: true;
   device: { id: string; name: string | null; role: string };
-  account: { email: string | null };
+  account: { email: string | null; emailVerified: boolean };
   /** Parent-set per-app capture filter (MONITORED_APPS ids). Pushed to native. */
   monitoredApps: string[];
   /** Parent-set protective-overlay (blocking) on/off. Pushed to the native gate. */
@@ -173,6 +173,8 @@ export const pairingApi = {
   /** Email the parent the 6-digit code that authorizes turning email alerts off. */
   requestSettingsOtp: (deviceToken: string) =>
     postAuthed<{ ok: true }>("/devices/settings/otp", {}, deviceToken),
+  resendConfirmation: (deviceToken: string) =>
+    postAuthed<{ ok: true }>("/devices/confirmation/resend", {}, deviceToken),
   /** This device's last-7-days picture for the kid-facing Weekly screen. */
   weekly: (deviceToken: string) => get<WeeklyResponse>("/devices/weekly", deviceToken),
 };
