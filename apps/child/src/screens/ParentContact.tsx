@@ -91,7 +91,7 @@ export function ParentContact({
     const res = await pairingApi.register(
       e,
       phoneValid ? normalized : undefined,
-      { model: di.model, manufacturer: di.manufacturer, os: `Android ${Platform.Version}` },
+      { model: di.model, manufacturer: di.manufacturer, os: `Android ${Platform.Version}`, ...(di.phoneId ? { phoneId: di.phoneId } : {}) },
       installId,
     );
 

@@ -34,6 +34,7 @@ export function findReplaced(rows: ReinstallRow[]): Map<string, string> {
       let by: ReinstallRow | undefined;
       for (const r of group) {
         if (r.id === old.id || started(r) <= lastAlive(old)) continue;
+        if (old.deviceInfo?.phoneId && r.deviceInfo?.phoneId && old.deviceInfo.phoneId !== r.deviceInfo.phoneId) continue;
         if (!by || started(r) > started(by)) by = r;
       }
       if (by) replaced.set(old.id, by.id);

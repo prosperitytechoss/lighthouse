@@ -143,6 +143,7 @@ class LighthousePermissionsModule(private val ctx: ReactApplicationContext) :
     map.putString("manufacturer", Build.MANUFACTURER ?: "")
     map.putString("brand", Build.BRAND ?: "")
     map.putString("model", Build.MODEL ?: "")
+    map.putString("phoneId", PhoneId.get(ctx) ?: "")
     promise.resolve(map)
   }
 

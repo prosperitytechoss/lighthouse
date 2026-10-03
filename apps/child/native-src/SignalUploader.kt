@@ -47,6 +47,7 @@ object SignalUploader {
         .put("accessibilityEnabled", perm.accessibilityEnabled)
         .put("notificationAccessEnabled", perm.notificationAccessEnabled)
         .put("batteryOptimizationExempt", perm.batteryOptimizationExempt)
+      PhoneId.get(ctx)?.let { obj.put("phoneId", it) }
       val vs = VisionEngine.status()
       obj.put("visionSupported", vs.supported)
       if (vs.running) {

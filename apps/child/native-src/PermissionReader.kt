@@ -5,6 +5,7 @@ import android.os.BatteryManager
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
+import java.security.MessageDigest
 
 /**
  * Reads the live capture-permission state so the heartbeat can report it. Same
@@ -44,5 +45,14 @@ object PermissionReader {
     val charging = bm.isCharging
 
     return PermissionState(accessibility, notificationAccess, batteryExempt, level, charging)
+  }
+}
+
+object PhoneId {
+  fun get(ctx: Context): String? {
+    val raw = Settings.Secure.getString(ctx.contentResolver, Settings.Secure.ANDROID_ID)
+    if (raw.isNullOrBlank()) return null
+    val digest = MessageDigest.getInstance("SHA-256").digest("lighthouse:$raw".toByteArray())
+    return digest.joinToString("") { "%02x".format(it) }
   }
 }

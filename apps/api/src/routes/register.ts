@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { Router } from "express";
 import { z } from "zod";
 
@@ -32,6 +32,7 @@ const RegisterBody = z.object({
       model: z.string().max(120).optional(),
       manufacturer: z.string().max(120).optional(),
       os: z.string().max(120).optional(),
+      phoneId: z.string().regex(/^[0-9a-f]{64}$/).optional(),
     })
     .optional(),
   installId: z.string().min(8).max(200).optional(),
@@ -76,15 +77,12 @@ registerRouter.post(
     if (!account) return res.status(500).json({ ok: false, error: "Could not create account." });
 
     // Create-or-update this child device (dedupe on installId within the account).
-    const existing = body.installId
-      ? (
-          await db
-            .select()
-            .from(devices)
-            .where(and(eq(devices.accountId, account.id), eq(devices.installId, body.installId)))
-            .limit(1)
-        )[0]
-      : undefined;
+    const phoneId = body.deviceInfo?.phoneId;
+    const findBy = async (match: ReturnType<typeof eq>) =>
+      (await db.select().from(devices).where(and(eq(devices.accountId, account.id), match)).limit(1))[0];
+    const existing =
+      (phoneId ? await findBy(eq(sql`${devices.deviceInfo}->>'phoneId'`, phoneId)) : undefined) ??
+      (body.installId ? await findBy(eq(devices.installId, body.installId)) : undefined);
 
     let device;
     if (existing) {
@@ -93,6 +91,7 @@ registerRouter.post(
         .update(devices)
         .set({
           role: "child",
+          installId: body.installId ?? existing.installId,
           name: body.deviceName ?? existing.name ?? defaultDeviceName(body.deviceInfo, 1),
           deviceInfo: body.deviceInfo ?? {},
           pairedAt: new Date(),

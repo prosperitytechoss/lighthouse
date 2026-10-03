@@ -154,7 +154,7 @@ export const pairingApi = {
   register: (
     email: string,
     whatsapp: string | undefined,
-    deviceInfo: { model?: string; manufacturer?: string; os?: string },
+    deviceInfo: { model?: string; manufacturer?: string; os?: string; phoneId?: string },
     installId: string,
     deviceName?: string,
   ) =>

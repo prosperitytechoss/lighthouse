@@ -1,5 +1,5 @@
 import { MONITORED_APP_IDS } from "@lighthouse/types";
-import { and, eq, gte } from "drizzle-orm";
+import { and, eq, gte, sql } from "drizzle-orm";
 import { Router } from "express";
 import { z } from "zod";
 
@@ -172,6 +172,7 @@ const HeartbeatBody = z.object({
   accessibilityEnabled: z.boolean().optional(),
   notificationAccessEnabled: z.boolean().optional(),
   batteryOptimizationExempt: z.boolean().optional(),
+  phoneId: z.string().regex(/^[0-9a-f]{64}$/).optional(),
   batteryLevel: z.number().int().min(0).max(100).optional(),
   batteryCharging: z.boolean().optional(),
   visionSupported: z.boolean().optional(),
@@ -195,6 +196,9 @@ devicesRouter.post(
       .set({
         lastSeenAt: new Date(),
         silenceAlertedAt: null,
+        ...(perm.phoneId
+          ? { deviceInfo: sql`coalesce(${devices.deviceInfo}, '{}'::jsonb) || jsonb_build_object('phoneId', ${perm.phoneId}::text)` }
+          : {}),
         ...(perm.accessibilityEnabled !== undefined
           ? { accessibilityEnabled: perm.accessibilityEnabled }
           : {}),

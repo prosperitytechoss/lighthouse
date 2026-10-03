@@ -62,7 +62,7 @@ export const pushTokens = pgTable("push_tokens", {
  * A device linked to an account. Everything is account-scoped so signal access
  * control falls out naturally when signals land (Phase 5+).
  */
-export type DeviceInfo = { model?: string; manufacturer?: string; os?: string };
+export type DeviceInfo = { model?: string; manufacturer?: string; os?: string; phoneId?: string };
 
 export const devices = pgTable("devices", {
   id: uuid("id").primaryKey().defaultRandom(),

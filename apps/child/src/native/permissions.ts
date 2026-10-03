@@ -11,7 +11,7 @@ export type NativeKind =
   | "backgroundLocation";
 export type SettingsTarget = NativeKind | "appInfo" | "location" | "settings";
 
-export type DeviceInfo = { manufacturer: string; brand: string; model: string };
+export type DeviceInfo = { manufacturer: string; brand: string; model: string; phoneId?: string };
 
 type Bridge = {
   isGranted(kind: NativeKind): Promise<boolean>;
