@@ -135,6 +135,8 @@ input[type="checkbox"] { width: auto; accent-color: var(--cyan); }
 .badge.ai { background: var(--review-bg); color: var(--review); }
 
 /* lists */
+.parents { display: flex; flex-direction: column; gap: 20px; }
+.parent-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin: 0 0 8px 2px; overflow-wrap: anywhere; }
 .list { border: 1px solid var(--border); border-radius: var(--radius); background: var(--white); }
 .list > .term { padding: 12px 16px; }
 .term { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }

@@ -76,16 +76,22 @@ export function DeviceList({ devices, open, onOpen, emptyText }: { devices: Over
               <div style={{ fontSize: 15, fontWeight: 600 }}>
                 {d.name}{d.assignee && <span className="muted" style={{ fontWeight: 400 }}>, {d.assignee}</span>}
               </div>
-              <div className="muted small">{d.account ?? "no account"}, {d.signals} signals, {fmtSeen(d.lastSeenAt)}</div>
-              {line && <div style={{ fontSize: 13, marginTop: 4, color: "var(--ink-2)" }}>{line}</div>}
+              <div className="muted small">{d.replacedBy ? "Old install. This phone was set up again" : `${d.signals} signals`}, {fmtSeen(d.lastSeenAt)}</div>
+              {line && !d.replacedBy && <div style={{ fontSize: 13, marginTop: 4, color: "var(--ink-2)" }}>{line}</div>}
             </div>
-            {d.batteryLevel != null && <span className="badge lang">Battery {d.batteryLevel}%</span>}
-            {d.visionTier ? (
-              <span className="badge lang">Vision {d.visionTier}, {d.visionFrames ?? 0} frames</span>
-            ) : d.visionSupported === false ? (
-              <span className="badge lang">No vision</span>
-            ) : null}
-            <span className={`badge ${HEALTH_CLASS[d.health]}`}>{d.lastSeenAt ? HEALTH_LABEL[d.health] : "Never online"}</span>
+            {d.replacedBy ? (
+              <span className="badge lang">Reinstalled</span>
+            ) : (
+              <>
+                {d.batteryLevel != null && <span className="badge lang">Battery {d.batteryLevel}%</span>}
+                {d.visionTier ? (
+                  <span className="badge lang">Vision {d.visionTier}, {d.visionFrames ?? 0} frames</span>
+                ) : d.visionSupported === false ? (
+                  <span className="badge lang">No vision</span>
+                ) : null}
+                <span className={`badge ${HEALTH_CLASS[d.health]}`}>{d.lastSeenAt ? HEALTH_LABEL[d.health] : "Never online"}</span>
+              </>
+            )}
             <span className="muted small" aria-hidden>{isOpen ? "Hide" : "Open"}</span>
             {isOpen && (
               <div className="detail" onClick={(e) => e.stopPropagation()}>
@@ -94,6 +100,32 @@ export function DeviceList({ devices, open, onOpen, emptyText }: { devices: Over
               </div>
             )}
           </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export function ParentList({ devices, open, onOpen, emptyText }: { devices: OverviewDevice[]; open: string | null; onOpen: (id: string | null) => void; emptyText: string }) {
+  if (devices.length === 0) return <Empty>{emptyText}</Empty>;
+  const groups = new Map<string, OverviewDevice[]>();
+  for (const d of devices) {
+    const key = d.account ?? "No parent email";
+    groups.set(key, [...(groups.get(key) ?? []), d]);
+  }
+  return (
+    <div className="parents">
+      {[...groups].map(([email, ds]) => {
+        const current = ds.filter((d) => !d.replacedBy);
+        const old = ds.length - current.length;
+        return (
+          <section key={email}>
+            <div className="parent-head">
+              <strong>{email}</strong>
+              <span className="muted small">{current.length} phone{current.length === 1 ? "" : "s"}{old ? `, ${old} old install${old === 1 ? "" : "s"}` : ""}</span>
+            </div>
+            <DeviceList devices={[...current, ...ds.filter((d) => d.replacedBy)]} open={open} onOpen={onOpen} emptyText={emptyText} />
+          </section>
         );
       })}
     </div>

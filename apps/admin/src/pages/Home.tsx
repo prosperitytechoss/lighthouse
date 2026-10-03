@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import * as api from "../api";
 import { type DatasetStats, type JobsInfo, type LexStatus, type Overview } from "../api";
 import { BarChart, Bars, CHANNEL_LABEL } from "../Charts";
-import { DeviceList, StatusHelp, fmtAgo } from "../DeviceList";
+import { ParentList, StatusHelp, fmtAgo } from "../DeviceList";
 import { JOB_LABEL, runFailures } from "../Jobs";
 import { type Go } from "../routes";
 import { Page, Spinner, errMsg } from "../ui";
@@ -19,7 +19,7 @@ function statusLine(ov: Overview | null, status: LexStatus | null, attention: nu
   }
   parts.push(attention === 0 ? "Nothing needs attention." : `${attention} thing${attention === 1 ? "" : "s"} need${attention === 1 ? "s" : ""} attention.`);
   if (status && ov) {
-    const known = ov.devices.filter((d) => d.engineStats?.lexiconVersion != null);
+    const known = ov.devices.filter((d) => !d.replacedBy && d.engineStats?.lexiconVersion != null);
     const behind = known.filter((d) => Number(d.engineStats!.lexiconVersion) < status.version).length;
     if (status.pendingChanges) parts.push(`Word list v${status.version} is out, with changes waiting to publish.`);
     else if (behind > 0) parts.push(`Word list v${status.version}. ${behind} phone${behind === 1 ? " is" : "s are"} still on an older list.`);
@@ -55,6 +55,7 @@ export function Home({ go, status, statusError }: { go: Go; status: LexStatus | 
   const items: Item[] = [];
   let neverCheckedIn = 0;
   for (const d of ov?.devices ?? []) {
+    if (d.replacedBy) continue;
     if (d.health === "not_reporting" && !d.lastSeenAt) neverCheckedIn++;
     if (d.health === "not_reporting" && d.lastSeenAt) items.push({ tone: "high", tag: "Offline", text: `${d.name} was last online ${fmtAgo(d.lastSeenAt)}.`, action: "Open phone", go: () => go("phones", d.id) });
     if (d.health === "monitoring_off") items.push({ tone: "review", tag: "Switch off", text: `${d.name} has a monitoring switch turned off on the phone.`, action: "Open phone", go: () => go("phones", d.id) });
@@ -91,6 +92,7 @@ export function Home({ go, status, statusError }: { go: Go; status: LexStatus | 
             <>
               <h2>Signals</h2>
               <div className="metrics">
+                <div className="metric"><div className="val">{ov.stats.parents ?? 0}</div><div className="lbl">Parents</div></div>
                 <div className="metric"><div className="val">{ov.stats.totalDevices}</div><div className="lbl">Phones</div></div>
                 <div className="metric"><div className="val">{ov.stats.reporting}</div><div className="lbl">Reporting now</div></div>
                 <div className="metric"><div className="val">{ov.stats.signals7d}</div><div className="lbl">Signals, last 7 days</div></div>
@@ -103,7 +105,7 @@ export function Home({ go, status, statusError }: { go: Go; status: LexStatus | 
               </div>
 
               <h2>Phones</h2>
-              <DeviceList devices={ov.devices} open={open} onOpen={setOpen} emptyText="No phones set up yet." />
+              <ParentList devices={ov.devices} open={open} onOpen={setOpen} emptyText="No phones set up yet." />
             </>
           )}
         </>

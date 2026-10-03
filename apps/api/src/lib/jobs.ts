@@ -9,6 +9,7 @@ import { emailService } from "../services/email";
 import { isJobRunning, lastOkRun, runJob } from "./harvest";
 import { logger } from "./logger";
 import { createQueue, createWorker, readyQueues } from "./queue";
+import { findReplaced } from "./reinstalls";
 
 /**
  * Safety net: a silently-dead monitor is the worst failure mode. If a child
@@ -19,9 +20,10 @@ export async function checkSilentDevices(): Promise<{ flagged: number }> {
   const cutoff = Date.now() - env.SILENCE_HOURS * 60 * 60 * 1000;
   const rows = await db
     .select({
-      deviceId: devices.id,
+      id: devices.id,
       name: devices.name,
       accountId: devices.accountId,
+      deviceInfo: devices.deviceInfo,
       lastSeenAt: devices.lastSeenAt,
       pairedAt: devices.pairedAt,
       createdAt: devices.createdAt,
@@ -38,18 +40,20 @@ export async function checkSilentDevices(): Promise<{ flagged: number }> {
       ),
     );
 
+  const replaced = findReplaced(rows);
   let flagged = 0;
   for (const d of rows) {
     if (d.silenceAlertedAt) continue; // already alerted this episode
+    if (replaced.has(d.id)) continue;
     const last = (d.lastSeenAt ?? d.pairedAt ?? d.createdAt).getTime();
     if (last >= cutoff) continue; // checked in recently — alive
 
     const who = d.name ?? "your child's device";
     await emailService.sendSilenceAlert(d.email, who);
-    await db.update(devices).set({ silenceAlertedAt: new Date() }).where(eq(devices.id, d.deviceId));
+    await db.update(devices).set({ silenceAlertedAt: new Date() }).where(eq(devices.id, d.id));
     flagged += 1;
   }
-  logger.info(`[silence] checked ${rows.length} device(s), flagged ${flagged}`);
+  logger.info(`[silence] checked ${rows.length} device(s), flagged ${flagged}, skipped ${replaced.size} reinstalled`);
   return { flagged };
 }
 

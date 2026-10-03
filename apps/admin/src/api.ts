@@ -79,7 +79,7 @@ export type EvalResult = {
 };
 
 export type Overview = {
-  stats: { totalDevices: number; reporting: number; silenceHours?: number; totalSignals: number; signals7d: number };
+  stats: { totalDevices: number; parents?: number; reinstalled?: number; reporting: number; silenceHours?: number; totalSignals: number; signals7d: number };
   byDay: { date: string; count: number }[];
   byCategory: Record<string, number>;
   byChannel?: Record<string, number>;
@@ -88,6 +88,8 @@ export type Overview = {
     name: string;
     assignee: string | null;
     account: string | null;
+    accountId?: string;
+    replacedBy?: string | null;
     role: string;
     batteryLevel: number | null;
     batteryCharging: boolean | null;

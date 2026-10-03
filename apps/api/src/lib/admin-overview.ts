@@ -4,6 +4,7 @@ import { env } from "../config/env";
 import { db } from "../db/client";
 import { accounts, devices, signals } from "../db/schema";
 
+import { findReplaced } from "./reinstalls";
 import { decryptSignalContent } from "./signal-crypto";
 
 /** Fleet health, mirrors the parent devices logic (silence + tamper). */
@@ -26,9 +27,11 @@ export async function buildOverview() {
   const devs = await db
     .select({
       id: devices.id,
+      accountId: devices.accountId,
       name: devices.name,
       assignee: devices.assignee,
       role: devices.role,
+      deviceInfo: devices.deviceInfo,
       batteryLevel: devices.batteryLevel,
       batteryCharging: devices.batteryCharging,
       lastSeenAt: devices.lastSeenAt,
@@ -40,6 +43,7 @@ export async function buildOverview() {
       visionTier: devices.visionTier,
       visionFrames: devices.visionFrames,
       visionLastFrameAt: devices.visionLastFrameAt,
+      visionIntervalMs: devices.visionIntervalMs,
       engineStats: devices.engineStats,
       email: accounts.email,
     })
@@ -80,11 +84,14 @@ export async function buildOverview() {
     byDay.push({ date: dayLabel(d), count: dayCounts.get(dayKey(d)) ?? 0 });
   }
 
+  const replaced = findReplaced(devs);
   const deviceList = devs.map((d) => ({
     id: d.id,
     name: d.name ?? "(unnamed)",
     assignee: d.assignee,
     account: d.email,
+    accountId: d.accountId,
+    replacedBy: replaced.get(d.id) ?? null,
     role: d.role,
     batteryLevel: d.batteryLevel,
     batteryCharging: d.batteryCharging,
@@ -93,15 +100,19 @@ export async function buildOverview() {
     visionTier: d.visionTier,
     visionFrames: d.visionFrames,
     visionLastFrameAt: d.visionLastFrameAt,
+    visionIntervalMs: d.visionIntervalMs,
     engineStats: (d.engineStats ?? null) as Record<string, string | number | boolean> | null,
     health: health(d),
     signals: perDevice.get(d.id) ?? 0,
   }));
 
+  const current = deviceList.filter((d) => !d.replacedBy);
   return {
     stats: {
-      totalDevices: devs.length,
-      reporting: deviceList.filter((d) => d.health === "active").length,
+      totalDevices: current.length,
+      parents: new Set(current.map((d) => d.accountId)).size,
+      reinstalled: replaced.size,
+      reporting: current.filter((d) => d.health === "active").length,
       silenceHours: env.SILENCE_HOURS,
       totalSignals: sigs.length,
       signals7d,
