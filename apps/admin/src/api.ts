@@ -279,5 +279,6 @@ export type DeviceDetail = {
   alertThreshold: string | null;
   emailAlertsEnabled: boolean | null;
 };
+export const resendConfirmation = (id: string) => req<{ ok: true; alreadyConfirmed?: boolean }>(`/admin/devices/${id}/resend-confirmation`, { method: "POST" });
 export const getDevice = (id: string) => req<{ device: DeviceDetail; events: AdminEvent[] }>(`/admin/devices/${id}`);
 export const listEvents = (limit = 100) => req<{ events: AdminEvent[] }>(`/admin/events?limit=${limit}`);

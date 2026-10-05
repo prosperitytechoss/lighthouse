@@ -15,8 +15,9 @@ import { db } from "../db/client";
 import { accounts, devices } from "../db/schema";
 import { recentEvents } from "../lib/admin-events";
 import { buildOverview } from "../lib/admin-overview";
+import { createConfirmToken } from "../lib/email-confirm";
 import { JOB_NAMES, recentRuns, runJob, type JobName } from "../lib/harvest";
-import { ah, allowRequest, clientIp } from "../lib/http";
+import { ah, allowRequest, clientIp, publicBaseUrl } from "../lib/http";
 import { harvestSchedule } from "../lib/jobs";
 import { logger } from "../lib/logger";
 import { queueStats } from "../lib/queue";
@@ -200,6 +201,29 @@ adminRouter.get(
       return;
     }
     res.json({ device: d, events: await recentEvents(50, id) });
+  }),
+);
+
+adminRouter.post(
+  "/devices/:id/resend-confirmation",
+  requireAdmin,
+  ah(async (req, res) => {
+    const id = z.string().uuid().parse(req.params.id);
+    const [acct] = await db
+      .select({ id: accounts.id, email: accounts.email, emailVerified: accounts.emailVerified })
+      .from(devices)
+      .innerJoin(accounts, eq(devices.accountId, accounts.id))
+      .where(eq(devices.id, id))
+      .limit(1);
+    if (!acct) return res.status(404).json({ ok: false, error: "Device not found" });
+    if (acct.emailVerified) return res.json({ ok: true, alreadyConfirmed: true });
+    if (!(await allowRequest(`admin-resend-confirm:${acct.id}`, 3, 3600))) {
+      return res.status(429).json({ ok: false, error: "Sent 3 times this hour. Try again later." });
+    }
+    const token = await createConfirmToken(acct.id);
+    await emailService.sendSetupConfirmation(acct.email, `${publicBaseUrl(req)}/register/confirm?token=${token}`);
+    logger.info(`[admin] confirmation email resent to ${acct.email} by ${req.adminEmail}`);
+    return res.json({ ok: true });
   }),
 );
 

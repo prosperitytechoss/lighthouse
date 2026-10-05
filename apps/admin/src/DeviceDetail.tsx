@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import * as api from "./api";
 import { type DeviceDetail as Detail } from "./api";
@@ -19,13 +19,38 @@ function Row({ k, v }: { k: string; v: string }) {
   );
 }
 
-function Block({ title, rows }: { title: string; rows: [string, string][] }) {
+function Block({ title, rows, children }: { title: string; rows: [string, string][]; children?: ReactNode }) {
   return (
     <div className="card" style={{ padding: 14 }}>
       <h3 style={{ margin: "0 0 8px" }}>{title}</h3>
       <div className="kv">
         {rows.map(([k, v]) => <Row key={k} k={k} v={v} />)}
       </div>
+      {children}
+    </div>
+  );
+}
+
+function ResendConfirmation({ id }: { id: string }) {
+  const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
+  const [err, setErr] = useState("");
+  const send = async () => {
+    setState("sending");
+    setErr("");
+    try {
+      await api.resendConfirmation(id);
+      setState("sent");
+    } catch (e) {
+      setErr(errMsg(e, "Email did not send"));
+      setState("idle");
+    }
+  };
+  return (
+    <div className="row wrap" style={{ gap: 10, marginTop: 12 }}>
+      <button className="btn sm" disabled={state !== "idle"} onClick={() => void send()}>
+        {state === "sending" ? "Sending" : state === "sent" ? "Sent" : "Resend confirmation email"}
+      </button>
+      {err && <span className="small" style={{ color: "var(--high)" }}>{err}</span>}
     </div>
   );
 }
@@ -59,7 +84,9 @@ export function DeviceDetail({ id }: { id: string }) {
           ["Alert level", THRESHOLD[d.alertThreshold ?? ""] ?? d.alertThreshold ?? "?"],
           ["Pause screen on risk", onoff(d.overlayEnabled)],
           ["Watched apps", apps],
-        ]} />
+        ]}>
+          {d.emailVerified === false && <ResendConfirmation id={d.id} />}
+        </Block>
       </div>
       <div className="cols">
         <Block title="Monitoring switches on the phone" rows={[
