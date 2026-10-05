@@ -182,11 +182,39 @@ const HeartbeatBody = z.object({
   visionLastFrameAt: z.string().datetime({ offset: true }).nullable().optional(),
   engine: z.record(z.union([z.string().max(64), z.number(), z.boolean()])).optional(),
 });
+const STUCK_AFTER_MS = 10 * 60 * 1000;
+
+function screenReaderNotStarted(perm: z.infer<typeof HeartbeatBody>): boolean {
+  return (
+    perm.accessibilityEnabled === true &&
+    perm.visionSupported === true &&
+    perm.visionTier === undefined &&
+    perm.engine?.visionEnabled === true &&
+    perm.engine?.ocrReady === false &&
+    perm.engine?.imageReady === false &&
+    perm.engine?.a11ySetting === undefined
+  );
+}
+
 devicesRouter.post(
   "/heartbeat",
   requireDevice,
   ah(async (req, res) => {
     const perm = HeartbeatBody.parse(req.body ?? {});
+    const [prev] = await db
+      .select({ engineStats: devices.engineStats })
+      .from(devices)
+      .where(eq(devices.id, req.deviceId!))
+      .limit(1);
+    const prevStats = (prev?.engineStats ?? {}) as Record<string, unknown>;
+    const notStartedSince = screenReaderNotStarted(perm)
+      ? typeof prevStats.notStartedSince === "string" ? prevStats.notStartedSince : new Date().toISOString()
+      : undefined;
+    const stuck =
+      perm.engine?.a11ySetting === true
+        ? perm.accessibilityEnabled === false
+        : !!notStartedSince && Date.now() - Date.parse(notStartedSince) > STUCK_AFTER_MS;
+    if (stuck) perm.accessibilityEnabled = false;
     // A critical capture permission OFF while still heartbeating = tamper.
     const captureOff =
       perm.accessibilityEnabled === false || perm.notificationAccessEnabled === false;
@@ -214,7 +242,7 @@ devicesRouter.post(
         ...(perm.visionTier !== undefined ? { visionTier: perm.visionTier } : {}),
         ...(perm.visionIntervalMs !== undefined ? { visionIntervalMs: perm.visionIntervalMs } : {}),
         ...(perm.visionFrames !== undefined ? { visionFrames: perm.visionFrames } : {}),
-        ...(perm.engine ? { engineStats: { ...perm.engine, reportedAt: new Date().toISOString() } } : {}),
+        ...(perm.engine ? { engineStats: { ...perm.engine, screenReaderStuck: stuck, ...(notStartedSince ? { notStartedSince } : {}), reportedAt: new Date().toISOString() } } : {}),
         ...(perm.visionLastFrameAt !== undefined
           ? { visionLastFrameAt: perm.visionLastFrameAt ? new Date(perm.visionLastFrameAt) : null }
           : {}),

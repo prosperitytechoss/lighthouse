@@ -23,6 +23,7 @@ import {
   getDeviceInfo,
   hasBackgroundLocation,
   hasFineLocation,
+  accessibilityStuck,
   isGranted,
   nativeBridgeReady,
   openAutostart,
@@ -95,6 +96,13 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
   const [autostartMissing, setAutostartMissing] = useState(false);
 
   const step = STEPS[index]!;
+  const [stuck, setStuck] = useState(false);
+  const stepNative = step.type === "grant" ? step.native : null;
+
+  useEffect(() => {
+    if (stepNative !== "accessibility") return setStuck(false);
+    accessibilityStuck().then(setStuck);
+  }, [stepNative]);
 
   // Learn the OEM once, so the autostart step can pull device-specific steps.
   useEffect(() => {
@@ -129,8 +137,12 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
     setBusy(true);
     const ok = await check();
     setBusy(false);
-    if (ok) advance();
-    else setError(p.notYetError);
+    if (ok) return advance();
+    if (stepNative === "accessibility" && (await accessibilityStuck())) {
+      setStuck(true);
+      return setError(ps.accessibility.stuck);
+    }
+    setError(p.notYetError);
   };
 
   // Open the system settings page for a "grant" permission.
@@ -205,6 +217,9 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
                   <StepRows rows={step.do} />
                 )}
 
+                {stuck && !error ? (
+                  <Text className="pt-lg text-[13px] leading-[18px] text-[#B45309]">{ps.accessibility.stuck}</Text>
+                ) : null}
                 {error ? (
                   <Text className="pt-lg text-[13px] leading-[18px] text-destructive">{error}</Text>
                 ) : null}

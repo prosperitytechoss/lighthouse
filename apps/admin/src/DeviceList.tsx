@@ -36,7 +36,8 @@ export function enginePlain(d: OverviewDevice): string | null {
   const s = d.engineStats;
   if (!s) return null;
   const n = (k: string) => (s[k] == null ? 0 : Number(s[k]));
-  if (!d.visionTier) return "Vision is off on this phone.";
+  if (s.screenReaderStuck === true) return "Not watching. Screen reading shows on, but the phone stopped it.";
+  if (!d.visionTier) return s.visionEnabled === true ? "Not watching the screen. Screen checks are on but never started." : "Vision is off on this phone.";
   const ok = s.ocrReady === true && s.imageReady === true && s.textModelReady === true;
   const every = d.visionIntervalMs ? Math.round(d.visionIntervalMs / 1000) : 60;
   return `Looks at the screen every ${every} s in watched apps. ${n("framesChecked")} checks so far, ${n("textHits") + n("imageHits")} flagged. ${ok ? "All three models loaded." : "A model is missing."}`;

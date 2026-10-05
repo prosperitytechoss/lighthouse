@@ -63,7 +63,7 @@ export function DeviceDetail({ id }: { id: string }) {
       </div>
       <div className="cols">
         <Block title="Monitoring switches on the phone" rows={[
-          ["Read screen (accessibility)", onoff(d.accessibilityEnabled)],
+          ["Read screen (accessibility)", s.screenReaderStuck === true ? "on in settings, but the phone stopped it" : onoff(d.accessibilityEnabled)],
           ["Read notifications", onoff(d.notificationAccessEnabled)],
           ["Battery saver exemption", onoff(d.batteryOptimizationExempt)],
         ]} />

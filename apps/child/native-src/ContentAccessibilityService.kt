@@ -77,6 +77,7 @@ class ContentAccessibilityService : AccessibilityService() {
 
   override fun onServiceConnected() {
     super.onServiceConnected()
+    connected = true
     val ctx = applicationContext
     try {
       OverlayManager.setEnabled(BackgroundConfig.blockingEnabled(ctx))
@@ -101,16 +102,20 @@ class ContentAccessibilityService : AccessibilityService() {
   }
 
   override fun onUnbind(intent: android.content.Intent?): Boolean {
+    connected = false
     VisionEngine.stop()
     return super.onUnbind(intent)
   }
 
   override fun onDestroy() {
+    connected = false
     VisionEngine.stop()
     super.onDestroy()
   }
 
   companion object {
+    @Volatile var connected = false
+
     // Lower debounce → the protective overlay reacts quickly (was 1500ms, felt slow).
     private const val DEBOUNCE_MS = 450L
     private const val MAX_CHARS = 2000

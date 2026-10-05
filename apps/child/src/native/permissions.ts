@@ -15,6 +15,7 @@ export type DeviceInfo = { manufacturer: string; brand: string; model: string; p
 
 type Bridge = {
   isGranted(kind: NativeKind): Promise<boolean>;
+  accessibilityStuck?(): Promise<boolean>;
   openSettings(kind: SettingsTarget): Promise<boolean> | void;
   openAutostart(): Promise<boolean>;
   deviceInfo(): Promise<DeviceInfo>;
@@ -30,6 +31,14 @@ export async function isGranted(kind: NativeKind): Promise<boolean> {
   if (!LH) return false;
   try {
     return !!(await LH.isGranted(kind));
+  } catch {
+    return false;
+  }
+}
+
+export async function accessibilityStuck(): Promise<boolean> {
+  try {
+    return !!(await LH?.accessibilityStuck?.());
   } catch {
     return false;
   }

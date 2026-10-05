@@ -20,25 +20,24 @@ const lastAlive = (r: ReinstallRow) =>
 
 export function findReplaced(rows: ReinstallRow[]): Map<string, string> {
   const groups = new Map<string, ReinstallRow[]>();
+  const add = (k: string, r: ReinstallRow) => groups.set(k, [...(groups.get(k) ?? []), r]);
   for (const r of rows) {
     const key = modelKey(r.deviceInfo);
-    if (!key) continue;
-    const k = `${r.accountId}|${key}`;
-    groups.set(k, [...(groups.get(k) ?? []), r]);
+    if (key) add(`${r.accountId}|${key}`, r);
+    if (r.deviceInfo?.phoneId) add(`phone|${r.deviceInfo.phoneId}`, r);
   }
 
-  const replaced = new Map<string, string>();
+  const best = new Map<string, ReinstallRow>();
   for (const group of groups.values()) {
     if (group.length < 2) continue;
     for (const old of group) {
-      let by: ReinstallRow | undefined;
       for (const r of group) {
         if (r.id === old.id || started(r) <= lastAlive(old)) continue;
         if (old.deviceInfo?.phoneId && r.deviceInfo?.phoneId && old.deviceInfo.phoneId !== r.deviceInfo.phoneId) continue;
-        if (!by || started(r) > started(by)) by = r;
+        const by = best.get(old.id);
+        if (!by || started(r) > started(by)) best.set(old.id, r);
       }
-      if (by) replaced.set(old.id, by.id);
     }
   }
-  return replaced;
+  return new Map([...best].map(([id, r]) => [id, r.id]));
 }

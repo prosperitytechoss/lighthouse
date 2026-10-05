@@ -68,6 +68,7 @@ object SignalUploader {
           .put("imageModel", NsfwClassifier.NAME)
           .put("imageReady", vs.imageReady)
           .put("visionEnabled", vs.enabled)
+          .put("a11ySetting", AccessibilityState.settingOn(ctx))
           .put("framesChecked", vs.framesChecked)
           .put("framesSkipped", vs.framesSkipped)
           .put("textHits", vs.textHits)

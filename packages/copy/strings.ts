@@ -679,6 +679,7 @@ export const strings = {
         accessibility: {
           title: "Accessibility",
           bubble: "Lighthouse needs permission to read words shown in apps on this phone.",
+          stuck: "It shows as on, but the phone stopped it. Turn Lighthouse off, then on again.",
           // Prominent disclosure for the Accessibility Service (Google Play User Data
           // policy): stated in-context, before the permission is enabled.
           note: "Lighthouse uses Android's Accessibility Service to read on screen text and take a quick look at the screen every few seconds in the apps it watches, on this phone only. Words and pictures are checked here, then thrown away. Never saved, never sent. Your parent only ever sees a safety category.",

@@ -3,6 +3,8 @@ package fund.fastforward.lighthouse.child
 import android.content.Context
 import android.os.BatteryManager
 import android.os.PowerManager
+import android.os.Process
+import android.os.SystemClock
 import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
 import java.security.MessageDigest
@@ -26,13 +28,7 @@ object PermissionReader {
   fun read(ctx: Context): PermissionState {
     val pkg = ctx.packageName
 
-    val accessibility = run {
-      val flat = Settings.Secure.getString(
-        ctx.contentResolver,
-        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-      ) ?: ""
-      flat.split(':').any { it.contains(pkg) && it.contains("ContentAccessibilityService") }
-    }
+    val accessibility = AccessibilityState.running(ctx)
 
     val notificationAccess = NotificationManagerCompat.getEnabledListenerPackages(ctx).contains(pkg)
 
@@ -55,4 +51,21 @@ object PhoneId {
     val digest = MessageDigest.getInstance("SHA-256").digest("lighthouse:$raw".toByteArray())
     return digest.joinToString("") { "%02x".format(it) }
   }
+}
+
+object AccessibilityState {
+  private const val BIND_GRACE_MS = 15_000L
+
+  fun settingOn(ctx: Context): Boolean {
+    val flat = Settings.Secure.getString(ctx.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
+    return flat.split(':').any { it.contains(ctx.packageName) && it.contains("ContentAccessibilityService") }
+  }
+
+  fun running(ctx: Context): Boolean {
+    if (!settingOn(ctx)) return false
+    if (ContentAccessibilityService.connected) return true
+    return SystemClock.elapsedRealtime() - Process.getStartElapsedRealtime() < BIND_GRACE_MS
+  }
+
+  fun stuck(ctx: Context): Boolean = settingOn(ctx) && !running(ctx)
 }

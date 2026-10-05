@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import { env, isProd } from "../config/env";
 import { db } from "../db/client";
@@ -29,20 +29,17 @@ export async function checkSilentDevices(): Promise<{ flagged: number }> {
       createdAt: devices.createdAt,
       silenceAlertedAt: devices.silenceAlertedAt,
       email: accounts.email,
+      emailVerified: accounts.emailVerified,
+      emailAlertsEnabled: accounts.emailAlertsEnabled,
     })
     .from(devices)
     .innerJoin(accounts, eq(devices.accountId, accounts.id))
-    .where(
-      and(
-        eq(devices.role, "child"),
-        eq(accounts.emailVerified, true),
-        eq(accounts.emailAlertsEnabled, true),
-      ),
-    );
+    .where(eq(devices.role, "child"));
 
   const replaced = findReplaced(rows);
   let flagged = 0;
   for (const d of rows) {
+    if (!d.emailVerified || !d.emailAlertsEnabled) continue;
     if (d.silenceAlertedAt) continue; // already alerted this episode
     if (replaced.has(d.id)) continue;
     const last = (d.lastSeenAt ?? d.pairedAt ?? d.createdAt).getTime();

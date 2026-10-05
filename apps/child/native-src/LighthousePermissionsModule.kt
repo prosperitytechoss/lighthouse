@@ -40,17 +40,16 @@ class LighthousePermissionsModule(private val ctx: ReactApplicationContext) :
     }
   }
 
+  @ReactMethod
+  fun accessibilityStuck(promise: Promise) {
+    promise.resolve(AccessibilityState.stuck(ctx))
+  }
+
   private fun check(kind: String): Boolean = when (kind) {
     "notificationListener" ->
       NotificationManagerCompat.getEnabledListenerPackages(ctx).contains(pkg)
 
-    "accessibility" -> {
-      val flat = Settings.Secure.getString(
-        ctx.contentResolver,
-        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-      ) ?: ""
-      flat.split(':').any { it.contains(pkg) && it.contains("ContentAccessibilityService") }
-    }
+    "accessibility" -> AccessibilityState.running(ctx)
 
     "usageAccess" -> {
       val ops = ctx.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
