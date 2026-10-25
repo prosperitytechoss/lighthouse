@@ -15,15 +15,15 @@ import java.util.concurrent.ConcurrentLinkedQueue
  */
 object CaptureBuffer {
   private const val MAX = 500
-  data class Item(val pkg: String, val text: String, val channel: String)
+  data class Item(val pkg: String, val text: String, val channel: String, val paused: Boolean = false)
 
   private val queue = ConcurrentLinkedQueue<Item>()
 
   fun isMonitored(pkg: String): Boolean = LighthouseRegistry.idForPackage(pkg) != null
 
-  fun add(pkg: String, text: String, channel: String = "text") {
+  fun add(pkg: String, text: String, channel: String = "text", paused: Boolean = false) {
     if (text.isBlank() || !isMonitored(pkg)) return
-    queue.add(Item(pkg, text, channel))
+    queue.add(Item(pkg, text, channel, paused))
     while (queue.size > MAX) queue.poll()
   }
 
@@ -34,5 +34,20 @@ object CaptureBuffer {
       out.add(item)
     }
     return out
+  }
+}
+
+object SignalDedupe {
+  private const val WINDOW_MS = 10 * 60 * 1000L
+  private val recent = HashMap<String, Long>()
+
+  @Synchronized
+  fun seen(pkg: String, cls: Classification, channel: String): Boolean {
+    val now = System.currentTimeMillis()
+    recent.entries.removeAll { now - it.value > WINDOW_MS }
+    val k = "$pkg|$channel|${cls.category}|${cls.severity}|${cls.matched ?: cls.tier}"
+    if (recent.containsKey(k)) return true
+    recent[k] = now
+    return false
   }
 }

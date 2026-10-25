@@ -774,6 +774,20 @@ export const strings = {
           cta: "Allow battery use",
           search: "Battery",
         },
+        xiaomi: {
+          title: "Xiaomi extra switches",
+          bubble: "Xiaomi phones stop apps on their own. Two more switches keep me working.",
+          note: "Without these, Xiaomi can stop Lighthouse or hide the pause screen.",
+          do: [
+            "Tap Open settings. Lighthouse's Other permissions page opens.",
+            "Open new windows while running in the background. Pick Always allow.",
+            "Show on Lock screen. Pick Always allow.",
+            "Back in recent apps, hold the Lighthouse card and tap the lock.",
+          ],
+          cta: "Open settings",
+          search: "Other permissions",
+          done: "Done",
+        },
         autostart: {
           title: "Keep Lighthouse running",
           bubble: "Lighthouse needs permission to start again after this phone restarts.",

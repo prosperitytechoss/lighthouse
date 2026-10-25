@@ -36,7 +36,7 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "versionCode": 109
+      "versionCode": 114
     },
     "plugins": [
       "expo-dev-client",

@@ -181,6 +181,26 @@ class LighthousePermissionsModule(private val ctx: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun openOtherPermissions(promise: Promise) {
+    val miui = Intent("miui.intent.action.APP_PERM_EDITOR").putExtra("extra_pkgname", pkg).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val attempts = listOf(
+      Intent(miui).setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity"),
+      Intent(miui).setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.AppPermissionsEditorActivity"),
+      miui,
+      Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$pkg")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+    )
+    for ((i, intent) in attempts.withIndex()) {
+      try {
+        ctx.startActivity(intent)
+        promise.resolve(i < attempts.size - 1)
+        return
+      } catch (_: Exception) {
+      }
+    }
+    promise.resolve(false)
+  }
+
+  @ReactMethod
   fun openAutostart(promise: Promise) {
     val keys = listOf(Build.MANUFACTURER.lowercase(), Build.BRAND.lowercase())
     val candidates = keys.flatMap { AUTOSTART_INTENTS[it] ?: emptyList() }

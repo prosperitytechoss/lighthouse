@@ -27,7 +27,7 @@ class ContentAccessibilityService : AccessibilityService() {
     if (ev.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) VisionEngine.onForegroundApp(pkg)
     // Auto-clear the protective overlay once the child leaves the blocked app — so
     // it never lingers over the launcher or another app. No trap.
-    if (OverlayManager.isShown() && pkg != blockedPkg) {
+    if (OverlayManager.isShown() && leftBlockedApp(ev, pkg)) {
       OverlayManager.dismiss(applicationContext)
       blockedPkg = ""
     }
@@ -35,10 +35,27 @@ class ContentAccessibilityService : AccessibilityService() {
 
     // Debounce per package to limit volume + battery.
     val now = System.currentTimeMillis()
-    if (pkg == lastPkg && now - lastAt < DEBOUNCE_MS) return
+    main.removeCallbacks(trailingRead)
+    if (pkg == lastPkg && now - lastAt < DEBOUNCE_MS) {
+      main.postDelayed(trailingRead, DEBOUNCE_MS)
+      return
+    }
     lastPkg = pkg
     lastAt = now
+    readScreen(pkg)
+  }
 
+  private val main = android.os.Handler(android.os.Looper.getMainLooper())
+
+  private val trailingRead = Runnable {
+    val pkg = lastPkg
+    if (pkg.isNotEmpty() && CaptureBuffer.isMonitored(pkg) && rootInActiveWindow?.packageName?.toString() == pkg) {
+      lastAt = System.currentTimeMillis()
+      readScreen(pkg)
+    }
+  }
+
+  private fun readScreen(pkg: String) {
     val root = rootInActiveWindow ?: return
     val sb = StringBuilder()
     collectText(root, sb)
@@ -47,18 +64,35 @@ class ContentAccessibilityService : AccessibilityService() {
       // DEV-ONLY raw-text trace to logcat. BuildConfig.DEBUG is false in release,
       // so this physically cannot ship. Never persisted, never sent.
       if (BuildConfig.DEBUG) Log.d("LH-capture", "$pkg: ${LogScrub.scrub(text)}")
-      CaptureBuffer.add(pkg, text, "text")
-
       // Real-time protective block — brain-agnostic: rides on classify() + the
       // shouldBlock rule, which now follows the PARENT'S SEVERITY THRESHOLD (same as
       // alerts): severe→high, moderate→high+review, all→everything. Gated on the
       // parent's overlay toggle AND the overlay permission.
-      if (OverlayManager.isEnabled() &&
-        LighthouseClassifier.shouldBlock(LighthouseClassifier.classify(text), OverlayManager.threshold())
-      ) {
-        block(pkg)
-      }
+      val cls = LighthouseClassifier.classify(text)
+      val pause = OverlayManager.isEnabled() &&
+        LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()) &&
+        !OverlayManager.isShown() &&
+        PauseMemory.claim(applicationContext, pkg, cls!!, "text")
+      CaptureBuffer.add(pkg, text, "text", pause)
+      if (pause) block(pkg)
     }
+  }
+
+  private val passThroughPkgs: Set<String> by lazy {
+    val ime = (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
+      .enabledInputMethodList.map { it.packageName }
+    setOf("android", "com.android.systemui", "com.miui.securitycenter", "com.miui.powerkeeper", "com.xiaomi.xmsf") + ime
+  }
+
+  private val homePkgs: Set<String> by lazy {
+    val home = android.content.Intent(android.content.Intent.ACTION_MAIN).addCategory(android.content.Intent.CATEGORY_HOME)
+    packageManager.queryIntentActivities(home, 0).map { it.activityInfo.packageName }.toSet()
+  }
+
+  private fun leftBlockedApp(ev: AccessibilityEvent, pkg: String): Boolean {
+    if (ev.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return false
+    if (pkg == blockedPkg || pkg in passThroughPkgs) return false
+    return pkg in homePkgs || packageManager.getLaunchIntentForPackage(pkg) != null
   }
 
   fun block(pkg: String) {
@@ -103,6 +137,7 @@ class ContentAccessibilityService : AccessibilityService() {
 
   override fun onUnbind(intent: android.content.Intent?): Boolean {
     connected = false
+    main.removeCallbacks(trailingRead)
     VisionEngine.stop()
     return super.onUnbind(intent)
   }
@@ -118,6 +153,6 @@ class ContentAccessibilityService : AccessibilityService() {
 
     // Lower debounce → the protective overlay reacts quickly (was 1500ms, felt slow).
     private const val DEBOUNCE_MS = 450L
-    private const val MAX_CHARS = 2000
+    private const val MAX_CHARS = 4000
   }
 }

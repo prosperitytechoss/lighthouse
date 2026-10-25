@@ -100,6 +100,15 @@ export function ChildHome({ navigation }: NativeStackScreenProps<ChildStackParam
   }, [navigation, toast, load]);
 
   const monitoringOn = !!status && status.accessibility && status.notifications;
+  const fixMonitoring = () =>
+    navigation.navigate(
+      "Setup",
+      status && !status.accessibility
+        ? { focus: "accessibility" }
+        : status && !status.notifications
+          ? { focus: "notificationListener" }
+          : undefined,
+    );
   const tiles = calendarWeek(week?.days, "short");
   const quiet = quietDayCount(tiles);
   let todayIndex = -1;
@@ -186,16 +195,7 @@ export function ChildHome({ navigation }: NativeStackScreenProps<ChildStackParam
                       size="sm"
                       label={h.statusFix}
                       style={{ marginTop: 12 }}
-                      onPress={() =>
-                        navigation.navigate(
-                          "Setup",
-                          !status.accessibility
-                            ? { focus: "accessibility" }
-                            : !status.notifications
-                              ? { focus: "notificationListener" }
-                              : undefined,
-                        )
-                      }
+                      onPress={fixMonitoring}
                     />
                   ) : null}
                 </View>
@@ -242,7 +242,7 @@ export function ChildHome({ navigation }: NativeStackScreenProps<ChildStackParam
                 <LinkCard
                   icon={<ScanEye size={22} color="#1CABE2" strokeWidth={2.2} />}
                   label={h.visionCard}
-                  onPress={() => navigation.navigate("Transparency")}
+                  onPress={vision.supported && vision.enabled && !vision.running ? () => navigation.navigate("Setup", { focus: "accessibility" }) : undefined}
                   trailing={
                     <View className="rounded-pill bg-primary-50 px-[10px] py-xs">
                       <Text className="text-[12px] font-bold leading-4 text-primary-700">
@@ -269,7 +269,7 @@ export function ChildHome({ navigation }: NativeStackScreenProps<ChildStackParam
                     )
                   ) : null
                 }
-                onPress={() => navigation.navigate("Transparency")}
+                onPress={monitoringOn ? () => navigation.navigate("Settings") : fixMonitoring}
                 trailing={
                   <View className={`rounded-pill px-[10px] py-xs ${monitoringOn ? "bg-primary-50" : "bg-warning-bg"}`}>
                     <Text className={`text-[12px] font-bold leading-4 ${monitoringOn ? "text-primary-700" : "text-[#B45309]"}`}>
@@ -286,6 +286,7 @@ export function ChildHome({ navigation }: NativeStackScreenProps<ChildStackParam
           </View>
         ) : null}
       </ScrollView>
+      <View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, right: 0, height: insets.top, backgroundColor: BAND }} />
     </Screen>
   );
 }
@@ -303,14 +304,15 @@ function LinkCard({
   icon: React.ReactNode;
   label: string;
   sub?: React.ReactNode;
-  onPress: () => void;
+  onPress?: () => void;
   trailing?: React.ReactNode;
 }) {
   return (
     <Pressable
-      onPressIn={haptics.select}
+      onPressIn={onPress ? haptics.select : undefined}
       onPress={onPress}
-      accessibilityRole="button"
+      disabled={!onPress}
+      accessibilityRole={onPress ? "button" : undefined}
       className="flex-row items-center gap-md rounded-xl bg-white px-lg py-[14px] active:opacity-80"
     >
       {icon}

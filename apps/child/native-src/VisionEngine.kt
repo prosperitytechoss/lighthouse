@@ -234,16 +234,20 @@ object VisionEngine {
     val key = "$app|${cls.category}|$channel"
     val now = System.currentTimeMillis()
     val last = recent[key]
-    if (last == null || now - last > DEDUPE_MS) {
+    val service = serviceRef?.get()
+    val pause = service != null &&
+      OverlayManager.isEnabled() &&
+      LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()) &&
+      !OverlayManager.isShown() &&
+      PauseMemory.claim(service.applicationContext, currentPkg, cls, channel)
+    if (pause || last == null || now - last > DEDUPE_MS) {
       recent[key] = now
-      meta.put("paused", OverlayManager.isEnabled() && LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()))
+      meta.put("paused", pause)
       SignalBuffer.add(SignalUploader.Signal(cls.category, cls.severity, app, SignalUploader.nowIso(), channel, meta))
       if (channel == "ocr") textHits++ else imageHits++
       if (BuildConfig.DEBUG) Log.d("LH-vision", "$channel hit ${cls.category}/${cls.severity} in $app")
     }
-    if (OverlayManager.isEnabled() && LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold())) {
-      serviceRef?.get()?.block(currentPkg)
-    }
+    if (pause) service?.block(currentPkg)
   }
 
   private fun nextInterval(ctx: Context): Long {

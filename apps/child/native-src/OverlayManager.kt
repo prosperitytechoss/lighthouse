@@ -30,7 +30,7 @@ import android.widget.TextView
  *  - Single instance (re-show while up = no-op); the AccessibilityService dismisses
  *    it the moment the child leaves the blocked app.
  *
- * Copy is DRAFT. Built programmatically (no layout XML) to keep
+ * Copy is DRAFT — flag for Pleasant. Built programmatically (no layout XML) to keep
  * it inside the plugin-copied native set.
  */
 object OverlayManager {
@@ -306,5 +306,33 @@ object OverlayManager {
     cardLp.rightMargin = dp(ctx, 24f)
     root.addView(card, cardLp)
     return root
+  }
+}
+
+object PauseMemory {
+  private const val PREFS = "lh_pause_memory"
+  private const val TEXT_QUIET_MS = 24 * 60 * 60 * 1000L
+  private const val IMAGE_QUIET_MS = 10 * 60 * 1000L
+  private const val MAX_KEYS = 300
+
+  private fun key(pkg: String, cls: Classification, channel: String): String {
+    val what = if (channel == "image") "image" else cls.matched ?: cls.tier
+    val digest = java.security.MessageDigest.getInstance("SHA-256").digest("$pkg|${cls.category}|$what".toByteArray())
+    return digest.take(12).joinToString("") { "%02x".format(it) }
+  }
+
+  @Synchronized
+  fun claim(ctx: Context, pkg: String, cls: Classification, channel: String): Boolean {
+    val prefs = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    val now = System.currentTimeMillis()
+    val quiet = if (channel == "image") IMAGE_QUIET_MS else TEXT_QUIET_MS
+    val k = key(pkg, cls, channel)
+    if (now - prefs.getLong(k, 0L) < quiet) return false
+    val edit = prefs.edit().putLong(k, now)
+    val stale = prefs.all.filter { (_, v) -> (v as? Long)?.let { now - it > TEXT_QUIET_MS } ?: true }.keys
+    stale.forEach { edit.remove(it) }
+    if (prefs.all.size - stale.size > MAX_KEYS) prefs.all.entries.sortedBy { it.value as? Long ?: 0L }.take(50).forEach { edit.remove(it.key) }
+    edit.apply()
+    return true
   }
 }

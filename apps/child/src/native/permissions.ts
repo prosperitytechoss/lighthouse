@@ -18,6 +18,7 @@ type Bridge = {
   accessibilityStuck?(): Promise<boolean>;
   openSettings(kind: SettingsTarget): Promise<boolean> | void;
   openAutostart(): Promise<boolean>;
+  openOtherPermissions?(): Promise<boolean>;
   deviceInfo(): Promise<DeviceInfo>;
 };
 
@@ -69,6 +70,16 @@ export async function openAutostart(): Promise<boolean> {
     return false;
   }
 }
+
+export async function openOtherPermissions(): Promise<boolean> {
+  try {
+    return !!(await LH?.openOtherPermissions?.());
+  } catch {
+    return false;
+  }
+}
+
+export const isXiaomiFamily = (d: DeviceInfo | null) => /xiaomi|redmi|poco/i.test(`${d?.manufacturer ?? ""} ${d?.brand ?? ""}`);
 
 /** Build.MANUFACTURER / BRAND / MODEL, for choosing OEM-specific guidance. */
 export async function getDeviceInfo(): Promise<DeviceInfo> {

@@ -74,9 +74,10 @@ class LighthouseMonitorService : Service() {
           for (item in CaptureBuffer.drain()) {
             val app = LighthouseRegistry.idForPackage(item.pkg) ?: continue
             val cls = LighthouseClassifier.classify(item.text) ?: continue
+            if (!item.paused && SignalDedupe.seen(item.pkg, cls, item.channel)) continue
             val meta = LighthouseClassifier.baseMeta(cls)
               .put("chars", item.text.length)
-              .put("paused", OverlayManager.isEnabled() && LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()))
+              .put("paused", item.paused)
             pending.add(SignalUploader.Signal(cls.category, cls.severity, app, SignalUploader.nowIso(), item.channel, meta))
             if (BuildConfig.DEBUG) Log.d("LH-service", "classified ${cls.category}/${cls.severity} from $app via ${item.channel}")
           }

@@ -10,7 +10,7 @@ import {
 } from "@lighthouse/ui";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, View } from "react-native";
 import { Confetti } from "react-native-fast-confetti";
 import Animated, { FadeIn, FadeInDown, useReducedMotion } from "react-native-reanimated";
@@ -26,7 +26,9 @@ import {
   accessibilityStuck,
   isGranted,
   nativeBridgeReady,
+  isXiaomiFamily,
   openAutostart,
+  openOtherPermissions,
   openSettings,
   requestBackgroundLocation,
   requestFineLocation,
@@ -52,6 +54,7 @@ type WizardStep =
   | ({ type: "location" } & Guided)
   | ({ type: "backgroundLocation" } & Guided)
   | ({ type: "autostart" } & AutostartCopy)
+  | ({ type: "xiaomi" } & Guided)
   | { type: "done" };
 
 const STEPS: WizardStep[] = [
@@ -63,11 +66,11 @@ const STEPS: WizardStep[] = [
   { type: "grant", native: "overlay", ...ps.overlay },
   { type: "grant", native: "battery", ...ps.battery },
   { type: "autostart", ...ps.autostart },
+  { type: "xiaomi", ...ps.xiaomi },
   { type: "done" },
 ];
 
-const NUMBERED = new Set(["grant", "location", "backgroundLocation", "autostart"]);
-const TOTAL = STEPS.filter((s) => NUMBERED.has(s.type)).length;
+const NUMBERED = new Set(["grant", "location", "backgroundLocation", "autostart", "xiaomi"]);
 
 /**
  * Sequential permission wizard, boards 27 + 31 to 35: segmented progress, the
@@ -77,6 +80,9 @@ const TOTAL = STEPS.filter((s) => NUMBERED.has(s.type)).length;
  */
 export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackParamList, "Setup">) {
   useFocusedStatusBar("dark");
+  const [device, setDevice] = useState<DeviceInfo | null>(null);
+  const steps = useMemo(() => (isXiaomiFamily(device) ? STEPS : STEPS.filter((s) => s.type !== "xiaomi")), [device]);
+  const total = steps.filter((s) => NUMBERED.has(s.type)).length;
   // Deep-link from the child self-heal prompt: jump straight to the off permission.
   const focus = route.params?.focus;
   const focusIndex = focus
@@ -88,14 +94,13 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
   // Explicit consent gate for the AccessibilityService (Google Play requires an
   // affirmative two-button choice before the permission is requested).
   const [consentOpen, setConsentOpen] = useState(false);
-  const [device, setDevice] = useState<DeviceInfo | null>(null);
   const [dkma, setDkma] = useState<DkmaGuide>(null);
   const [dkmaLoading, setDkmaLoading] = useState(false);
   // This phone has no OEM autostart manager (Samsung, Pixel, …): nothing to set,
   // so we say so instead of dead-ending the parent in generic Settings.
   const [autostartMissing, setAutostartMissing] = useState(false);
 
-  const step = STEPS[index]!;
+  const step = steps[Math.min(index, steps.length - 1)]!;
   const [stuck, setStuck] = useState(false);
   const stepNative = step.type === "grant" ? step.native : null;
 
@@ -123,14 +128,14 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
       alive = false;
     };
   }, [step.type, device]);
-  const stepNo = STEPS.slice(0, index + 1).filter((s) => NUMBERED.has(s.type)).length;
+  const stepNo = steps.slice(0, index + 1).filter((s) => NUMBERED.has(s.type)).length;
   const numbered = NUMBERED.has(step.type);
 
   const advance = () => {
     setError(null);
     setBusy(false);
     setAutostartMissing(false);
-    setIndex((i) => Math.min(i + 1, STEPS.length - 1));
+    setIndex((i) => Math.min(i + 1, steps.length - 1));
   };
 
   const verify = async (check: () => Promise<boolean>) => {
@@ -161,7 +166,7 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
         {/* Segmented progress (boards 27/31/32/33): filled cyan up to here. */}
         {numbered ? (
           <View className="flex-row items-center gap-[6px] pt-sm">
-            {Array.from({ length: TOTAL }).map((_, i) => (
+            {Array.from({ length: total }).map((_, i) => (
               <View
                 key={i}
                 className={`h-2 flex-1 rounded-pill ${i < stepNo ? "bg-primary" : "bg-hairline"}`}
@@ -272,6 +277,19 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
                     }}
                   />
                   <ChunkyButton variant="success" label={p.granted} loading={busy} onPress={() => verify(hasBackgroundLocation)} />
+                </>
+              ) : step.type === "xiaomi" ? (
+                <>
+                  <ChunkyButton
+                    label={step.cta}
+                    onPress={async () => {
+                      setError(null);
+                      if (!nativeBridgeReady) return setError(p.bridgeMissing);
+                      const exact = await openOtherPermissions();
+                      if (!exact) setError(p.openFallback(step.search ?? p.appLabel));
+                    }}
+                  />
+                  <ChunkyButton variant="success" label={ps.xiaomi.done} onPress={advance} />
                 </>
               ) : autostartMissing ? (
                 <>

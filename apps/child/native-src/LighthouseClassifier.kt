@@ -3,7 +3,7 @@ package fund.fastforward.lighthouse.child
 import android.content.Context
 import org.json.JSONObject
 
-data class Classification(val category: String, val severity: String, val tier: String = "keeper", val confidence: Float? = null, val risk: Float? = null, val ms: Long? = null)
+data class Classification(val category: String, val severity: String, val tier: String = "keeper", val confidence: Float? = null, val risk: Float? = null, val ms: Long? = null, val matched: String? = null)
 
 object LighthouseClassifier {
   const val ENGINE = "child-0.6.0"
@@ -14,7 +14,13 @@ object LighthouseClassifier {
 
   fun classify(text: String): Classification? {
     val r = Keeper.predict(text) ?: return null
-    return Classification(r.category, r.severity, "keeper", r.confidence, r.risk, r.ms)
+    return Classification(r.category, r.severity, "keeper", r.confidence, r.risk, r.ms, fingerprint(text))
+  }
+
+  private fun fingerprint(text: String): String {
+    val norm = text.lowercase().replace(Regex("\\s+"), " ").trim()
+    val digest = java.security.MessageDigest.getInstance("SHA-256").digest(norm.toByteArray())
+    return digest.take(8).joinToString("") { "%02x".format(it) }
   }
 
   fun baseMeta(cls: Classification): JSONObject {
