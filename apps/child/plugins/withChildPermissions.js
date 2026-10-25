@@ -192,18 +192,17 @@ function copyNativeSources(projectRoot, platformRoot) {
   fs.mkdirSync(valuesDir, { recursive: true });
   fs.mkdirSync(assetsDir, { recursive: true });
 
-  // Bundled default lexicon (the classifier's offline fallback before its first
-  // sync). It's a GENERATED artifact — regenerate with `npm run db:export-lexicon`
-  // in apps/api so the bundle matches the live published DB lexicon.
-  fs.copyFileSync(
-    path.join(projectRoot, "src/native/lexicon.json"),
-    path.join(assetsDir, "lexicon.json"),
-  );
-
-  for (const model of ["nsfw.onnx", "textmodel.bin"]) {
+  for (const model of ["keeper.onnx", "keeper.spm", "keeper.json"]) {
+    const src = path.join(projectRoot, "models", model);
+    if (!fs.existsSync(src)) throw new Error(`Missing apps/child/models/${model}. Run scripts/fetch-keeper.sh first.`);
+    fs.copyFileSync(src, path.join(assetsDir, model));
+  }
+  for (const model of ["nsfw.onnx"]) {
     const src = path.join(projectRoot, "models", model);
     if (fs.existsSync(src)) fs.copyFileSync(src, path.join(assetsDir, model));
   }
+  for (const stale of ["lexicon.json", "textmodel.bin"]) fs.rmSync(path.join(assetsDir, stale), { force: true });
+  fs.rmSync(path.join(javaDir, "TextModel.kt"), { force: true });
 
   for (const f of [
     "DeviceTier.kt",
@@ -211,7 +210,9 @@ function copyNativeSources(projectRoot, platformRoot) {
     "OcrEngine.kt",
     "NsfwClassifier.kt",
     "SignalBuffer.kt",
-    "TextModel.kt",
+    "Keeper.kt",
+    "KeeperTokenizer.kt",
+    "KeeperUpdater.kt",
     "NotificationCaptureService.kt",
     "ContentAccessibilityService.kt",
     "CaptureBuffer.kt",

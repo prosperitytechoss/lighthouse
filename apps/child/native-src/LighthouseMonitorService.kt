@@ -94,9 +94,7 @@ class LighthouseMonitorService : Service() {
           val now = System.currentTimeMillis()
           if (now - lastHeartbeat > HEARTBEAT_MS) {
             if (SignalUploader.heartbeat(ctx, baseUrl, token, PermissionReader.read(ctx))) lastHeartbeat = now
-            // Same cadence: pull a newer published lexicon if one exists (cheap
-            // version check first). Classifier keeps its cached copy on failure.
-            SignalUploader.syncLexicon(ctx, baseUrl, token)
+            KeeperUpdater.maybeSync(ctx, baseUrl, token)
           }
         }
       } catch (e: Exception) {

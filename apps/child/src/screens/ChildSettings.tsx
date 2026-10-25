@@ -21,7 +21,7 @@ import Svg, { Path } from "react-native-svg";
 
 import { pairingApi } from "../api/client";
 import { useFocusedStatusBar } from "../hooks/useFocusedStatusBar";
-import { setBlockingEnabled, setBlockThreshold, setMonitoredApps, stopCapture } from "../native/capture";
+import { getAppVersion, getKeeperInfo, setBlockingEnabled, setBlockThreshold, setMonitoredApps, stopCapture } from "../native/capture";
 import { clearDeviceToken, getDeviceToken } from "../native/session";
 import type { ChildStackParamList } from "../navigation/RootNavigator";
 
@@ -51,6 +51,13 @@ export function ChildSettings({
   const [enabled, setEnabled] = useState<Set<string>>(new Set(MONITORED_APPS.map((a) => a.id)));
   const [otpOpen, setOtpOpen] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
+  const [keeperVersion, setKeeperVersion] = useState<string | null>(null);
+  const [appVersion, setAppVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    void getKeeperInfo().then((k) => setKeeperVersion(k?.version ?? null));
+    void getAppVersion().then(setAppVersion);
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -218,6 +225,15 @@ export function ChildSettings({
                 ))}
               </View>
               <Text className="pt-sm text-[12.5px] leading-[18px] text-muted-foreground">{s.appsSub}</Text>
+
+              {keeperVersion || appVersion ? (
+                <View className="flex-row items-center justify-between pt-xl">
+                  <Text className="text-[13px] font-bold leading-4 text-foreground">{s.modelLabel}</Text>
+                  <Text className="text-[12.5px] leading-[18px] text-muted-foreground">
+                    {[keeperVersion ? s.modelValue(keeperVersion) : null, appVersion ? s.appVersion(appVersion) : null].filter(Boolean).join("   ")}
+                  </Text>
+                </View>
+              ) : null}
             </ScrollView>
 
             <View className="gap-[10px] px-2xl pb-md pt-sm">

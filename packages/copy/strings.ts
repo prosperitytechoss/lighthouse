@@ -446,7 +446,7 @@ export const strings = {
       },
     },
 
-    // Parent-friendly labels for the 8 canonical risk categories (CategoryName).
+    // Parent-friendly labels for the 13 canonical risk categories (CategoryName).
     categoryLabels: {
       Violence: "Violence",
       "Sexual Content": "Sexual content",
@@ -456,6 +456,11 @@ export const strings = {
       "Hate Speech": "Hate speech",
       Gambling: "Gambling",
       "Graphic Content": "Graphic / disturbing",
+      Bullying: "Bullying",
+      Grooming: "Grooming",
+      "Privacy Threats": "Privacy threats",
+      Scams: "Scams",
+      Sextortion: "Sextortion",
     },
 
     // Weekly email preview: a live preview of the Sunday digest email.
@@ -539,6 +544,9 @@ export const strings = {
       saveError: "Couldn't save. Check the connection and try again.",
       reportBug: "Report a bug",
       disconnect: "Stop email alerts",
+      modelLabel: "Safety model",
+      modelValue: (version: string) => `Keeper ${version}`,
+      appVersion: (version: string) => `App ${version}`,
     },
 
     // OTP gate shown before email alerts can be switched OFF (board 39).

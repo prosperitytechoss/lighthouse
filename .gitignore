@@ -35,3 +35,6 @@ build/
 *-firebase-adminsdk-*.json
 **/serviceAccount*.json
 **/google-service-account*.json
+
+# Keeper model files come from Hugging Face at build time (scripts/fetch-keeper.sh), never git
+apps/child/models/keeper.*

@@ -22,6 +22,11 @@ const KEBAB: Record<string, string> = {
   "Hate Speech": "hate-speech",
   Gambling: "gambling",
   "Graphic Content": "graphic-content",
+  Bullying: "bullying",
+  Grooming: "grooming",
+  "Privacy Threats": "privacy-threats",
+  Scams: "scams",
+  Sextortion: "sextortion",
 };
 
 // category-<name> => { bg, fg } -> bg-category-violence / text-category-violence-fg

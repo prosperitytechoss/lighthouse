@@ -93,6 +93,11 @@ export const category: Record<CategoryName, { bg: string; fg: string }> = {
   "Hate Speech": { bg: "#FFF0CC", fg: "#9A7B1A" },
   Gambling: { bg: "#E3EAF0", fg: "#4A5A6A" },
   "Graphic Content": { bg: "#FFE2DC", fg: "#C2382B" },
+  Bullying: { bg: "#FFF0CC", fg: "#9A7B1A" },
+  Grooming: { bg: "#FFE2DC", fg: "#C2382B" },
+  "Privacy Threats": { bg: "#DCEEF7", fg: "#1C6E96" },
+  Scams: { bg: "#E3EAF0", fg: "#4A5A6A" },
+  Sextortion: { bg: "#FFE2DC", fg: "#C2382B" },
 };
 
 export const colors = { primary, neutral, semantic, alpha, category } as const;

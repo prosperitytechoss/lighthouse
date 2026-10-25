@@ -60,9 +60,16 @@ object SignalUploader {
         "engine",
         JSONObject()
           .put("engine", LighthouseClassifier.ENGINE)
-          .put("lexiconVersion", LighthouseClassifier.version())
-          .put("textModel", TextModel.NAME)
-          .put("textModelReady", TextModel.isReady())
+          .put("keeper", Keeper.NAME)
+          .put("keeperVersion", Keeper.version() ?: "none")
+          .put("keeperReady", Keeper.isReady())
+          .put("keeperSource", Keeper.source() ?: "none")
+          .put("keeperUpdate", KeeperUpdater.status)
+          .put("keeperServerVersion", KeeperUpdater.serverVersion ?: "none")
+          .put("keeperChecks", Keeper.checks)
+          .put("keeperHits", Keeper.hits)
+          .put("lastKeeperMs", Keeper.lastMs)
+          .put("keeperMinRisk", (Keeper.minRisk() ?: -1f).toDouble())
           .put("ocr", "mlkit-text-v2")
           .put("ocrReady", vs.ocrReady)
           .put("imageModel", NsfwClassifier.NAME)
@@ -123,46 +130,6 @@ object SignalUploader {
       }
     } catch (_: Exception) {
       // malformed/older server response → ignore, keep current settings
-    }
-  }
-
-  /**
-   * Lexicon sync (mirror of lexiconSync.ts). Cheap version check first; only
-   * downloads the full lexicon when the server's published version is newer, then
-   * caches it on-device and activates it. Never throws — on any failure the
-   * classifier keeps its cached/bundled lexicon.
-   */
-  fun syncLexicon(ctx: Context, baseUrl: String, token: String): Boolean {
-    return try {
-      val local = LighthouseClassifier.version()
-      val vBody = getJson(baseUrl, "/lexicon/version", token) ?: return false
-      val serverVersion = JSONObject(vBody).optInt("version", -1)
-      if (serverVersion <= local) return true // already current
-      val body = getJson(baseUrl, "/lexicon", token) ?: return false
-      val obj = JSONObject(body)
-      if (!obj.has("version") || !obj.has("categories")) return false // shape guard
-      LighthouseClassifier.saveAndActivate(ctx, body)
-      true
-    } catch (e: Exception) {
-      false
-    }
-  }
-
-  /** GET {baseUrl}{path} with the device bearer; returns the body or null on any error. */
-  private fun getJson(baseUrl: String, path: String, token: String): String? {
-    var conn: HttpURLConnection? = null
-    return try {
-      conn = (URL(baseUrl.trimEnd('/') + path).openConnection() as HttpURLConnection).apply {
-        requestMethod = "GET"
-        connectTimeout = 10_000
-        readTimeout = 15_000
-        setRequestProperty("Authorization", "Bearer $token")
-      }
-      if (conn.responseCode in 200..299) conn.inputStream.bufferedReader().use { it.readText() } else null
-    } catch (e: Exception) {
-      null
-    } finally {
-      conn?.disconnect()
     }
   }
 

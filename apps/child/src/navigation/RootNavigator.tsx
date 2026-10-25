@@ -13,7 +13,6 @@ import {
   startCapture,
   stopCapture,
 } from "../native/capture";
-import { initLexicon, refreshLexicon } from "../native/lexiconStorage";
 import { startLocationUpdates, stopLocationUpdates } from "../native/location";
 import { clearDeviceToken, getDeviceToken, getSetupDone } from "../native/session";
 import { ActiveBadge } from "../screens/ActiveBadge";
@@ -80,9 +79,6 @@ export function RootNavigator() {
       }
       const done = await getSetupDone();
       if (alive) setState(done ? "home" : "setup");
-      // Lexicon Admin sync: load the on-device cache into the classifier, then
-      // check the server for a newer published version. Never blocks the UI.
-      void initLexicon().then(() => refreshLexicon());
       const res = await pairingApi.me(token);
       if (alive && res.status === 401) await handleUnlinked();
       // Sync the parent's per-app monitoring choice + overlay gate to native.
@@ -108,8 +104,6 @@ export function RootNavigator() {
       if (!token) return;
       const res = await pairingApi.me(token);
       if (!cancelled && res.status === 401) await handleUnlinked();
-      // Also poll for a newer lexicon on the same cadence + on foreground.
-      void refreshLexicon();
     };
     const interval = setInterval(check, 30_000);
     const sub = AppState.addEventListener("change", (s) => {

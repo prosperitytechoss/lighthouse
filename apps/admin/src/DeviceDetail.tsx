@@ -100,9 +100,11 @@ export function DeviceDetail({ id }: { id: string }) {
           ["Tier", d.visionTier ? `${d.visionTier}, every ${Math.round((d.visionIntervalMs ?? 0) / 1000)} s` : "not running"],
           ["Frames checked", String(d.visionFrames ?? 0)],
           ["Last frame", when(d.visionLastFrameAt)],
-          ["Last timings", `ocr ${n("lastOcrMs")} ms, image ${n("lastImageMs")} ms`],
-          ["Models", `${n("ocr")} ${s.ocrReady === true ? "ready" : ""}, ${n("imageModel")} ${s.imageReady === true ? "ready" : ""}, ${n("textModel")} ${s.textModelReady === true ? "ready" : ""}`],
-          ["Word list on phone", `v${n("lexiconVersion")}`],
+          ["Last timings", `keeper ${n("lastKeeperMs")} ms, ocr ${n("lastOcrMs")} ms, image ${n("lastImageMs")} ms`],
+          ["Models", `${n("ocr")} ${s.ocrReady === true ? "ready" : ""}, ${n("imageModel")} ${s.imageReady === true ? "ready" : ""}`],
+          ["Keeper on phone", s.keeperVersion ? `${n("keeperVersion")}${s.keeperReady === true ? ", ready" : ", not loaded"}, ${n("keeperSource")}` : "unknown"],
+          ["Keeper update", s.keeperUpdate ? `${n("keeperUpdate")}, live version ${n("keeperServerVersion")}` : "unknown"],
+          ["Keeper checks", `${n("keeperHits")} flagged of ${n("keeperChecks")} texts since the app started`],
           ["App", n("engine")],
         ]} />
       </div>

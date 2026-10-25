@@ -29,5 +29,10 @@ export const householdSettings: HouseholdSettings = {
     "Hate Speech": true,
     Gambling: true,
     "Graphic Content": true,
+    Bullying: true,
+    Grooming: true,
+    "Privacy Threats": true,
+    Scams: true,
+    Sextortion: true,
   },
 };

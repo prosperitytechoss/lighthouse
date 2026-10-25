@@ -9,6 +9,7 @@ import { datasetRouter } from "./routes/dataset";
 import { devicesRouter } from "./routes/devices";
 import { feedbackRouter } from "./routes/feedback";
 import { healthRouter } from "./routes/health";
+import { keeperRouter } from "./routes/keeper";
 import { lexiconRouter } from "./routes/lexicon";
 import { locationsRouter } from "./routes/locations";
 import { pairingRouter } from "./routes/pairing";
@@ -30,7 +31,7 @@ export function createApp(): Express {
     const origin = req.header("origin");
     if (origin && adminOrigins.has(origin)) {
       res.header("Access-Control-Allow-Origin", origin);
-      res.header("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+      res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
       res.header("Access-Control-Allow-Headers", "authorization,content-type");
     }
     if (req.method === "OPTIONS") {
@@ -40,8 +41,9 @@ export function createApp(): Express {
     next();
   });
 
-  app.use(express.json());
   app.use(requestLogger);
+  app.use("/keeper", keeperRouter);
+  app.use(express.json());
 
   app.use(healthRouter);
   app.use("/auth", authRouter);

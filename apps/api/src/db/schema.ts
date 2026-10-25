@@ -1,4 +1,4 @@
-import { boolean, index, integer, jsonb, pgEnum, pgTable, serial, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, customType, doublePrecision, index, integer, jsonb, pgEnum, pgTable, serial, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 /**
  * Placeholder liveness table (kept from the infra scaffold). Real domain tables
@@ -311,6 +311,27 @@ export const jobRuns = pgTable(
     byJob: index("job_runs_job_started_idx").on(t.job, t.startedAt),
   }),
 );
+
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => "bytea" });
+
+export const keeperModels = pgTable("keeper_models", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  version: text("version").notNull().unique(),
+  onnx: bytea("onnx"),
+  spm: bytea("spm"),
+  onnxSha256: text("onnx_sha256"),
+  spmSha256: text("spm_sha256"),
+  onnxBytes: integer("onnx_bytes"),
+  spmBytes: integer("spm_bytes"),
+  notes: text("notes"),
+  minRisk: doublePrecision("min_risk").notNull().default(0.8),
+  live: boolean("live").notNull().default(false),
+  uploadedBy: text("uploaded_by"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
+});
+
+export type KeeperModel = typeof keeperModels.$inferSelect;
 
 export type DatasetSource = typeof datasetSources.$inferSelect;
 export type DatasetExample = typeof datasetExamples.$inferSelect;

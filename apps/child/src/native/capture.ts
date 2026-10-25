@@ -29,7 +29,30 @@ type MonitorBridge = {
   setBlockThreshold?: (threshold: string) => void;
   setVisionEnabled?: (enabled: boolean) => void;
   visionStatus?: () => Promise<VisionStatus>;
+  keeperInfo?: () => Promise<KeeperInfo>;
+  appVersion?: () => Promise<{ name: string | null; code: number }>;
 };
+
+export type KeeperInfo = { version: string | null; source: string | null; ready: boolean };
+
+export async function getKeeperInfo(): Promise<KeeperInfo | null> {
+  if (!LH?.keeperInfo) return null;
+  try {
+    return await LH.keeperInfo();
+  } catch {
+    return null;
+  }
+}
+
+export async function getAppVersion(): Promise<string | null> {
+  if (!LH?.appVersion) return null;
+  try {
+    const v = await LH.appVersion();
+    return v.name ? `${v.name} (${v.code})` : null;
+  } catch {
+    return null;
+  }
+}
 
 export type VisionStatus = {
   supported: boolean;

@@ -154,6 +154,33 @@ class LighthousePermissionsModule(private val ctx: ReactApplicationContext) :
    * (JS then falls back to Settings search / DontKillMyApp steps).
    */
   @ReactMethod
+  fun keeperInfo(promise: Promise) {
+    try {
+      Keeper.init(ctx)
+      val map = Arguments.createMap()
+      map.putString("version", Keeper.version())
+      map.putString("source", Keeper.source())
+      map.putBoolean("ready", Keeper.isReady())
+      promise.resolve(map)
+    } catch (e: Exception) {
+      promise.reject("LH_KEEPER_ERR", e)
+    }
+  }
+
+  @ReactMethod
+  fun appVersion(promise: Promise) {
+    try {
+      val info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
+      val map = Arguments.createMap()
+      map.putString("name", info.versionName)
+      map.putDouble("code", if (Build.VERSION.SDK_INT >= 28) info.longVersionCode.toDouble() else @Suppress("DEPRECATION") info.versionCode.toDouble())
+      promise.resolve(map)
+    } catch (e: Exception) {
+      promise.reject("LH_VERSION_ERR", e)
+    }
+  }
+
+  @ReactMethod
   fun openAutostart(promise: Promise) {
     val keys = listOf(Build.MANUFACTURER.lowercase(), Build.BRAND.lowercase())
     val candidates = keys.flatMap { AUTOSTART_INTENTS[it] ?: emptyList() }

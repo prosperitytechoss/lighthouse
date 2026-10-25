@@ -113,6 +113,31 @@ export const me = () => req<{ email: string }>("/admin/me");
 export const logout = () => req("/admin/logout", { method: "POST" });
 export const getOverview = () => req<Overview>("/admin/overview");
 
+export type KeeperVersion = {
+  version: string;
+  onnxSha256: string | null;
+  spmSha256: string | null;
+  onnxBytes: number | null;
+  spmBytes: number | null;
+  notes: string | null;
+  minRisk: number;
+  live: boolean;
+  uploadedBy: string | null;
+  createdAt: string;
+  publishedAt: string | null;
+};
+export type KeeperFile = "keeper.onnx" | "keeper.spm";
+export const keeperVersions = () => req<{ versions: KeeperVersion[] }>("/keeper/versions");
+export const publishKeeper = (version: string) => req<{ ok: true; version: string }>(`/keeper/versions/${encodeURIComponent(version)}/publish`, { method: "POST" });
+export const patchKeeper = (version: string, patch: { notes?: string; minRisk?: number }) =>
+  req<{ model: KeeperVersion }>(`/keeper/versions/${encodeURIComponent(version)}`, { method: "PATCH", body: JSON.stringify(patch) });
+export const uploadKeeperFile = (version: string, file: KeeperFile, data: Blob) =>
+  req<{ model: KeeperVersion }>(`/keeper/versions/${encodeURIComponent(version)}/${file}`, {
+    method: "PUT",
+    body: data,
+    headers: { "content-type": "application/octet-stream" },
+  });
+
 // ── lexicon ──
 export const listTerms = (q: Record<string, string> = {}) =>
   req<{ terms: Term[]; count: number }>(`/lexicon/terms?${new URLSearchParams(q)}`);
@@ -234,7 +259,7 @@ export type JobsInfo = {
 export const listJobs = () => req<JobsInfo>("/admin/jobs");
 export const runJob = (job: JobName) => req<{ ok: true; run: JobRun }>(`/admin/jobs/${job}/run`, { method: "POST", body: "{}" });
 
-export const CATEGORIES = ["Violence", "Sexual Content", "Self-Harm", "Eating Disorders", "Substance Use", "Hate Speech", "Gambling", "Graphic Content"];
+export const CATEGORIES = ["Violence", "Sexual Content", "Self-Harm", "Eating Disorders", "Substance Use", "Hate Speech", "Gambling", "Graphic Content", "Bullying", "Grooming", "Privacy Threats", "Scams", "Sextortion"];
 export const LANGUAGES = ["en", "pidgin", "yoruba", "hausa", "igbo"];
 export const LANG_LABEL: Record<string, string> = { en: "English", pidgin: "Pidgin", yoruba: "Yorùbá", hausa: "Hausa", igbo: "Igbo" };
 export const SEVERITIES = ["high", "review", "low"];

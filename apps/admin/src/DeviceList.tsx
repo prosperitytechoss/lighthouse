@@ -38,9 +38,9 @@ export function enginePlain(d: OverviewDevice): string | null {
   const n = (k: string) => (s[k] == null ? 0 : Number(s[k]));
   if (s.screenReaderStuck === true) return "Not watching. Screen reading shows on, but the phone stopped it.";
   if (!d.visionTier) return s.visionEnabled === true ? "Not watching the screen. Screen checks are on but never started." : "Vision is off on this phone.";
-  const ok = s.ocrReady === true && s.imageReady === true && s.textModelReady === true;
+  const ok = s.ocrReady === true && s.imageReady === true && s.keeperReady === true;
   const every = d.visionIntervalMs ? Math.round(d.visionIntervalMs / 1000) : 60;
-  return `Looks at the screen every ${every} s in watched apps. ${n("framesChecked")} checks so far, ${n("textHits") + n("imageHits")} flagged. ${ok ? "All three models loaded." : "A model is missing."}`;
+  return `Looks at the screen every ${every} s in watched apps. ${n("framesChecked")} checks so far, ${n("textHits") + n("imageHits")} flagged. ${ok ? `All models loaded, Keeper ${String(s.keeperVersion ?? "?")}.` : "A model is missing."}`;
 }
 
 function EngineDetail({ d }: { d: OverviewDevice }) {
@@ -54,11 +54,13 @@ function EngineDetail({ d }: { d: OverviewDevice }) {
         <span className="muted">vision</span>
         <span>{d.visionTier ?? "off"}{d.visionIntervalMs ? `, every ${Math.round(d.visionIntervalMs / 1000)} s` : ""}, {n("framesChecked")} frames checked, {n("framesSkipped")} unchanged skipped{d.visionLastFrameAt ? `, last ${new Date(d.visionLastFrameAt).toLocaleTimeString()}` : ""}</span>
         <span className="muted">timing</span>
-        <span>ocr {n("lastOcrMs")} ms, image {n("lastImageMs")} ms, frame {n("lastTotalMs")} ms</span>
+        <span>keeper {n("lastKeeperMs")} ms, ocr {n("lastOcrMs")} ms, image {n("lastImageMs")} ms, frame {n("lastTotalMs")} ms</span>
         <span className="muted">hits</span>
-        <span>{n("textHits")} from text in frames, {n("imageHits")} from the image model</span>
+        <span>{n("keeperHits")} of {n("keeperChecks")} texts flagged by Keeper, {n("textHits")} from text in frames, {n("imageHits")} from the image model</span>
+        <span className="muted">keeper</span>
+        <span>{String(s.keeperVersion ?? "?")} {ready("keeperReady")}, {String(s.keeperSource ?? "")}, update {String(s.keeperUpdate ?? "?")}, live {String(s.keeperServerVersion ?? "?")}</span>
         <span className="muted">models</span>
-        <span>{String(s.ocr ?? "ocr")} {ready("ocrReady")}, {String(s.imageModel ?? "image")} {ready("imageReady")}, {String(s.textModel ?? "text model")} {ready("textModelReady")}, word list v{String(s.lexiconVersion ?? "?")}, {String(s.engine ?? "")}</span>
+        <span>{String(s.ocr ?? "ocr")} {ready("ocrReady")}, {String(s.imageModel ?? "image")} {ready("imageReady")}, {String(s.engine ?? "")}</span>
       </div>
     </details>
   );

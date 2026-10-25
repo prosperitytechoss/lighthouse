@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import * as api from "../api";
-import { type DatasetStats, type JobsInfo, type LexStatus, type Overview } from "../api";
+import { type DatasetStats, type JobsInfo, type KeeperVersion, type Overview } from "../api";
 import { BarChart, Bars, CHANNEL_LABEL } from "../Charts";
 import { ParentList, StatusHelp, fmtAgo } from "../DeviceList";
 import { JOB_LABEL, runFailures } from "../Jobs";
@@ -10,7 +10,7 @@ import { Page, Spinner, errMsg } from "../ui";
 
 type Item = { tone: "high" | "review" | "low"; tag: string; text: string; action: string; go: () => void };
 
-function statusLine(ov: Overview | null, status: LexStatus | null, attention: number): string {
+function statusLine(ov: Overview | null, keeper: KeeperVersion | null | undefined, attention: number): string {
   const parts: string[] = [];
   if (ov) {
     const total = ov.stats.totalDevices;
@@ -18,18 +18,19 @@ function statusLine(ov: Overview | null, status: LexStatus | null, attention: nu
     else parts.push(`${ov.stats.reporting} of ${total} phone${total === 1 ? "" : "s"} reporting.`);
   }
   parts.push(attention === 0 ? "Nothing needs attention." : `${attention} thing${attention === 1 ? "" : "s"} need${attention === 1 ? "s" : ""} attention.`);
-  if (status && ov) {
-    const known = ov.devices.filter((d) => !d.replacedBy && d.engineStats?.lexiconVersion != null);
-    const behind = known.filter((d) => Number(d.engineStats!.lexiconVersion) < status.version).length;
-    if (status.pendingChanges) parts.push(`Word list v${status.version} is out, with changes waiting to publish.`);
-    else if (behind > 0) parts.push(`Word list v${status.version}. ${behind} phone${behind === 1 ? " is" : "s are"} still on an older list.`);
-    else if (known.length > 0) parts.push(`Word list v${status.version} on every phone.`);
-    else parts.push(`Word list v${status.version} published.`);
+  if (keeper && ov) {
+    const known = ov.devices.filter((d) => !d.replacedBy && d.engineStats?.keeperVersion != null);
+    const behind = known.filter((d) => String(d.engineStats!.keeperVersion) !== keeper.version).length;
+    if (behind > 0) parts.push(`Keeper ${keeper.version} is live. ${behind} phone${behind === 1 ? " is" : "s are"} still on another version.`);
+    else if (known.length > 0) parts.push(`Keeper ${keeper.version} on every phone.`);
+    else parts.push(`Keeper ${keeper.version} is live.`);
+  } else if (keeper === null) {
+    parts.push("Phones use the Keeper version built into the app.");
   }
   return parts.join(" ");
 }
 
-export function Home({ go, status, statusError }: { go: Go; status: LexStatus | null; statusError: string }) {
+export function Home({ go, keeper }: { go: Go; keeper: KeeperVersion | null | undefined }) {
   const [ov, setOv] = useState<Overview | null>(null);
   const [ds, setDs] = useState<DatasetStats | null>(null);
   const [jobs, setJobs] = useState<JobsInfo | null>(null);
@@ -66,14 +67,13 @@ export function Home({ go, status, statusError }: { go: Go; status: LexStatus | 
     for (const r of [...jobs.runs].sort((a, b) => b.startedAt.localeCompare(a.startedAt))) if (!latest.has(r.job)) latest.set(r.job, r);
     for (const r of latest.values()) for (const f of runFailures(r)) items.push({ tone: "review", tag: "Job failed", text: `Last "${JOB_LABEL[r.job] ?? r.job}" run: ${f}`, action: "Open jobs", go: () => go("advanced", "jobs") });
   }
-  if (status?.pendingChanges) items.push({ tone: "review", tag: "Not published", text: "The word list has approved changes that are not on phones yet.", action: "Publish", go: () => go("words", "publish") });
   if (ds && (ds.approvedUntrained ?? 0) > 0) items.push({ tone: "low", tag: "Training", text: `${ds.approvedUntrained} approved example${ds.approvedUntrained === 1 ? " is" : "s are"} waiting for the next training run.`, action: "Open examples", go: () => go("advanced", "dataset") });
 
   return (
-    <Page title="Home" blurb="How things are right now, and what to do next." errors={[statusError, ...errs]}>
+    <Page title="Home" blurb="How things are right now, and what to do next." errors={errs}>
       {loading ? <Spinner /> : (
         <>
-          <p className="status-line">{statusLine(ov, status, items.length)}</p>
+          <p className="status-line">{statusLine(ov, keeper, items.length)}</p>
 
           <h2 style={{ marginTop: 0, display: "flex", alignItems: "center", gap: 8 }}>Needs attention<StatusHelp hours={ov?.stats.silenceHours} /></h2>
           <div className="attn">
