@@ -2,6 +2,8 @@
 
 Child safety that runs on the phone. Parents get a category, never the content.
 
+Powered by [Lighthouse Keeper](https://huggingface.co/Prosperitytech/lighthouse-keeper), our open child safety model for Nigerian languages.
+
 Lighthouse is a free Android app for families. It reads what is on a child's screen in the apps a parent chooses, decides on the phone whether it is risky, and tells the parent the kind of thing it saw. The words, the pictures and the screen never leave the phone.
 
 Built in Nigeria for Nigerian families first. English, Nigerian Pidgin, Yoruba, Hausa and Igbo.
@@ -11,8 +13,7 @@ Built in Nigeria for Nigerian families first. English, Nigerian Pidgin, Yoruba, 
 ```
 watched app on the child's phone
   -> on screen text, notifications, and a screen frame every 15 to 60 seconds
-  -> word list (exact phrases)
-  -> tiny text model (when the word list is silent)
+  -> Lighthouse Keeper (the text, 13 kinds of risk)
   -> nudity model (on the screen frame)
   -> category and severity only
   -> encrypted signal to the server
@@ -22,13 +23,23 @@ frame is freed in memory. Nothing is stored. Nothing is uploaded.
 
 Everything that decides runs on the device. The server only ever sees a category, a severity, an app name and a time.
 
+## Lighthouse Keeper
+
+Keeper is the text model inside the app. It is 8.5 MB, runs in under a millisecond, and reads Nigerian English, Pidgin, Yoruba, Hausa and Igbo. It scores each message for bullying, eating disorders, gambling, graphic content, grooming, hate speech, privacy threats, scams, self harm, sextortion, sexual content, substance use and violence.
+
+- Model: https://huggingface.co/Prosperitytech/lighthouse-keeper
+- Test set: https://huggingface.co/datasets/Prosperitytech/keeper-nigerian-safety-test
+- Demo: https://huggingface.co/spaces/Prosperitytech/lighthouse-keeper-demo
+
+Keeper is Apache 2.0. The app ships with one version built in and picks up newer versions over Wi-Fi when we publish them from the admin.
+
 ## What is in this repository
 
 | Folder | What |
 |---|---|
 | `apps/child` | The Android app. React Native shell plus the native engine in Kotlin: capture, classifier, vision, block overlay, keep alive. |
-| `apps/api` | Express and Postgres API. Accounts, devices, encrypted signals, alerts, weekly summary, word list publishing. |
-| `apps/admin` | Web admin. Word list review and publish, phones, alerts, training examples. |
+| `apps/api` | Express and Postgres API. Accounts, devices, encrypted signals, alerts, weekly summary, Keeper version publishing. |
+| `apps/admin` | Web admin. Keeper versions, phones, alerts, training examples. |
 | `apps/web` | The public website. |
 | `packages` | Shared UI, tokens, types and copy. |
 | `ml` | Evaluation harness, word list tooling, text model training, vision model notes. |
@@ -36,8 +47,7 @@ Everything that decides runs on the device. The server only ever sees a category
 
 ## What is not in this repository
 
-- The full Lighthouse word list. A 48 word English starter ships so the app runs. Grow your own through the admin.
-- The trained text model and the nudity model files. See `apps/child/models/README.md`.
+- The Keeper and nudity model files. `scripts/fetch-keeper.sh` downloads Keeper from Hugging Face. See `apps/child/models/README.md`.
 - Signing keys, API keys and credentials. Provide your own through environment variables.
 
 ## Running it
@@ -48,6 +58,7 @@ You need Node 20 or newer, Yarn 1, Postgres and Redis, and the Android SDK.
 yarn install
 cd apps/api && cp .env.example .env && yarn db:migrate && yarn db:seed-lexicon && yarn dev
 cd apps/admin && yarn dev
+scripts/fetch-keeper.sh
 cd apps/child && node ../../node_modules/expo/bin/cli run:android
 ```
 
@@ -59,17 +70,19 @@ Lighthouse is honest with children. The app tells them what it can and cannot se
 
 ## Evaluation
 
-The classifier is scored against a hand written set of code switched Nigerian messages and against benign Nigerian tweets. Results and caveats are in `ml/guard-eval` and `ml/textmodel/REPORT.md`. Numbers measured on real low end phones are still pending and are marked as such.
+Keeper is scored on 746 messages it never saw in training, across all five languages and all 13 kinds of risk. Keeper 0.1 gets 80% and catches 84% of risky messages. The word list the app used before got 37% on the same test. Scores per language and the 557 messages we can share are on the Hugging Face pages above. Numbers measured on real low end phones are still pending.
 
 ## License
 
 Code is licensed under Apache 2.0. See LICENSE.
 
-The Lighthouse name, the mascot and logo, the word list, the dataset and the trained model files are not licensed. See NOTICE. Forks must use their own name and mascot.
+Lighthouse Keeper and its test set are Apache 2.0 on Hugging Face.
+
+The Lighthouse name, the mascot and logo, the word list and the training dataset are not licensed. See NOTICE. Forks must use their own name and mascot.
 
 ## Contributing
 
-See CONTRIBUTING.md. If you speak Pidgin, Yoruba, Hausa or Igbo, CONTRIBUTING-LEXICON.md is the best place to start.
+See CONTRIBUTING.md. If you speak Pidgin, Yoruba, Hausa or Igbo and Keeper gets your language wrong, tell us on the [model page](https://huggingface.co/Prosperitytech/lighthouse-keeper/discussions).
 
 ## Security
 
