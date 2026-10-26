@@ -18,6 +18,11 @@ object Keeper {
     "Scams", "Self-Harm", "Sextortion", "Sexual Content", "Substance Use", "Violence",
   )
   private val SEVERITY = mapOf(3 to "high", 2 to "review", 1 to "low")
+  private val PRIORITY = listOf(
+    "Self-Harm", "Sextortion", "Grooming", "Sexual Content", "Violence", "Graphic Content", "Eating Disorders",
+    "Substance Use", "Hate Speech", "Scams", "Privacy Threats", "Gambling", "Bullying",
+  )
+  private val BONUS = FloatArray(CATEGORIES.size) { 0.06f * (1f - PRIORITY.indexOf(CATEGORIES[it]).toFloat() / PRIORITY.size) }
 
   data class Result(val category: String, val severity: String, val level: Int, val confidence: Float, val risk: Float, val ms: Long)
 
@@ -134,15 +139,18 @@ object Keeper {
     var best = -1
     var bestLevel = 0
     var bestP = 0f
+    var bestScore = 0f
     for (c in probs.indices) {
       val p = probs[c]
       var lv = 0
       for (k in 1..3) if (p[k] > p[lv]) lv = k
       if (lv > 0 && 1f - p[0] < l.minRisk) continue
-      if (lv > bestLevel || (lv == bestLevel && lv > 0 && p[lv] > bestP)) {
+      val score = p[lv] + BONUS[c]
+      if (lv > bestLevel || (lv == bestLevel && lv > 0 && score > bestScore)) {
         best = c
         bestLevel = lv
         bestP = p[lv]
+        bestScore = score
       }
     }
     if (best < 0 || bestLevel == 0) return null
