@@ -6,7 +6,6 @@ import { accounts, devices } from "../db/schema";
 import { runWeeklyDigests } from "../services/digest";
 import { emailService } from "../services/email";
 
-import { isJobRunning, lastOkRun, runJob } from "./harvest";
 import { logger } from "./logger";
 import { createQueue, createWorker, readyQueues } from "./queue";
 import { findReplaced } from "./reinstalls";
@@ -87,14 +86,6 @@ export async function harvestSchedule(): Promise<{ enabled: boolean; harvestInte
   return { enabled, harvestIntervalMinutes: env.HARVEST_INTERVAL_MINUTES, nextHarvestAt: scheduler?.next ? new Date(scheduler.next) : null };
 }
 
-async function scheduledHarvest(): Promise<void> {
-  const intervalMs = env.HARVEST_INTERVAL_MINUTES * 60_000;
-  if (isJobRunning("dataset_harvest")) return;
-  const last = await lastOkRun("dataset_harvest");
-  if (last && Date.now() - last.startedAt.getTime() < intervalMs) return;
-  await runJob("dataset_harvest", "scheduler");
-}
-
 /** Redis owns schedules and locks, so restarts and overlapping deploys are safe. */
 export async function startSchedulers(): Promise<void> {
   if (!schedulersEnabled || scheduleQueue) return;
@@ -107,19 +98,12 @@ export async function startSchedulers(): Promise<void> {
   await scheduleQueue.upsertJobScheduler("weekly", { every: 15 * 60_000 }, {
     name: "weekly", data: { task: "weekly" },
   });
-  if (env.HARVEST_ENABLED) {
-    await scheduleQueue.upsertJobScheduler("harvest", { every: env.HARVEST_INTERVAL_MINUTES * 60_000 }, {
-      name: "harvest", data: { task: "harvest" },
-    });
-  } else {
-    await scheduleQueue.removeJobScheduler("harvest");
-  }
+  await scheduleQueue.removeJobScheduler("harvest");
   createWorker<ScheduledData>("scheduled", async (job) => {
     switch (job.data.task) {
       case "silence": await checkSilentDevices(); break;
       case "weekly": if (isWeeklySendWindow()) await runWeeklyDigests(); break;
-      case "harvest": if (env.HARVEST_ENABLED) await scheduledHarvest(); break;
     }
   }, { concurrency: 1 });
-  logger.info("[jobs] BullMQ schedules active (silence: 30m, weekly window: 15m, harvest per configuration)");
+  logger.info("[jobs] BullMQ schedules active (silence: 30m, weekly window: 15m)");
 }

@@ -5,6 +5,7 @@ import { type KeeperVersion } from "../api";
 import { type OverviewDevice } from "../DeviceList";
 import { Empty, ErrBanner, Page, Spinner, errMsg, fmtWhen } from "../ui";
 
+const BUILT_IN = "0.1";
 const mb = (b: number | null) => (b == null ? "missing" : `${(b / 1e6).toFixed(1)} MB`);
 
 function Upload({ onDone, toast }: { onDone: () => void; toast: (m: string) => void }) {
@@ -98,13 +99,13 @@ export function Keeper({ toast }: { toast: (m: string) => void }) {
       {!versions ? <Spinner /> : (
         <>
           <div className="metrics" style={{ maxWidth: 560 }}>
-            <div className="metric"><div className="val">{live ? live.version : "none"}</div><div className="lbl">Live version</div></div>
-            <div className="metric"><div className="val">{live ? onPhone(live.version) : 0}</div><div className="lbl">Phones on it</div></div>
-            <div className="metric"><div className="val">{reporting - (live ? onPhone(live.version) : 0)}</div><div className="lbl">Phones on another</div></div>
+            <div className="metric"><div className="val">{live ? live.version : BUILT_IN}</div><div className="lbl">{live ? "Published version" : "Version built into the app"}</div></div>
+            <div className="metric"><div className="val">{onPhone(live ? live.version : BUILT_IN)}</div><div className="lbl">Phones running it</div></div>
+            <div className="metric"><div className="val">{devices.length - reporting}</div><div className="lbl">Phones still on the old app</div></div>
           </div>
 
           <h2>Versions</h2>
-          {versions.length === 0 ? <Empty>No versions uploaded yet. Phones use the one built into the app.</Empty> : (
+          {versions.length === 0 ? <Empty>Nothing uploaded yet. Phones run Keeper {BUILT_IN}, which ships inside app 0.6.0. Upload a new version here when there is one.</Empty> : (
             <div className="card tablewrap">
               <table className="runs">
                 <thead><tr><th>Version</th><th>Files</th><th>Cutoff</th><th>Notes</th><th>Uploaded</th><th>Phones</th><th /></tr></thead>

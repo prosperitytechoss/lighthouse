@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 
 import * as api from "../api";
-import { type DatasetStats, type JobsInfo, type KeeperVersion, type Overview } from "../api";
+import { type KeeperVersion, type Overview } from "../api";
 import { BarChart, Bars, CHANNEL_LABEL } from "../Charts";
 import { ParentList, StatusHelp, fmtAgo } from "../DeviceList";
-import { JOB_LABEL, runFailures } from "../Jobs";
 import { type Go } from "../routes";
 import { Page, Spinner, errMsg } from "../ui";
 
@@ -32,8 +31,6 @@ function statusLine(ov: Overview | null, keeper: KeeperVersion | null | undefine
 
 export function Home({ go, keeper }: { go: Go; keeper: KeeperVersion | null | undefined }) {
   const [ov, setOv] = useState<Overview | null>(null);
-  const [ds, setDs] = useState<DatasetStats | null>(null);
-  const [jobs, setJobs] = useState<JobsInfo | null>(null);
   const [errs, setErrs] = useState<string[]>([]);
   const [open, setOpen] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,12 +38,10 @@ export function Home({ go, keeper }: { go: Go; keeper: KeeperVersion | null | un
   useEffect(() => {
     let alive = true;
     (async () => {
-      const [o, d, j] = await Promise.allSettled([api.getOverview(), api.datasetStats(), api.listJobs()]);
+      const [o] = await Promise.allSettled([api.getOverview()]);
       if (!alive) return;
       const e: string[] = [];
       if (o.status === "fulfilled") setOv(o.value); else e.push(`Phones and signals did not load. ${errMsg(o.reason, "")}`.trim());
-      if (d.status === "fulfilled") setDs(d.value); else e.push(`Training example counts did not load. ${errMsg(d.reason, "")}`.trim());
-      if (j.status === "fulfilled") setJobs(j.value); else e.push(`Background job history did not load. ${errMsg(j.reason, "")}`.trim());
       setErrs(e);
       setLoading(false);
     })();
@@ -62,12 +57,6 @@ export function Home({ go, keeper }: { go: Go; keeper: KeeperVersion | null | un
     if (d.health === "monitoring_off") items.push({ tone: "review", tag: "Switch off", text: `${d.name} has a monitoring switch turned off on the phone.`, action: "Open phone", go: () => go("phones", d.id) });
   }
   if (neverCheckedIn) items.push({ tone: "low", tag: "Never online", text: `${neverCheckedIn} phone${neverCheckedIn === 1 ? " was" : "s were"} set up but never came online.`, action: "Open phones", go: () => go("phones") });
-  if (jobs) {
-    const latest = new Map<string, api.JobRun>();
-    for (const r of [...jobs.runs].sort((a, b) => b.startedAt.localeCompare(a.startedAt))) if (!latest.has(r.job)) latest.set(r.job, r);
-    for (const r of latest.values()) for (const f of runFailures(r)) items.push({ tone: "review", tag: "Job failed", text: `Last "${JOB_LABEL[r.job] ?? r.job}" run: ${f}`, action: "Open jobs", go: () => go("advanced", "jobs") });
-  }
-  if (ds && (ds.approvedUntrained ?? 0) > 0) items.push({ tone: "low", tag: "Training", text: `${ds.approvedUntrained} approved example${ds.approvedUntrained === 1 ? " is" : "s are"} waiting for the next training run.`, action: "Open examples", go: () => go("advanced", "dataset") });
 
   return (
     <Page title="Home" blurb="How things are right now, and what to do next." errors={errs}>
