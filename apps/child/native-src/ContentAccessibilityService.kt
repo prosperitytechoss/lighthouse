@@ -57,10 +57,11 @@ class ContentAccessibilityService : AccessibilityService() {
 
   private fun readScreen(pkg: String) {
     val root = rootInActiveWindow ?: return
-    val sb = StringBuilder()
-    collectText(root, sb)
-    val text = sb.toString().trim()
-    if (text.isNotEmpty()) {
+    val parts = ArrayList<String>()
+    collectText(root, parts, intArrayOf(0))
+    val hit = LighthouseClassifier.classifyParts(parts)
+    if (hit != null) {
+      val (text, cls) = hit
       // DEV-ONLY raw-text trace to logcat. BuildConfig.DEBUG is false in release,
       // so this physically cannot ship. Never persisted, never sent.
       if (BuildConfig.DEBUG) Log.d("LH-capture", "$pkg: ${LogScrub.scrub(text)}")
@@ -68,11 +69,10 @@ class ContentAccessibilityService : AccessibilityService() {
       // shouldBlock rule, which now follows the PARENT'S SEVERITY THRESHOLD (same as
       // alerts): severe→high, moderate→high+review, all→everything. Gated on the
       // parent's overlay toggle AND the overlay permission.
-      val cls = LighthouseClassifier.classify(text)
       val pause = OverlayManager.isEnabled() &&
         LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()) &&
         !OverlayManager.isShown() &&
-        PauseMemory.claim(applicationContext, pkg, cls!!, "text")
+        PauseMemory.claim(applicationContext, pkg, cls, "text")
       CaptureBuffer.add(pkg, text, "text", pause)
       if (pause) block(pkg)
     }
@@ -100,12 +100,17 @@ class ContentAccessibilityService : AccessibilityService() {
     OverlayManager.show(applicationContext) { performGlobalAction(GLOBAL_ACTION_HOME) }
   }
 
-  private fun collectText(node: AccessibilityNodeInfo?, sb: StringBuilder) {
-    if (node == null || sb.length >= MAX_CHARS) return
-    node.text?.let { if (it.isNotBlank()) sb.append(it).append(' ') }
+  private fun collectText(node: AccessibilityNodeInfo?, parts: MutableList<String>, total: IntArray) {
+    if (node == null || total[0] >= MAX_CHARS) return
+    node.text?.let {
+      if (it.isNotBlank()) {
+        parts.add(it.toString())
+        total[0] += it.length
+      }
+    }
     for (i in 0 until node.childCount) {
-      if (sb.length >= MAX_CHARS) break
-      collectText(node.getChild(i), sb)
+      if (total[0] >= MAX_CHARS) break
+      collectText(node.getChild(i), parts, total)
     }
   }
 

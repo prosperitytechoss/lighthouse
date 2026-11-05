@@ -26,7 +26,7 @@ object OcrEngine {
   fun recognize(bitmap: Bitmap): String {
     val r = recognizer ?: return ""
     return try {
-      Tasks.await(r.process(InputImage.fromBitmap(bitmap, 0)), 12, TimeUnit.SECONDS).text
+      Tasks.await(r.process(InputImage.fromBitmap(bitmap, 0)), 12, TimeUnit.SECONDS).textBlocks.joinToString("\n\n") { b -> b.text.replace('\n', ' ') }
     } catch (_: Throwable) {
       ""
     }

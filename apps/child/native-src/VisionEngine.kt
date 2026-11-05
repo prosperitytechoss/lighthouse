@@ -194,7 +194,7 @@ object VisionEngine {
     lastOcrMs = SystemClock.elapsedRealtime() - t0
     if (text.isNotBlank()) {
       if (BuildConfig.DEBUG) Log.d("LH-vision", "ocr ${text.length} chars in ${lastOcrMs}ms: ${LogScrub.scrub(text.take(160))}")
-      LighthouseClassifier.classify(text)?.let {
+      LighthouseClassifier.classifyParts(text.split("\n\n"))?.second?.let {
         val meta = LighthouseClassifier.baseMeta(it)
           .put("ocr", "mlkit-text-v2")
           .put("ocrMs", lastOcrMs)
