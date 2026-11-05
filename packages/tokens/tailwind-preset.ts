@@ -27,6 +27,7 @@ const KEBAB: Record<string, string> = {
   "Privacy Threats": "privacy-threats",
   Scams: "scams",
   Sextortion: "sextortion",
+  "Disappearing Messages": "disappearing-messages",
 };
 
 // category-<name> => { bg, fg } -> bg-category-violence / text-category-violence-fg

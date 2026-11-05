@@ -57,6 +57,7 @@ class ContentAccessibilityService : AccessibilityService() {
 
   private fun readScreen(pkg: String) {
     val root = rootInActiveWindow ?: return
+    if (LighthouseRegistry.idForPackage(pkg) == "whatsapp") checkViewOnce(root)
     val parts = ArrayList<String>()
     collectText(root, parts, intArrayOf(0))
     val hit = LighthouseClassifier.classifyParts(parts)
@@ -71,7 +72,7 @@ class ContentAccessibilityService : AccessibilityService() {
       // parent's overlay toggle AND the overlay permission.
       val pause = OverlayManager.isEnabled() &&
         LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()) &&
-        !OverlayManager.isShown() &&
+        OverlayManager.canShow(applicationContext) &&
         PauseMemory.claim(applicationContext, pkg, cls, "text")
       CaptureBuffer.add(pkg, text, "text", pause)
       if (pause) block(pkg)
@@ -100,8 +101,26 @@ class ContentAccessibilityService : AccessibilityService() {
     OverlayManager.show(applicationContext) { performGlobalAction(GLOBAL_ACTION_HOME) }
   }
 
+  private fun checkViewOnce(root: AccessibilityNodeInfo) {
+    try {
+      val title = root.findAccessibilityNodeInfosByViewId("com.whatsapp:id/conversation_contact_name").firstOrNull()?.text
+        ?: root.findAccessibilityNodeInfosByViewId("com.whatsapp.w4b:id/conversation_contact_name").firstOrNull()?.text
+        ?: return
+      var count = 0
+      fun walk(n: AccessibilityNodeInfo?, depth: Int) {
+        if (n == null || depth > 40) return
+        if (ViewOnceWatch.isViewOnce(n.text) || ViewOnceWatch.isViewOnce(n.contentDescription)) count++
+        for (i in 0 until n.childCount) walk(n.getChild(i), depth + 1)
+      }
+      walk(root, 0)
+      ViewOnceWatch.recordVisible(title.toString(), count, System.currentTimeMillis())?.let { ViewOnceWatch.emit(it, "text") }
+    } catch (_: Throwable) {
+    }
+  }
+
   private fun collectText(node: AccessibilityNodeInfo?, parts: MutableList<String>, total: IntArray) {
     if (node == null || total[0] >= MAX_CHARS) return
+    if (node.isEditable) return
     node.text?.let {
       if (it.isNotBlank()) {
         parts.add(it.toString())

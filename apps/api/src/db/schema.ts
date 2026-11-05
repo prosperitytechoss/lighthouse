@@ -76,6 +76,7 @@ export const devices = pgTable("devices", {
   // Parent-set label + assigned person; captured native device details.
   name: text("name"),
   assignee: text("assignee"),
+  childAge: integer("child_age"),
   deviceInfo: jsonb("device_info").$type<DeviceInfo>(),
   pairedAt: timestamp("paired_at", { withTimezone: true }),
   // Updated on any device-authed request (ingest + /devices/me heartbeat), so

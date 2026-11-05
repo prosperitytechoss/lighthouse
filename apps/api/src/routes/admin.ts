@@ -168,6 +168,7 @@ adminRouter.get(
       .select({
         id: devices.id,
         name: devices.name,
+        childAge: devices.childAge,
         assignee: devices.assignee,
         deviceInfo: devices.deviceInfo,
         pairedAt: devices.pairedAt,

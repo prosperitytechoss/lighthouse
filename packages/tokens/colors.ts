@@ -98,6 +98,7 @@ export const category: Record<CategoryName, { bg: string; fg: string }> = {
   "Privacy Threats": { bg: "#DCEEF7", fg: "#1C6E96" },
   Scams: { bg: "#E3EAF0", fg: "#4A5A6A" },
   Sextortion: { bg: "#FFE2DC", fg: "#C2382B" },
+  "Disappearing Messages": { bg: "#FFF0CC", fg: "#9A7B1A" },
 };
 
 export const colors = { primary, neutral, semantic, alpha, category } as const;

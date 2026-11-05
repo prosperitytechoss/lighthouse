@@ -79,6 +79,8 @@ object OverlayManager {
     blockThreshold = value
   }
 
+  fun canShow(ctx: Context): Boolean = !shown && Settings.canDrawOverlays(ctx) && System.currentTimeMillis() >= suppressUntil
+
   /** Show the overlay. `onExit` runs when the child taps "Go back" (e.g. go HOME). */
   fun show(ctx: Context, onExit: () -> Unit) {
     if (!Settings.canDrawOverlays(ctx)) return // gated: never draw without permission

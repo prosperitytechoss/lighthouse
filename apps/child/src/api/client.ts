@@ -157,6 +157,7 @@ export const pairingApi = {
     deviceInfo: { model?: string; manufacturer?: string; os?: string; phoneId?: string },
     installId: string,
     deviceName?: string,
+    childAge?: number,
   ) =>
     post<RegisterResponse>("/register", {
       email,
@@ -164,9 +165,11 @@ export const pairingApi = {
       deviceInfo,
       installId,
       ...(deviceName ? { deviceName } : {}),
+      ...(childAge ? { childAge } : {}),
     }),
   /** Validate the stored device token (child boot gate). 401 = revoked/unlinked. */
   me: (deviceToken: string) => get<MeResponse>("/devices/me", deviceToken),
+  setAge: (deviceToken: string, age: number) => postAuthed<{ ok: true }>("/devices/age", { age }, deviceToken),
   /** Update parent-controlled settings from the in-child settings screen. */
   updateSettings: (deviceToken: string, patch: SettingsPatch) =>
     postAuthed<SettingsResponse>("/devices/settings", patch, deviceToken),

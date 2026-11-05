@@ -6,7 +6,7 @@ import org.json.JSONObject
 data class Classification(val category: String, val severity: String, val tier: String = "keeper", val confidence: Float? = null, val risk: Float? = null, val ms: Long? = null, val matched: String? = null)
 
 object LighthouseClassifier {
-  const val ENGINE = "child-0.6.1"
+  const val ENGINE = "child-0.6.2"
   private const val MAX_PARTS = 40
 
   fun init(ctx: Context) {

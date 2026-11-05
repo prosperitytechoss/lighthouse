@@ -109,6 +109,16 @@ devicesRouter.get(
 );
 
 devicesRouter.post(
+  "/age",
+  requireDevice,
+  ah(async (req, res) => {
+    const { age } = z.object({ age: z.number().int().min(1).max(15, "Lighthouse is for ages 6 to 15") }).parse(req.body);
+    await db.update(devices).set({ childAge: age, updatedAt: new Date() }).where(eq(devices.id, req.deviceId!));
+    return res.json({ ok: true });
+  }),
+);
+
+devicesRouter.post(
   "/confirmation/resend",
   requireDevice,
   ah(async (req, res) => {

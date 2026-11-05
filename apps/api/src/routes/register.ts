@@ -37,6 +37,7 @@ const RegisterBody = z.object({
     .optional(),
   installId: z.string().min(8).max(200).optional(),
   deviceName: z.string().trim().max(120).optional(),
+  childAge: z.number().int().min(1).max(15, "Lighthouse is for ages 6 to 15").optional(),
 });
 
 function defaultDeviceName(info: { model?: string; manufacturer?: string } | undefined, n: number): string {
@@ -94,6 +95,7 @@ registerRouter.post(
           installId: body.installId ?? existing.installId,
           name: body.deviceName ?? existing.name ?? defaultDeviceName(body.deviceInfo, 1),
           deviceInfo: body.deviceInfo ?? {},
+          childAge: body.childAge ?? existing.childAge,
           pairedAt: new Date(),
           updatedAt: new Date(),
         })
@@ -108,6 +110,7 @@ registerRouter.post(
           installId: body.installId ?? null,
           name: body.deviceName ?? defaultDeviceName(body.deviceInfo, (await db.select({ id: devices.id }).from(devices).where(eq(devices.accountId, account.id))).length + 1),
           deviceInfo: body.deviceInfo ?? {},
+          childAge: body.childAge ?? null,
           pairedAt: new Date(),
         })
         .returning();

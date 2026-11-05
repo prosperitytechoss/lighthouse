@@ -29,6 +29,7 @@ export async function buildOverview() {
       id: devices.id,
       accountId: devices.accountId,
       name: devices.name,
+      childAge: devices.childAge,
       assignee: devices.assignee,
       role: devices.role,
       deviceInfo: devices.deviceInfo,

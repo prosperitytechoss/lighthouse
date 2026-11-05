@@ -71,6 +71,7 @@ export function DeviceDetail({ id }: { id: string }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 10 }}>
       <div className="cols">
         <Block title="Phone" rows={[
+          ["Child's age", d.childAge == null ? "not asked, set up before 0.6.2" : String(d.childAge)],
           ["Model", [d.deviceInfo?.manufacturer, d.deviceInfo?.model].filter(Boolean).join(" ") || "unknown"],
           ["Android", d.deviceInfo?.os ?? "unknown"],
           ["Battery", d.batteryLevel == null ? "not reported yet" : `${d.batteryLevel}%${d.batteryCharging ? ", charging" : ""}`],

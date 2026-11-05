@@ -3,7 +3,7 @@
     "name": "Lighthouse",
     "slug": "lighthouse-child",
     "scheme": "lighthousechild",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -36,7 +36,7 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "versionCode": 116
+      "versionCode": 118
     },
     "plugins": [
       "expo-dev-client",

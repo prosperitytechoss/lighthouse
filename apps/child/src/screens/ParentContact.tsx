@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { pairingApi } from "../api/client";
 import { getDeviceInfo } from "../native/permissions";
-import { getInstallId, setDeviceToken } from "../native/session";
+import { getInstallId, setAgeDone, setDeviceToken } from "../native/session";
 import type { ChildStackParamList } from "../navigation/RootNavigator";
 
 const s = strings.child.pairing;
@@ -62,6 +62,7 @@ const inputClass = "mt-sm rounded-[14px] bg-white px-lg py-[14px] text-[15px] le
  */
 export function ParentContact({
   navigation,
+  route,
 }: NativeStackScreenProps<ChildStackParamList, "ParentContact">) {
   const toast = useToast();
   const [email, setEmail] = useState("");
@@ -93,10 +94,13 @@ export function ParentContact({
       phoneValid ? normalized : undefined,
       { model: di.model, manufacturer: di.manufacturer, os: `Android ${Platform.Version}`, ...(di.phoneId ? { phoneId: di.phoneId } : {}) },
       installId,
+      undefined,
+      route.params?.age,
     );
 
     if (res.ok) {
       await setDeviceToken(res.data.deviceToken);
+      if (route.params?.age) await setAgeDone();
       navigation.replace("Linked", { emailSent: res.data.emailSent !== false, needsConfirmation: res.data.needsConfirmation });
       return;
     }

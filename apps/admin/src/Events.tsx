@@ -13,7 +13,7 @@ const HOW: Record<string, string> = {
   ocr: "Words inside a picture or video",
   image: "The picture itself",
 };
-const BY: Record<string, string> = { keeper: "was scored by Keeper", lexicon: "matched the word list", model: "looked like it to the text model", image: "was scored by the image model" };
+const BY: Record<string, string> = { "view-once": "came from view-once messages in one chat", keeper: "was scored by Keeper", lexicon: "matched the word list", model: "looked like it to the text model", image: "was scored by the image model" };
 const MODEL_NAME: Record<string, string> = {
   "lh-textmodel-v1": "Lighthouse text model v1",
   "lighthouse-keeper": "Lighthouse Keeper",
@@ -38,6 +38,7 @@ function rows(e: AdminEvent): [string, string][] {
   const m = e.meta;
   const out: [string, string][] = [];
   const by = String(m.decidedBy ?? "");
+  if (by === "view-once") out.push(["Decided by", `${String(m.count ?? "3")} view-once photos, videos or voice notes from the same chat within a day. Lighthouse cannot see what was in them.`]);
   if (by === "keeper") {
     out.push(["Decided by", `Keeper ${String(m.modelVersion ?? "?")}, ${m.confidence != null ? `${pct(m.confidence)} sure of this level` : "confident"}${m.risk != null ? `, ${pct(m.risk)} chance of any risk` : ""}.`]);
     if (m.keeperMs != null) out.push(["Checked in", `${String(m.keeperMs)} ms on the phone`]);

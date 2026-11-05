@@ -14,12 +14,13 @@ import {
   stopCapture,
 } from "../native/capture";
 import { startLocationUpdates, stopLocationUpdates } from "../native/location";
-import { clearDeviceToken, getDeviceToken, getSetupDone } from "../native/session";
+import { clearDeviceToken, getDeviceToken, getAgeDone, getSetupDone } from "../native/session";
 import { ActiveBadge } from "../screens/ActiveBadge";
 import { ChildHome } from "../screens/ChildHome";
 import { ChildSettings } from "../screens/ChildSettings";
 import { Linked } from "../screens/Linked";
 import { Overlay } from "../screens/Overlay";
+import { Age } from "../screens/Age";
 import { ParentContact } from "../screens/ParentContact";
 import { ReportBug } from "../screens/ReportBug";
 import { Setup } from "../screens/Setup";
@@ -29,7 +30,8 @@ import { Weekly } from "../screens/Weekly";
 
 export type ChildStackParamList = {
   Onboarding: undefined;
-  ParentContact: undefined;
+  Age: { returning?: boolean } | undefined;
+  ParentContact: { age?: number } | undefined;
   Linked: { emailSent?: boolean; needsConfirmation?: boolean } | undefined;
   Setup: { focus?: "accessibility" | "notificationListener" } | undefined;
   Home: undefined;
@@ -45,7 +47,7 @@ const Stack = createNativeStackNavigator<ChildStackParamList>();
 
 // Where a fresh boot lands. "setup" = paired but the permission wizard wasn't
 // finished (Android restarts the app mid-wizard on accessibility/overlay grants).
-type BootState = "loading" | "onboarding" | "setup" | "home";
+type BootState = "loading" | "onboarding" | "setup" | "home" | "age";
 
 export function RootNavigator() {
   const toast = useToast();
@@ -78,7 +80,8 @@ export function RootNavigator() {
         return;
       }
       const done = await getSetupDone();
-      if (alive) setState(done ? "home" : "setup");
+      const ageDone = await getAgeDone();
+      if (alive) setState(!done ? "setup" : ageDone ? "home" : "age");
       const res = await pairingApi.me(token);
       if (alive && res.status === 401) await handleUnlinked();
       // Sync the parent's per-app monitoring choice + overlay gate to native.
@@ -138,7 +141,7 @@ export function RootNavigator() {
     );
   }
 
-  const initialRouteName = state === "home" ? "Home" : state === "setup" ? "Setup" : "Onboarding";
+  const initialRouteName = state === "home" ? "Home" : state === "setup" ? "Setup" : state === "age" ? "Age" : "Onboarding";
 
   return (
     <NavigationContainer
@@ -154,6 +157,7 @@ export function RootNavigator() {
         screenOptions={{ headerShown: false, animation: "slide_from_right" }}
       >
         <Stack.Screen name="Onboarding" component={Splash} />
+        <Stack.Screen name="Age" component={Age} options={{ animation: "fade" }} initialParams={state === "age" ? { returning: true } : undefined} />
         <Stack.Screen name="ParentContact" component={ParentContact} options={{ animation: "fade" }} />
         <Stack.Screen name="Linked" component={Linked} />
         <Stack.Screen name="Setup" component={Setup} />

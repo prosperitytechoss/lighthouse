@@ -17,7 +17,8 @@ export type CategoryName =
   | "Grooming"
   | "Privacy Threats"
   | "Scams"
-  | "Sextortion";
+  | "Sextortion"
+  | "Disappearing Messages";
 
 export type PersonTag = {
   id: string;
@@ -152,7 +153,7 @@ export const SEVERITY_NAMES = ["high", "review", "low"] as const;
 
 export type SeverityName = (typeof SEVERITY_NAMES)[number];
 
-/** The thirteen content categories, in demo order. */
+/** The content categories, in demo order. */
 export const CATEGORY_NAMES = [
   "Violence",
   "Sexual Content",
@@ -167,4 +168,5 @@ export const CATEGORY_NAMES = [
   "Privacy Threats",
   "Scams",
   "Sextortion",
+  "Disappearing Messages",
 ] as const satisfies readonly CategoryName[];

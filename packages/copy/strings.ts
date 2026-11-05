@@ -446,7 +446,7 @@ export const strings = {
       },
     },
 
-    // Parent-friendly labels for the 13 canonical risk categories (CategoryName).
+    // Parent-friendly labels for the canonical risk categories (CategoryName).
     categoryLabels: {
       Violence: "Violence",
       "Sexual Content": "Sexual content",
@@ -461,6 +461,7 @@ export const strings = {
       "Privacy Threats": "Privacy threats",
       Scams: "Scams",
       Sextortion: "Sextortion",
+      "Disappearing Messages": "Repeated disappearing messages on WhatsApp",
     },
 
     // Weekly email preview: a live preview of the Sunday digest email.
@@ -489,6 +490,15 @@ export const strings = {
 
     // Parent-contact setup — the parent enters their email + WhatsApp on the
     // child's phone. Replaces QR pairing now that there's no separate parent app.
+    age: {
+      title: "How old are you?",
+      placeholder: "Your age",
+      next: "Next",
+      invalid: "Type your age as a number.",
+      tooOld: "Lighthouse is for ages 6 to 15",
+      back: "Go back",
+    },
+
     pairing: {
       title: "Where should we send safety alerts?",
       body: "Add a parent or guardian's email. We'll send them a confirmation before Lighthouse starts monitoring.",

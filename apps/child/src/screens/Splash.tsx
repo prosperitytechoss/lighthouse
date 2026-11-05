@@ -47,7 +47,7 @@ export function Splash({ navigation }: NativeStackScreenProps<ChildStackParamLis
             <ChunkyButton
               style={{ marginTop: 24 }}
               label={s.scanButton}
-              onPress={() => navigation.navigate("ParentContact")}
+              onPress={() => navigation.navigate("Age")}
             />
           </View>
         </View>

@@ -238,7 +238,7 @@ object VisionEngine {
     val pause = service != null &&
       OverlayManager.isEnabled() &&
       LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()) &&
-      !OverlayManager.isShown() &&
+      OverlayManager.canShow(service.applicationContext) &&
       PauseMemory.claim(service.applicationContext, currentPkg, cls, channel)
     if (pause || last == null || now - last > DEDUPE_MS) {
       recent[key] = now

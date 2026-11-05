@@ -34,5 +34,6 @@ export const householdSettings: HouseholdSettings = {
     "Privacy Threats": true,
     Scams: true,
     Sextortion: true,
+    "Disappearing Messages": true,
   },
 };

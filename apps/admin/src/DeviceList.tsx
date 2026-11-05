@@ -77,7 +77,7 @@ export function DeviceList({ devices, open, onOpen, emptyText }: { devices: Over
           <div className={`term clickable ${isOpen ? "open" : ""}`} key={d.id} style={{ alignItems: "flex-start" }} onClick={() => onOpen(isOpen ? null : d.id)}>
             <div className="txt">
               <div style={{ fontSize: 15, fontWeight: 600 }}>
-                {d.name}{d.assignee && <span className="muted" style={{ fontWeight: 400 }}>, {d.assignee}</span>}
+                {d.name}{d.assignee && <span className="muted" style={{ fontWeight: 400 }}>, {d.assignee}</span>}{d.childAge != null && <span className="muted" style={{ fontWeight: 400 }}>, age {d.childAge}</span>}
               </div>
               <div className="muted small">{d.replacedBy ? "Old install. This phone was set up again" : `${d.signals} signals`}, {fmtSeen(d.lastSeenAt)}</div>
               {line && !d.replacedBy && <div style={{ fontSize: 13, marginTop: 4, color: "var(--ink-2)" }}>{line}</div>}

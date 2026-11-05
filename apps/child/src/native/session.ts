@@ -23,6 +23,17 @@ export async function setDeviceToken(token: string): Promise<void> {
 export async function clearDeviceToken(): Promise<void> {
   await SecureStore.deleteItemAsync(KEY);
   await SecureStore.deleteItemAsync(SETUP_KEY);
+  await SecureStore.deleteItemAsync(AGE_KEY);
+}
+
+const AGE_KEY = "lighthouse.child.ageDone";
+
+export async function getAgeDone(): Promise<boolean> {
+  return (await SecureStore.getItemAsync(AGE_KEY)) === "1";
+}
+
+export async function setAgeDone(): Promise<void> {
+  await SecureStore.setItemAsync(AGE_KEY, "1", OPTS);
 }
 
 export async function getSetupDone(): Promise<boolean> {

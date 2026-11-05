@@ -87,6 +87,7 @@ export type Overview = {
     id: string;
     name: string;
     assignee: string | null;
+    childAge?: number | null;
     account: string | null;
     accountId?: string;
     replacedBy?: string | null;
@@ -259,7 +260,7 @@ export type JobsInfo = {
 export const listJobs = () => req<JobsInfo>("/admin/jobs");
 export const runJob = (job: JobName) => req<{ ok: true; run: JobRun }>(`/admin/jobs/${job}/run`, { method: "POST", body: "{}" });
 
-export const CATEGORIES = ["Violence", "Sexual Content", "Self-Harm", "Eating Disorders", "Substance Use", "Hate Speech", "Gambling", "Graphic Content", "Bullying", "Grooming", "Privacy Threats", "Scams", "Sextortion"];
+export const CATEGORIES = ["Violence", "Sexual Content", "Self-Harm", "Eating Disorders", "Substance Use", "Hate Speech", "Gambling", "Graphic Content", "Bullying", "Grooming", "Privacy Threats", "Scams", "Sextortion", "Disappearing Messages"];
 export const LANGUAGES = ["en", "pidgin", "yoruba", "hausa", "igbo"];
 export const LANG_LABEL: Record<string, string> = { en: "English", pidgin: "Pidgin", yoruba: "Yorùbá", hausa: "Hausa", igbo: "Igbo" };
 export const SEVERITIES = ["high", "review", "low"];
@@ -281,6 +282,7 @@ export type DeviceDetail = {
   id: string;
   name: string | null;
   assignee: string | null;
+  childAge?: number | null;
   deviceInfo: { model?: string; manufacturer?: string; os?: string } | null;
   pairedAt: string | null;
   lastSeenAt: string | null;
