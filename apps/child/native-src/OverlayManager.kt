@@ -118,8 +118,8 @@ object OverlayManager {
         },
         onWrong = {
           what?.let { PopupReports.wrong(it) }
-          suppressUntil = System.currentTimeMillis() + SUPPRESS_MS
-          hideInternal(wm)
+          onExit()
+          main.postDelayed({ hideInternal(wm) }, 350)
         },
       )
       try {
