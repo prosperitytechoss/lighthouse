@@ -128,6 +128,22 @@ export function Setup({ navigation, route }: NativeStackScreenProps<ChildStackPa
       alive = false;
     };
   }, [step.type, device]);
+  useEffect(() => {
+    const check =
+      step.type === "grant" ? () => isGranted(step.native)
+      : step.type === "location" ? hasFineLocation
+      : step.type === "backgroundLocation" ? hasBackgroundLocation
+      : null;
+    if (!check) return;
+    let alive = true;
+    check().then((ok) => {
+      if (alive && ok) setIndex((i) => Math.min(i + 1, steps.length - 1));
+    });
+    return () => {
+      alive = false;
+    };
+  }, [step, steps.length]);
+
   const stepNo = steps.slice(0, index + 1).filter((s) => NUMBERED.has(s.type)).length;
   const numbered = NUMBERED.has(step.type);
 
