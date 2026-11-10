@@ -31,6 +31,7 @@ object BackgroundConfig {
   // Severity threshold driving the overlay block: severe|moderate|all. Absent = severe.
   private const val KEY_THRESHOLD = "blockThreshold"
   private const val KEY_VISION = "visionEnabled"
+  private const val KEY_OCR_POPUPS = "ocrPopups"
   private const val MASTER_KEY_ALIAS = "_androidx_security_master_key_"
 
   @Volatile private var cached: SharedPreferences? = null
@@ -148,6 +149,12 @@ object BackgroundConfig {
   }
 
   fun visionEnabled(ctx: Context): Boolean = read(ctx, true) { it.getBoolean(KEY_VISION, true) }
+
+  fun saveOcrPopups(ctx: Context, enabled: Boolean) {
+    edit(ctx) { it.putBoolean(KEY_OCR_POPUPS, enabled) }
+  }
+
+  fun ocrPopups(ctx: Context): Boolean = read(ctx, false) { it.getBoolean(KEY_OCR_POPUPS, false) }
 
   /** Read the block threshold (default "severe" = high only). */
   fun blockThreshold(ctx: Context): String =

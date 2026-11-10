@@ -9,6 +9,7 @@ import { accounts, devices, popupReports, signals } from "../db/schema";
 import { requireDevice, requireParent } from "../lib/auth-middleware";
 import { revokeDeviceToken } from "../lib/device-token";
 import { createConfirmToken } from "../lib/email-confirm";
+import { ocrPopups } from "../lib/app-config";
 import { ah, allowRequest, publicBaseUrl } from "../lib/http";
 import { generateOtp, storeOtp, takeResendSlot, verifyOtp } from "../lib/otp";
 import { decryptSignalContent, encryptSignalContent } from "../lib/signal-crypto";
@@ -313,6 +314,7 @@ devicesRouter.post(
       overlayEnabled: d?.overlayEnabled ?? true,
       visionEnabled: d?.visionEnabled ?? true,
       alertThreshold: acct?.threshold ?? "severe",
+      ocrPopups: await ocrPopups(),
     });
   }),
 );

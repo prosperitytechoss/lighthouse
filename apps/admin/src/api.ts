@@ -139,6 +139,9 @@ export const uploadKeeperFile = (version: string, file: KeeperFile, data: Blob) 
     headers: { "content-type": "application/octet-stream" },
   });
 
+export type AppConfig = { ocrPopups: boolean; updatedBy: string | null; updatedAt: string | null };
+export const getConfig = () => req<AppConfig>("/admin/config");
+export const setConfig = (patch: { ocrPopups: boolean }) => req<AppConfig>("/admin/config", { method: "PUT", body: JSON.stringify(patch) });
 export type PopupRow = { engine: string; keeperVersion: string; popups: number; wrong: number; phoneDays: number; phones: number };
 export type PopupPhoneRow = PopupRow & { deviceId: string; name: string | null; email: string | null };
 export const popupStats = (days = 30) =>

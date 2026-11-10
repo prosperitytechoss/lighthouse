@@ -152,6 +152,13 @@ export const signals = pgTable(
   }),
 );
 
+export const appConfig = pgTable("app_config", {
+  key: text("key").primaryKey(),
+  value: jsonb("value").notNull(),
+  updatedBy: text("updated_by"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const popupReports = pgTable(
   "popup_reports",
   {

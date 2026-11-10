@@ -61,6 +61,7 @@ object VisionEngine {
   @Volatile private var lastImageMs = 0L
   @Volatile private var lastTotalMs = 0L
   @Volatile private var enabledFlag = true
+  @Volatile private var ocrPopups = false
 
   val supported: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 
@@ -74,6 +75,7 @@ object VisionEngine {
     baseTier = DeviceTier.detect(ctx)
     tier = baseTier
     enabledFlag = BackgroundConfig.visionEnabled(ctx)
+    ocrPopups = BackgroundConfig.ocrPopups(ctx)
     val t = HandlerThread("lh-vision").also { it.start() }
     val h = Handler(t.looper)
     thread = t
@@ -105,6 +107,10 @@ object VisionEngine {
 
   fun setEnabled(enabled: Boolean) {
     enabledFlag = enabled
+  }
+
+  fun setOcrPopups(enabled: Boolean) {
+    ocrPopups = enabled
   }
 
   fun status(): Status = Status(
@@ -194,14 +200,18 @@ object VisionEngine {
     lastOcrMs = SystemClock.elapsedRealtime() - t0
     if (text.isNotBlank()) {
       if (BuildConfig.DEBUG) Log.d("LH-vision", "ocr ${text.length} chars in ${lastOcrMs}ms: ${LogScrub.scrub(text.take(160))}")
-      LighthouseClassifier.classifyParts(text.split("\n\n"))?.second?.let {
+      val hits = LighthouseClassifier.classifyAll(text.split("\n\n"))
+      val trigger = if (ocrPopups && OverlayManager.isEnabled()) {
+        PopupGate.pick("ocr:$currentPkg", hits.filter { LighthouseClassifier.shouldBlock(it.second, OverlayManager.threshold()) }, System.currentTimeMillis())?.second
+      } else null
+      (trigger ?: LighthouseClassifier.best(hits)?.second)?.let {
         val meta = LighthouseClassifier.baseMeta(it)
           .put("ocr", "mlkit-text-v2")
           .put("ocrMs", lastOcrMs)
           .put("chars", text.length)
           .put("frameTier", tier.label)
           .put("intervalMs", tier.intervalMs)
-        emit(app, it, "ocr", meta)
+        emit(app, it, "ocr", meta, trigger != null)
       }
     }
 
@@ -220,7 +230,7 @@ object VisionEngine {
           .put("crops", tier.imageCrops)
           .put("frameTier", tier.label)
           .put("intervalMs", tier.intervalMs)
-        emit(app, it, "image", meta)
+        emit(app, it, "image", meta, true)
       }
     }
 
@@ -230,13 +240,13 @@ object VisionEngine {
 
   private fun r3(v: Float): Double = Math.round(v * 1000) / 1000.0
 
-  private fun emit(app: String, cls: Classification, channel: String, meta: org.json.JSONObject) {
+  private fun emit(app: String, cls: Classification, channel: String, meta: org.json.JSONObject, mayPause: Boolean) {
     val key = "$app|${cls.category}|$channel"
     val now = System.currentTimeMillis()
     val last = recent[key]
     val service = serviceRef?.get()
     val pause = service != null &&
-      channel == "image" &&
+      mayPause &&
       OverlayManager.isEnabled() &&
       LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()) &&
       OverlayManager.canShow(service.applicationContext) &&

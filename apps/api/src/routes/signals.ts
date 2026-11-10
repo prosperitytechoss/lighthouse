@@ -6,6 +6,7 @@ import { z } from "zod";
 import { db } from "../db/client";
 import { accounts, devices, signals } from "../db/schema";
 import { thresholdSeverities } from "../lib/alerts";
+import { ocrPopups } from "../lib/app-config";
 import { requireDevice, requireParent } from "../lib/auth-middleware";
 import { EPISODE_WINDOW_SECONDS, groupEpisodes, type RawSignal } from "../lib/episodes";
 import { ah } from "../lib/http";
@@ -38,7 +39,8 @@ async function maybeNotify(accountId: string, deviceId: string, items: IngestIte
 
   // Respect the parent's severity threshold (Settings).
   const allowed = new Set(thresholdSeverities(acct.threshold));
-  const high = items.filter((i) => allowed.has(i.severity) && i.channel !== "ocr");
+  const ocrOn = await ocrPopups();
+  const high = items.filter((i) => allowed.has(i.severity) && (ocrOn || i.channel !== "ocr"));
   if (high.length === 0) return;
 
   // Collapse to distinct episodes (app+category) and dedup each against its window.

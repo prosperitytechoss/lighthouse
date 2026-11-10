@@ -123,6 +123,11 @@ object SignalUploader {
         BackgroundConfig.saveVisionEnabled(ctx, v)
         VisionEngine.setEnabled(v)
       }
+      if (json.has("ocrPopups")) {
+        val o = json.getBoolean("ocrPopups")
+        BackgroundConfig.saveOcrPopups(ctx, o)
+        VisionEngine.setOcrPopups(o)
+      }
       if (json.has("alertThreshold")) {
         val t = json.getString("alertThreshold")
         OverlayManager.setThreshold(t)

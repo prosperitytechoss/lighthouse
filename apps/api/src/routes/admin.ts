@@ -16,6 +16,7 @@ import { accounts, devices } from "../db/schema";
 import { recentEvents } from "../lib/admin-events";
 import { buildOverview } from "../lib/admin-overview";
 import { popupStats } from "../lib/popup-stats";
+import { configSummary, setOcrPopups } from "../lib/app-config";
 import { createConfirmToken } from "../lib/email-confirm";
 import { JOB_NAMES, recentRuns, runJob, type JobName } from "../lib/harvest";
 import { ah, allowRequest, clientIp, publicBaseUrl } from "../lib/http";
@@ -109,6 +110,25 @@ adminRouter.get(
   requireAdmin,
   ah(async (_req, res) => {
     res.json(await buildOverview());
+  }),
+);
+
+adminRouter.get(
+  "/config",
+  requireAdmin,
+  ah(async (_req, res) => {
+    res.json(await configSummary());
+  }),
+);
+
+adminRouter.put(
+  "/config",
+  requireAdmin,
+  ah(async (req, res) => {
+    const { ocrPopups } = z.object({ ocrPopups: z.boolean() }).parse(req.body);
+    await setOcrPopups(ocrPopups, req.adminEmail ?? null);
+    logger.info(`[admin] picture text pop-ups ${ocrPopups ? "on" : "off"} by ${req.adminEmail}`);
+    res.json(await configSummary());
   }),
 );
 

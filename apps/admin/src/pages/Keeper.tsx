@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import * as api from "../api";
-import { type KeeperVersion, type PopupPhoneRow, type PopupRow } from "../api";
+import { type AppConfig, type KeeperVersion, type PopupPhoneRow, type PopupRow } from "../api";
 import { type OverviewDevice } from "../DeviceList";
 import { Empty, ErrBanner, Page, Spinner, errMsg, fmtWhen } from "../ui";
 
@@ -16,6 +16,41 @@ const hasButton = (engine: string) => {
 };
 const wrongRate = (r: PopupRow) => (!hasButton(r.engine) ? "no button yet" : r.popups ? `${Math.round((r.wrong / r.popups) * 100)}%` : "none");
 const label = (r: PopupRow) => `${r.engine.replace("child-", "App ")}, Keeper ${r.keeperVersion === "unknown" ? "none" : r.keeperVersion}`;
+
+function PictureText({ toast }: { toast: (m: string) => void }) {
+  const [cfg, setCfg] = useState<AppConfig | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    api.getConfig().then(setCfg).catch((e) => setErr(errMsg(e, "Settings did not load")));
+  }, []);
+  const flip = async () => {
+    if (!cfg) return;
+    const next = !cfg.ocrPopups;
+    if (!window.confirm(next ? "Turn on pop-ups for text inside pictures on every phone?" : "Turn off pop-ups for text inside pictures on every phone?")) return;
+    setBusy(true);
+    try {
+      setCfg(await api.setConfig({ ocrPopups: next }));
+      toast(next ? "Picture text pop-ups are on. Phones switch at their next check-in." : "Picture text pop-ups are off.");
+    } catch (e) {
+      setErr(errMsg(e, "Could not save"));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="card" style={{ maxWidth: 560 }}>
+      {err && <ErrBanner e={err} />}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ flex: 1 }}>
+          <b>Pop-ups for text inside pictures</b>
+          <div className="muted">{cfg ? (cfg.ocrPopups ? "On" : "Off. Picture text is logged only.") : "Loading"}{cfg?.updatedBy ? `, changed by ${cfg.updatedBy} ${fmtWhen(cfg.updatedAt)}` : ""}</div>
+        </div>
+        <button className="btn ghost sm" disabled={!cfg || busy} onClick={() => void flip()}>{cfg?.ocrPopups ? "Turn off" : "Turn on"}</button>
+      </div>
+    </div>
+  );
+}
 
 function Popups() {
   const [data, setData] = useState<{ byVersion: PopupRow[]; byPhone: PopupPhoneRow[] } | null>(null);
@@ -167,6 +202,9 @@ export function Keeper({ toast }: { toast: (m: string) => void }) {
             <div className="metric"><div className="val">{onPhone(live ? live.version : BUILT_IN)}</div><div className="lbl">Phones running it</div></div>
             <div className="metric"><div className="val">{devices.length - reporting}</div><div className="lbl">Phones still on the old app</div></div>
           </div>
+
+          <h2>Pop-up settings</h2>
+          <PictureText toast={toast} />
 
           <Popups />
 
