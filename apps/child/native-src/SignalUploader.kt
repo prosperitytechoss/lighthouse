@@ -133,6 +133,28 @@ object SignalUploader {
     }
   }
 
+  fun reportWrong(baseUrl: String, token: String, items: List<JSONObject>): Boolean {
+    if (items.isEmpty()) return true
+    var conn: HttpURLConnection? = null
+    return try {
+      conn = (URL(baseUrl.trimEnd('/') + "/devices/popup-wrong").openConnection() as HttpURLConnection).apply {
+        requestMethod = "POST"
+        connectTimeout = 10_000
+        readTimeout = 15_000
+        doOutput = true
+        setRequestProperty("Content-Type", "application/json")
+        setRequestProperty("Authorization", "Bearer $token")
+      }
+      val body = JSONObject().put("reports", JSONArray(items)).toString()
+      OutputStreamWriter(conn.outputStream).use { it.write(body) }
+      conn.responseCode in 200..299
+    } catch (e: Exception) {
+      false
+    } finally {
+      conn?.disconnect()
+    }
+  }
+
   /** Returns true on a 2xx response; false on any error (caller keeps + retries). */
   fun upload(baseUrl: String, token: String, signals: List<Signal>): Boolean {
     if (signals.isEmpty()) return true

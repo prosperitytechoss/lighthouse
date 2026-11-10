@@ -236,6 +236,7 @@ object VisionEngine {
     val last = recent[key]
     val service = serviceRef?.get()
     val pause = service != null &&
+      channel == "image" &&
       OverlayManager.isEnabled() &&
       LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()) &&
       OverlayManager.canShow(service.applicationContext) &&
@@ -247,7 +248,7 @@ object VisionEngine {
       if (channel == "ocr") textHits++ else imageHits++
       if (BuildConfig.DEBUG) Log.d("LH-vision", "$channel hit ${cls.category}/${cls.severity} in $app")
     }
-    if (pause) service?.block(currentPkg)
+    if (pause) service?.block(currentPkg, cls, channel)
   }
 
   private fun nextInterval(ctx: Context): Long {

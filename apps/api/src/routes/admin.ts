@@ -15,6 +15,7 @@ import { db } from "../db/client";
 import { accounts, devices } from "../db/schema";
 import { recentEvents } from "../lib/admin-events";
 import { buildOverview } from "../lib/admin-overview";
+import { popupStats } from "../lib/popup-stats";
 import { createConfirmToken } from "../lib/email-confirm";
 import { JOB_NAMES, recentRuns, runJob, type JobName } from "../lib/harvest";
 import { ah, allowRequest, clientIp, publicBaseUrl } from "../lib/http";
@@ -108,6 +109,15 @@ adminRouter.get(
   requireAdmin,
   ah(async (_req, res) => {
     res.json(await buildOverview());
+  }),
+);
+
+adminRouter.get(
+  "/popups",
+  requireAdmin,
+  ah(async (req, res) => {
+    const days = z.coerce.number().int().min(1).max(90).default(30).parse(req.query.days ?? undefined);
+    res.json(await popupStats(days));
   }),
 );
 

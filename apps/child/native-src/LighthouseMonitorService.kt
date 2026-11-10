@@ -82,6 +82,8 @@ class LighthouseMonitorService : Service() {
             if (BuildConfig.DEBUG) Log.d("LH-service", "classified ${cls.category}/${cls.severity} from $app via ${item.channel}")
           }
           pending.addAll(SignalBuffer.drain())
+          val wrong = PopupReports.drain()
+          if (wrong.isNotEmpty() && !SignalUploader.reportWrong(baseUrl, token, wrong)) PopupReports.putBack(wrong)
           // 2. upload a batch; keep items on failure for the next pass (retry)
           if (pending.isNotEmpty()) {
             val batch = ArrayList(pending.take(MAX_BATCH))

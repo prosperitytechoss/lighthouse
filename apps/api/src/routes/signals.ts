@@ -13,7 +13,7 @@ import { redis } from "../lib/redis";
 import { decryptSignalContent, encryptSignalContent } from "../lib/signal-crypto";
 import { emailService } from "../services/email";
 
-type IngestItem = { category: string; severity: string; app: string };
+type IngestItem = { category: string; severity: string; app: string; channel?: string; meta?: Record<string, unknown> };
 
 /**
  * Fire-and-forget: alert the parent on signals at/above their threshold, if opted
@@ -38,14 +38,18 @@ async function maybeNotify(accountId: string, deviceId: string, items: IngestIte
 
   // Respect the parent's severity threshold (Settings).
   const allowed = new Set(thresholdSeverities(acct.threshold));
-  const high = items.filter((i) => allowed.has(i.severity));
+  const high = items.filter((i) => allowed.has(i.severity) && i.channel !== "ocr");
   if (high.length === 0) return;
 
   // Collapse to distinct episodes (app+category) and dedup each against its window.
-  const groups = new Map<string, { app: string; category: string }>();
-  for (const h of high) groups.set(`${h.app}|${h.category}`, { app: h.app, category: h.category });
+  const groups = new Map<string, { app: string; category: string; paused: boolean }>();
+  for (const h of high) {
+    const k = `${h.app}|${h.category}`;
+    const paused = h.meta?.paused === true || groups.get(k)?.paused === true;
+    groups.set(k, { app: h.app, category: h.category, paused });
+  }
 
-  const fresh: { app: string; category: string }[] = [];
+  const fresh: { app: string; category: string; paused: boolean }[] = [];
   for (const g of groups.values()) {
     const key = `pushalert:${deviceId}:${g.app}:${g.category}`;
     // NX = only set if absent → tells us this is a NEW episode (fire). Otherwise
@@ -57,15 +61,12 @@ async function maybeNotify(accountId: string, deviceId: string, items: IngestIte
   if (fresh.length === 0) return; // every episode already alerted — suppress
 
   const [dev] = await db
-    .select({ name: devices.name, overlayEnabled: devices.overlayEnabled })
+    .select({ name: devices.name })
     .from(devices)
     .where(eq(devices.id, deviceId))
     .limit(1);
   const deviceName = dev?.name ?? "your child's device";
-  // The block uses the SAME severity threshold as this alert (shouldBlock), so
-  // among alerted signals, the ones that paused the screen are exactly those on
-  // a device with the overlay enabled. That lets the email say "paused" honestly.
-  const blocked = dev?.overlayEnabled ?? true;
+  const blocked = fresh.some((g) => g.paused);
   const apps = Array.from(new Set(fresh.map((g) => APP_LABEL.get(g.app) ?? g.app)));
   const cats = Array.from(new Set(fresh.map((g) => g.category)));
   await emailService.sendUrgentAlert(acct.email, { apps, categories: cats, deviceName, blocked });

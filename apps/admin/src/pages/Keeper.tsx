@@ -1,12 +1,76 @@
 import { useCallback, useEffect, useState } from "react";
 
 import * as api from "../api";
-import { type KeeperVersion } from "../api";
+import { type KeeperVersion, type PopupPhoneRow, type PopupRow } from "../api";
 import { type OverviewDevice } from "../DeviceList";
 import { Empty, ErrBanner, Page, Spinner, errMsg, fmtWhen } from "../ui";
 
 const BUILT_IN = "0.1";
 const mb = (b: number | null) => (b == null ? "missing" : `${(b / 1e6).toFixed(1)} MB`);
+const perDay = (r: PopupRow) => (r.phoneDays ? (r.popups / r.phoneDays).toFixed(1) : "0");
+const hasButton = (engine: string) => {
+  const m = engine.match(/(\d+)\.(\d+)\.(\d+)/);
+  if (!m) return false;
+  const [x, y, z] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  return x > 0 || y > 6 || (y === 6 && z >= 3);
+};
+const wrongRate = (r: PopupRow) => (!hasButton(r.engine) ? "no button yet" : r.popups ? `${Math.round((r.wrong / r.popups) * 100)}%` : "none");
+const label = (r: PopupRow) => `${r.engine.replace("child-", "App ")}, Keeper ${r.keeperVersion === "unknown" ? "none" : r.keeperVersion}`;
+
+function Popups() {
+  const [data, setData] = useState<{ byVersion: PopupRow[]; byPhone: PopupPhoneRow[] } | null>(null);
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    api.popupStats(30).then(setData).catch((e) => setErr(errMsg(e, "Pop-up numbers did not load")));
+  }, []);
+  if (err) return <ErrBanner e={err} />;
+  if (!data) return <Spinner />;
+  const versions = data.byVersion.filter((r) => r.popups > 0 || r.wrong > 0 || r.phoneDays > 0);
+  return (
+    <>
+      <h2>Pop-ups by version, last 30 days</h2>
+      {versions.length === 0 ? <Empty>No pop-ups in the last 30 days.</Empty> : (
+        <div className="card tablewrap">
+          <table className="runs">
+            <thead><tr><th>Version</th><th>Phones</th><th>Pop-ups</th><th>Per phone per day</th><th>Marked wrong</th><th>Wrong rate</th></tr></thead>
+            <tbody>
+              {versions.map((r) => (
+                <tr key={`${r.engine}|${r.keeperVersion}`}>
+                  <td><b>{label(r)}</b></td>
+                  <td>{r.phones}</td>
+                  <td>{r.popups}</td>
+                  <td>{perDay(r)}</td>
+                  <td>{r.wrong}</td>
+                  <td className="muted">{wrongRate(r)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <h2>Pop-ups by phone</h2>
+      {data.byPhone.length === 0 ? <Empty>No phone has shown a pop-up in the last 30 days.</Empty> : (
+        <div className="card tablewrap">
+          <table className="runs">
+            <thead><tr><th>Phone</th><th>Version</th><th>Pop-ups</th><th>Per day</th><th>Marked wrong</th><th>Wrong rate</th></tr></thead>
+            <tbody>
+              {data.byPhone.map((r) => (
+                <tr key={`${r.deviceId}|${r.engine}|${r.keeperVersion}`}>
+                  <td><b>{r.name ?? "Phone"}</b><div className="muted">{r.email ?? ""}</div></td>
+                  <td className="muted">{label(r)}</td>
+                  <td>{r.popups}</td>
+                  <td>{perDay(r)}</td>
+                  <td>{r.wrong}</td>
+                  <td className="muted">{wrongRate(r)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
 
 function Upload({ onDone, toast }: { onDone: () => void; toast: (m: string) => void }) {
   const [version, setVersion] = useState("");
@@ -103,6 +167,8 @@ export function Keeper({ toast }: { toast: (m: string) => void }) {
             <div className="metric"><div className="val">{onPhone(live ? live.version : BUILT_IN)}</div><div className="lbl">Phones running it</div></div>
             <div className="metric"><div className="val">{devices.length - reporting}</div><div className="lbl">Phones still on the old app</div></div>
           </div>
+
+          <Popups />
 
           <h2>Versions</h2>
           {versions.length === 0 ? <Empty>Nothing uploaded yet. Phones run Keeper {BUILT_IN}, which ships inside app 0.6.0. Upload a new version here when there is one.</Empty> : (

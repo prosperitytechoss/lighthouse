@@ -60,23 +60,17 @@ class ContentAccessibilityService : AccessibilityService() {
     if (LighthouseRegistry.idForPackage(pkg) == "whatsapp") checkViewOnce(root)
     val parts = ArrayList<String>()
     collectText(root, parts, intArrayOf(0))
-    val hit = LighthouseClassifier.classifyParts(parts)
-    if (hit != null) {
-      val (text, cls) = hit
-      // DEV-ONLY raw-text trace to logcat. BuildConfig.DEBUG is false in release,
-      // so this physically cannot ship. Never persisted, never sent.
-      if (BuildConfig.DEBUG) Log.d("LH-capture", "$pkg: ${LogScrub.scrub(text)}")
-      // Real-time protective block — brain-agnostic: rides on classify() + the
-      // shouldBlock rule, which now follows the PARENT'S SEVERITY THRESHOLD (same as
-      // alerts): severe→high, moderate→high+review, all→everything. Gated on the
-      // parent's overlay toggle AND the overlay permission.
-      val pause = OverlayManager.isEnabled() &&
-        LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()) &&
-        OverlayManager.canShow(applicationContext) &&
-        PauseMemory.claim(applicationContext, pkg, cls, "text")
-      CaptureBuffer.add(pkg, text, "text", pause)
-      if (pause) block(pkg)
-    }
+    val hits = LighthouseClassifier.classifyAll(parts)
+    val best = LighthouseClassifier.best(hits) ?: return
+    val blockable = if (OverlayManager.isEnabled()) hits.filter { LighthouseClassifier.shouldBlock(it.second, OverlayManager.threshold()) } else emptyList()
+    val trigger = PopupGate.pick(pkg, blockable, System.currentTimeMillis())
+    val pause = trigger != null &&
+      OverlayManager.canShow(applicationContext) &&
+      PauseMemory.claim(applicationContext, pkg, trigger.second, "text")
+    val (text, cls) = if (pause && trigger != null) trigger else best
+    if (BuildConfig.DEBUG) Log.d("LH-capture", "$pkg: ${LogScrub.scrub(text)}")
+    CaptureBuffer.add(pkg, text, "text", pause)
+    if (pause) block(pkg, cls, "text")
   }
 
   private val passThroughPkgs: Set<String> by lazy {
@@ -96,9 +90,11 @@ class ContentAccessibilityService : AccessibilityService() {
     return pkg in homePkgs || packageManager.getLaunchIntentForPackage(pkg) != null
   }
 
-  fun block(pkg: String) {
+  fun block(pkg: String, cls: Classification, channel: String) {
     blockedPkg = pkg
-    OverlayManager.show(applicationContext) { performGlobalAction(GLOBAL_ACTION_HOME) }
+    val app = LighthouseRegistry.idForPackage(pkg)
+    val what = app?.let { PopupReports.Shown(cls.category, cls.severity, it, channel, if (channel == "image") null else Keeper.version()) }
+    OverlayManager.show(applicationContext, what) { performGlobalAction(GLOBAL_ACTION_HOME) }
   }
 
   private fun checkViewOnce(root: AccessibilityNodeInfo) {

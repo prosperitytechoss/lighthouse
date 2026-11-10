@@ -41,6 +41,7 @@ object OverlayManager {
     "You didn't do anything wrong. You can head back, or keep going if you're okay."
   private const val BUTTON = "GO BACK"
   private const val CONTINUE = "Continue anyway"
+  private const val WRONG = "This was wrong"
   private const val FOOTER = "Your parent sees the category, never the content."
 
   // After "Continue anyway", don't re-cover the same screen for a short window,
@@ -82,7 +83,7 @@ object OverlayManager {
   fun canShow(ctx: Context): Boolean = !shown && Settings.canDrawOverlays(ctx) && System.currentTimeMillis() >= suppressUntil
 
   /** Show the overlay. `onExit` runs when the child taps "Go back" (e.g. go HOME). */
-  fun show(ctx: Context, onExit: () -> Unit) {
+  fun show(ctx: Context, what: PopupReports.Shown?, onExit: () -> Unit) {
     if (!Settings.canDrawOverlays(ctx)) return // gated: never draw without permission
     if (System.currentTimeMillis() < suppressUntil) return // recently dismissed via "Continue"
     main.post {
@@ -112,6 +113,11 @@ object OverlayManager {
         },
         onContinue = {
           // Dismiss and let the child read; suppress re-covering the same screen briefly.
+          suppressUntil = System.currentTimeMillis() + SUPPRESS_MS
+          hideInternal(wm)
+        },
+        onWrong = {
+          what?.let { PopupReports.wrong(it) }
           suppressUntil = System.currentTimeMillis() + SUPPRESS_MS
           hideInternal(wm)
         },
@@ -148,7 +154,7 @@ object OverlayManager {
   private fun dp(ctx: Context, value: Float): Int =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, ctx.resources.displayMetrics).toInt()
 
-  private fun buildView(ctx: Context, onGoBack: () -> Unit, onContinue: () -> Unit): View {
+  private fun buildView(ctx: Context, onGoBack: () -> Unit, onContinue: () -> Unit, onWrong: () -> Unit): View {
     // Matches the approved Paper "block screen": dark scrim + centered white card.
     val root = FrameLayout(ctx)
     root.setBackgroundColor(Color.parseColor("#F212141F")) // near-opaque dark scrim
@@ -277,6 +283,22 @@ object OverlayManager {
     contLp.topMargin = dp(ctx, 12f)
     cont.layoutParams = contLp
 
+    val wrong = TextView(ctx)
+    wrong.text = WRONG
+    wrong.setTextColor(Color.parseColor("#0E7FA8"))
+    wrong.textSize = 14f
+    wrong.typeface = Typeface.DEFAULT_BOLD
+    wrong.gravity = Gravity.CENTER
+    wrong.setPadding(dp(ctx, 12f), dp(ctx, 10f), dp(ctx, 12f), dp(ctx, 4f))
+    wrong.setOnClickListener { onWrong() }
+    val wrongLp =
+      LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.WRAP_CONTENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT,
+      )
+    wrongLp.topMargin = dp(ctx, 6f)
+    wrong.layoutParams = wrongLp
+
     val footer = TextView(ctx)
     footer.text = FOOTER
     footer.setTextColor(Color.parseColor("#8E8E93"))
@@ -296,6 +318,7 @@ object OverlayManager {
     card.addView(body)
     card.addView(button)
     card.addView(cont)
+    card.addView(wrong)
     card.addView(footer)
 
     val cardLp =

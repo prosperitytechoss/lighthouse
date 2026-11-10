@@ -1,17 +1,17 @@
-import { MONITORED_APP_IDS } from "@lighthouse/types";
+import { CATEGORY_NAMES, MONITORED_APP_IDS, SEVERITY_NAMES } from "@lighthouse/types";
 import { and, eq, gte, sql } from "drizzle-orm";
 import { Router } from "express";
 import { z } from "zod";
 
 import { env } from "../config/env";
 import { db } from "../db/client";
-import { accounts, devices, signals } from "../db/schema";
+import { accounts, devices, popupReports, signals } from "../db/schema";
 import { requireDevice, requireParent } from "../lib/auth-middleware";
 import { revokeDeviceToken } from "../lib/device-token";
 import { createConfirmToken } from "../lib/email-confirm";
 import { ah, allowRequest, publicBaseUrl } from "../lib/http";
 import { generateOtp, storeOtp, takeResendSlot, verifyOtp } from "../lib/otp";
-import { decryptSignalContent } from "../lib/signal-crypto";
+import { decryptSignalContent, encryptSignalContent } from "../lib/signal-crypto";
 import { emailService } from "../services/email";
 
 export const devicesRouter = Router();
@@ -115,6 +115,37 @@ devicesRouter.post(
     const { age } = z.object({ age: z.number().int().min(1).max(15, "Lighthouse is for ages 6 to 15") }).parse(req.body);
     await db.update(devices).set({ childAge: age, updatedAt: new Date() }).where(eq(devices.id, req.deviceId!));
     return res.json({ ok: true });
+  }),
+);
+
+const nonEmpty = <T>(arr: readonly T[]) => arr as unknown as [T, ...T[]];
+const PopupReport = z.object({
+  category: z.enum(nonEmpty(CATEGORY_NAMES)),
+  severity: z.enum(nonEmpty(SEVERITY_NAMES)),
+  app: z.enum(nonEmpty(MONITORED_APP_IDS)),
+  channel: z.enum(["text", "notification", "ocr", "image"]),
+  engine: z.string().max(32).optional(),
+  keeperVersion: z.string().max(32).optional(),
+  occurredAt: z.string().datetime({ offset: true }),
+});
+
+devicesRouter.post(
+  "/popup-wrong",
+  requireDevice,
+  ah(async (req, res) => {
+    const { reports } = z.object({ reports: z.array(PopupReport).min(1).max(50) }).parse(req.body);
+    await db.insert(popupReports).values(
+      reports.map((r) => ({
+        deviceId: req.deviceId!,
+        accountId: req.accountId!,
+        payload: encryptSignalContent({ category: r.category, severity: r.severity, app: r.app }),
+        channel: r.channel,
+        engine: r.engine ?? null,
+        keeperVersion: r.keeperVersion ?? null,
+        occurredAt: new Date(r.occurredAt),
+      })),
+    );
+    return res.json({ ok: true, count: reports.length });
   }),
 );
 
@@ -414,7 +445,6 @@ devicesRouter.get(
 );
 
 // PATCH /devices/:id — set name + assigned person.
-const nonEmpty = <T>(arr: readonly T[]) => arr as unknown as [T, ...T[]];
 const PatchBody = z.object({
   name: z.string().trim().min(1).max(80).optional(),
   assignee: z.string().trim().max(80).nullable().optional(),

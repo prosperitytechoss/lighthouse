@@ -215,6 +215,8 @@ function copyNativeSources(projectRoot, platformRoot) {
     "KeeperUpdater.kt",
     "MessageFilter.kt",
     "ViewOnceWatch.kt",
+    "PopupGate.kt",
+    "PopupReports.kt",
     "NotificationCaptureService.kt",
     "ContentAccessibilityService.kt",
     "CaptureBuffer.kt",

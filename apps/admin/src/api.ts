@@ -139,6 +139,11 @@ export const uploadKeeperFile = (version: string, file: KeeperFile, data: Blob) 
     headers: { "content-type": "application/octet-stream" },
   });
 
+export type PopupRow = { engine: string; keeperVersion: string; popups: number; wrong: number; phoneDays: number; phones: number };
+export type PopupPhoneRow = PopupRow & { deviceId: string; name: string | null; email: string | null };
+export const popupStats = (days = 30) =>
+  req<{ since: string; days: number; byVersion: PopupRow[]; byPhone: PopupPhoneRow[] }>(`/admin/popups?days=${days}`);
+
 // ── lexicon ──
 export const listTerms = (q: Record<string, string> = {}) =>
   req<{ terms: Term[]; count: number }>(`/lexicon/terms?${new URLSearchParams(q)}`);

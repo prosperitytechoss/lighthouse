@@ -152,6 +152,28 @@ export const signals = pgTable(
   }),
 );
 
+export const popupReports = pgTable(
+  "popup_reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    deviceId: uuid("device_id")
+      .notNull()
+      .references(() => devices.id, { onDelete: "cascade" }),
+    accountId: uuid("account_id")
+      .notNull()
+      .references(() => accounts.id, { onDelete: "cascade" }),
+    payload: text("payload").notNull(),
+    channel: text("channel").notNull(),
+    engine: text("engine"),
+    keeperVersion: text("keeper_version"),
+    occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    byDevice: index("popup_reports_device_idx").on(t.deviceId, t.occurredAt),
+  }),
+);
+
 /**
  * A child location point. The coordinates are the most sensitive data we hold, so
  * { lat, lng, accuracy } is encrypted at the application layer (AES-256-GCM) into

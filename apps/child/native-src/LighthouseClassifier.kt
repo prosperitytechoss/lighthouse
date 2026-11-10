@@ -6,7 +6,7 @@ import org.json.JSONObject
 data class Classification(val category: String, val severity: String, val tier: String = "keeper", val confidence: Float? = null, val risk: Float? = null, val ms: Long? = null, val matched: String? = null)
 
 object LighthouseClassifier {
-  const val ENGINE = "child-0.6.2"
+  const val ENGINE = "child-0.6.3"
   private const val MAX_PARTS = 40
 
   fun init(ctx: Context) {
@@ -18,17 +18,21 @@ object LighthouseClassifier {
     return Classification(r.category, r.severity, "keeper", r.confidence, r.risk, r.ms, fingerprint(text))
   }
 
-  fun classifyParts(parts: List<String>): Pair<String, Classification>? {
+  fun classifyAll(parts: List<String>): List<Pair<String, Classification>> =
+    parts.asSequence().map { it.trim() }.filter { MessageFilter.looksLikeMessage(it) }.distinct().take(MAX_PARTS)
+      .mapNotNull { part -> classify(part)?.let { Pair(part, it) } }.toList()
+
+  fun best(hits: List<Pair<String, Classification>>): Pair<String, Classification>? {
     var best: Pair<String, Classification>? = null
-    for (part in parts.asSequence().map { it.trim() }.filter { MessageFilter.looksLikeMessage(it) }.distinct().take(MAX_PARTS)) {
-      val c = classify(part) ?: continue
+    for (h in hits) {
+      val c = h.second
       val b = best?.second
-      if (b == null || rank(c.severity) > rank(b.severity) || (rank(c.severity) == rank(b.severity) && (c.confidence ?: 0f) > (b.confidence ?: 0f))) {
-        best = Pair(part, c)
-      }
+      if (b == null || rank(c.severity) > rank(b.severity) || (rank(c.severity) == rank(b.severity) && (c.confidence ?: 0f) > (b.confidence ?: 0f))) best = h
     }
     return best
   }
+
+  fun classifyParts(parts: List<String>): Pair<String, Classification>? = best(classifyAll(parts))
 
   private fun fingerprint(text: String): String {
     val norm = text.lowercase().replace(Regex("\\s+"), " ").trim()
@@ -48,7 +52,7 @@ object LighthouseClassifier {
     return m
   }
 
-  private fun rank(sev: String): Int = when (sev) { "high" -> 3; "review" -> 2; else -> 1 }
+  fun rank(sev: String): Int = when (sev) { "high" -> 3; "review" -> 2; else -> 1 }
 
   fun shouldBlock(result: Classification?, threshold: String): Boolean {
     if (result == null) return false
