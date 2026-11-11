@@ -10,8 +10,8 @@ import org.json.JSONObject
 
 object Keeper {
   const val NAME = "lighthouse-keeper"
-  const val BUNDLED_VERSION = "0.1"
-  const val DEFAULT_MIN_RISK = 0.8f
+  const val BUNDLED_VERSION = "0.2"
+  const val DEFAULT_MIN_RISK = 0.7f
 
   val CATEGORIES = listOf(
     "Bullying", "Eating Disorders", "Gambling", "Graphic Content", "Grooming", "Hate Speech", "Privacy Threats",

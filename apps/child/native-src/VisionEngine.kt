@@ -202,7 +202,7 @@ object VisionEngine {
       if (BuildConfig.DEBUG) Log.d("LH-vision", "ocr ${text.length} chars in ${lastOcrMs}ms: ${LogScrub.scrub(text.take(160))}")
       val hits = LighthouseClassifier.classifyAll(text.split("\n\n"))
       val trigger = if (ocrPopups && OverlayManager.isEnabled()) {
-        PopupGate.pick("ocr:$currentPkg", hits.filter { LighthouseClassifier.shouldBlock(it.second, OverlayManager.threshold()) }, System.currentTimeMillis())?.second
+        PopupGate.pick("ocr:$currentPkg", hits.filter { LighthouseClassifier.shouldBlock(it.second, OverlayManager.threshold()) && !OverlayManager.wasContinued(it.second.matched) }, System.currentTimeMillis())?.second
       } else null
       (trigger ?: LighthouseClassifier.best(hits)?.second)?.let {
         val meta = LighthouseClassifier.baseMeta(it)
@@ -211,7 +211,7 @@ object VisionEngine {
           .put("chars", text.length)
           .put("frameTier", tier.label)
           .put("intervalMs", tier.intervalMs)
-        emit(app, it, "ocr", meta, trigger != null)
+        emit(app, it, "ocr", meta, trigger != null, hits.mapNotNull { h -> h.second.matched })
       }
     }
 
@@ -240,13 +240,14 @@ object VisionEngine {
 
   private fun r3(v: Float): Double = Math.round(v * 1000) / 1000.0
 
-  private fun emit(app: String, cls: Classification, channel: String, meta: org.json.JSONObject, mayPause: Boolean) {
+  private fun emit(app: String, cls: Classification, channel: String, meta: org.json.JSONObject, mayPause: Boolean, onScreen: List<String> = emptyList()) {
     val key = "$app|${cls.category}|$channel"
     val now = System.currentTimeMillis()
     val last = recent[key]
     val service = serviceRef?.get()
     val pause = service != null &&
       mayPause &&
+      !OverlayManager.wasContinued(cls.matched) &&
       OverlayManager.isEnabled() &&
       LighthouseClassifier.shouldBlock(cls, OverlayManager.threshold()) &&
       OverlayManager.canShow(service.applicationContext) &&
@@ -258,7 +259,7 @@ object VisionEngine {
       if (channel == "ocr") textHits++ else imageHits++
       if (BuildConfig.DEBUG) Log.d("LH-vision", "$channel hit ${cls.category}/${cls.severity} in $app")
     }
-    if (pause) service?.block(currentPkg, cls, channel)
+    if (pause) service?.block(currentPkg, cls, channel, onScreen)
   }
 
   private fun nextInterval(ctx: Context): Long {

@@ -44,13 +44,9 @@ object OverlayManager {
   private const val WRONG = "This was wrong"
   private const val FOOTER = "Your parent sees the category, never the content."
 
-  // After "Continue anyway", don't re-cover the same screen for a short window,
-  // so the child can actually read it instead of the overlay popping straight
-  // back. The parent is still emailed regardless (server-side).
-  private const val SUPPRESS_MS = 60_000L
-
-  @Volatile
-  private var suppressUntil = 0L
+  private const val CONTINUED_MS = 10 * 60 * 1000L
+  private val continued = HashMap<String, Long>()
+  private var screen: List<String> = emptyList()
 
   @Volatile
   private var shown = false
@@ -80,13 +76,28 @@ object OverlayManager {
     blockThreshold = value
   }
 
-  fun canShow(ctx: Context): Boolean = !shown && Settings.canDrawOverlays(ctx) && System.currentTimeMillis() >= suppressUntil
+  fun canShow(ctx: Context): Boolean = !shown && Settings.canDrawOverlays(ctx)
+
+  @Synchronized
+  fun wasContinued(fingerprint: String?): Boolean {
+    if (fingerprint == null) return false
+    val now = System.currentTimeMillis()
+    continued.entries.removeAll { now - it.value > CONTINUED_MS }
+    return continued.containsKey(fingerprint)
+  }
+
+  @Synchronized
+  private fun markContinued() {
+    val now = System.currentTimeMillis()
+    screen.forEach { continued[it] = now }
+    while (continued.size > 500) continued.remove(continued.entries.minByOrNull { it.value }!!.key)
+  }
 
   /** Show the overlay. `onExit` runs when the child taps "Go back" (e.g. go HOME). */
-  fun show(ctx: Context, what: PopupReports.Shown?, onExit: () -> Unit) {
-    if (!Settings.canDrawOverlays(ctx)) return // gated: never draw without permission
-    if (System.currentTimeMillis() < suppressUntil) return // recently dismissed via "Continue"
+  fun show(ctx: Context, what: PopupReports.Shown?, onScreen: List<String>, onExit: () -> Unit) {
+    if (!Settings.canDrawOverlays(ctx)) return
     main.post {
+      if (!shown) screen = onScreen
       if (shown) return@post
       val wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
       val type =
@@ -112,12 +123,12 @@ object OverlayManager {
           main.postDelayed({ hideInternal(wm) }, 350)
         },
         onContinue = {
-          // Dismiss and let the child read; suppress re-covering the same screen briefly.
-          suppressUntil = System.currentTimeMillis() + SUPPRESS_MS
+          markContinued()
           hideInternal(wm)
         },
         onWrong = {
           what?.let { PopupReports.wrong(it) }
+          markContinued()
           onExit()
           main.postDelayed({ hideInternal(wm) }, 350)
         },

@@ -1,6 +1,7 @@
 package fund.fastforward.lighthouse.child
 
 import android.accessibilityservice.AccessibilityService
+import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -62,7 +63,7 @@ class ContentAccessibilityService : AccessibilityService() {
     collectText(root, parts, intArrayOf(0))
     val hits = LighthouseClassifier.classifyAll(parts)
     val best = LighthouseClassifier.best(hits) ?: return
-    val blockable = if (OverlayManager.isEnabled()) hits.filter { LighthouseClassifier.shouldBlock(it.second, OverlayManager.threshold()) } else emptyList()
+    val blockable = if (OverlayManager.isEnabled()) hits.filter { LighthouseClassifier.shouldBlock(it.second, OverlayManager.threshold()) && !OverlayManager.wasContinued(it.second.matched) } else emptyList()
     val trigger = PopupGate.pick(pkg, blockable, System.currentTimeMillis())
     val pause = trigger != null &&
       OverlayManager.canShow(applicationContext) &&
@@ -70,7 +71,7 @@ class ContentAccessibilityService : AccessibilityService() {
     val (text, cls) = if (pause && trigger != null) trigger else best
     if (BuildConfig.DEBUG) Log.d("LH-capture", "$pkg: ${LogScrub.scrub(text)}")
     CaptureBuffer.add(pkg, text, "text", pause)
-    if (pause) block(pkg, cls, "text")
+    if (pause) block(pkg, cls, "text", blockable.mapNotNull { it.second.matched })
   }
 
   private val passThroughPkgs: Set<String> by lazy {
@@ -90,11 +91,11 @@ class ContentAccessibilityService : AccessibilityService() {
     return pkg in homePkgs || packageManager.getLaunchIntentForPackage(pkg) != null
   }
 
-  fun block(pkg: String, cls: Classification, channel: String) {
+  fun block(pkg: String, cls: Classification, channel: String, onScreen: List<String> = emptyList()) {
     blockedPkg = pkg
     val app = LighthouseRegistry.idForPackage(pkg)
     val what = app?.let { PopupReports.Shown(cls.category, cls.severity, it, channel, if (channel == "image") null else Keeper.version()) }
-    OverlayManager.show(applicationContext, what) { performGlobalAction(GLOBAL_ACTION_HOME) }
+    OverlayManager.show(applicationContext, what, onScreen) { performGlobalAction(GLOBAL_ACTION_HOME) }
   }
 
   private fun checkViewOnce(root: AccessibilityNodeInfo) {
@@ -116,7 +117,7 @@ class ContentAccessibilityService : AccessibilityService() {
 
   private fun collectText(node: AccessibilityNodeInfo?, parts: MutableList<String>, total: IntArray) {
     if (node == null || total[0] >= MAX_CHARS) return
-    if (node.isEditable) return
+    if (node.isEditable && (node.isFocused || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && node.isShowingHintText)) return
     node.text?.let {
       if (it.isNotBlank()) {
         parts.add(it.toString())
